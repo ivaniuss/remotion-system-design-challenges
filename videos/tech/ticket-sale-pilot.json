@@ -1,0 +1,580 @@
+{
+  "id": "ticket-sale-pilot",
+  "title": "Ticket sale — visual pilot",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "light",
+  "shape": "progressive",
+  "hook": "incident",
+  "board": {
+    "nodes": [
+      {
+        "id": "fans",
+        "label": "Fans",
+        "icon": "users",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "room",
+        "label": "Waiting room",
+        "icon": "ratelimit",
+        "row": 0,
+        "col": 1,
+        "sub": "random line"
+      },
+      {
+        "id": "lb",
+        "label": "Load balancer",
+        "icon": "gateway",
+        "row": 0,
+        "col": 2,
+        "sub": "spreads traffic"
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "icon": "api",
+        "row": 0,
+        "col": 3,
+        "sub": "REST API"
+      },
+      {
+        "id": "pay",
+        "label": "Payments",
+        "icon": "external",
+        "row": 0,
+        "col": 4,
+        "sub": "card · bank"
+      },
+      {
+        "id": "cdn",
+        "label": "CDN",
+        "icon": "cdn",
+        "row": 1,
+        "col": 0,
+        "sub": "seat map"
+      },
+      {
+        "id": "copies",
+        "label": "More copies",
+        "icon": "instances",
+        "row": 1,
+        "col": 3,
+        "sub": "same backend"
+      },
+      {
+        "id": "db",
+        "label": "Database",
+        "icon": "db",
+        "row": 1,
+        "col": 4,
+        "sub": "seats"
+      },
+      {
+        "id": "expiry",
+        "label": "Hold expiry",
+        "icon": "scheduler",
+        "row": 2,
+        "col": 4,
+        "sub": "every minute"
+      }
+    ],
+    "edges": [
+      {
+        "from": "fans",
+        "to": "api"
+      },
+      {
+        "from": "fans",
+        "to": "lb"
+      },
+      {
+        "from": "fans",
+        "to": "room"
+      },
+      {
+        "from": "room",
+        "to": "lb"
+      },
+      {
+        "from": "lb",
+        "to": "api"
+      },
+      {
+        "from": "lb",
+        "to": "copies"
+      },
+      {
+        "from": "api",
+        "to": "pay"
+      },
+      {
+        "from": "api",
+        "to": "db"
+      },
+      {
+        "from": "copies",
+        "to": "db"
+      },
+      {
+        "from": "expiry",
+        "to": "db"
+      },
+      {
+        "from": "fans",
+        "to": "cdn"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "Why does every *ticket sale* crash?",
+      "subheading": "From 500 seats to millions of fans",
+      "chapter": "The question",
+      "narration": "Every time a huge tour goes on sale, the site crashes. So how would you design ticket sales? Like a real project: start with something simple that works, and fix it only when it breaks.",
+      "beats": [
+        {
+          "text": "Fans",
+          "icon": "users",
+          "at": "a huge tour"
+        },
+        {
+          "text": "Seats",
+          "icon": "db",
+          "at": "goes on sale"
+        },
+        {
+          "text": "Payment",
+          "icon": "external",
+          "at": "design ticket sales"
+        },
+        {
+          "text": "?",
+          "at": "fix it only"
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "3.5 billion",
+      "caption": "requests in one presale · 4× the previous peak",
+      "tone": "bad",
+      "icon": "users",
+      "sfx": "impact",
+      "chapter": "Millions at once",
+      "narration": "Now the big one. In 2022, one presale got three and a half billion requests: four times the ticket company's previous peak. What happens to our design?",
+      "countUp": true
+    },
+    {
+      "type": "board",
+      "title": "What breaks now",
+      "narration": "Everybody arrives in the same minute and keeps hitting refresh. The backend runs out of capacity, the database is flooded with seat checks, and some fans even lose the seats already in their cart.",
+      "steps": [
+        {
+          "at": "the same minute",
+          "camera": [],
+          "crowd": {
+            "from": "fans",
+            "to": "api",
+            "density": "flood",
+            "label": "×3.5B",
+            "color": "red"
+          }
+        },
+        {
+          "at": "hitting refresh",
+          "status": {
+            "api": "busy"
+          },
+          "meter": {
+            "api": {
+              "value": 0.6,
+              "label": "CPU"
+            }
+          }
+        },
+        {
+          "at": "runs out of capacity",
+          "status": {
+            "api": "error"
+          },
+          "meter": {
+            "api": {
+              "value": 1,
+              "label": "CPU"
+            }
+          }
+        },
+        {
+          "at": "flooded with seat checks",
+          "crowd": {
+            "from": "api",
+            "to": "db",
+            "density": "many",
+            "label": "A12? A13? A14?",
+            "color": "orange"
+          },
+          "status": {
+            "db": "error"
+          },
+          "meter": {
+            "db": {
+              "value": 1,
+              "label": "connections"
+            }
+          },
+          "sfx": "alarm"
+        },
+        {
+          "at": "already in their cart",
+          "note": {
+            "text": "Random errors, *lost carts*",
+            "tone": "bad"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The waiting room",
+      "chapter": "The waiting room",
+      "narration": "So you control how many get in. Put a waiting room in front. Before the sale, everyone waits on a simple page. At the start, they get a random place in line, so arriving early doesn't help. Then you let people in at the rate your database can handle.",
+      "steps": [
+        {
+          "at": "how many get in",
+          "status": {
+            "db": "idle",
+            "api": "idle",
+            "copies": "idle"
+          },
+          "focus": [],
+          "meter": {
+            "api": "off",
+            "db": "off"
+          }
+        },
+        {
+          "at": "waiting room in front",
+          "show": [
+            "room"
+          ],
+          "hide": [
+            "fans->lb"
+          ],
+          "focus": [
+            "fans",
+            "room",
+            "lb"
+          ],
+          "sfx": "impact",
+          "crowd": {
+            "from": "fans",
+            "to": "room",
+            "density": "flood",
+            "label": "×3.5B",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "waits on a simple page",
+          "status": {
+            "room": "busy"
+          }
+        },
+        {
+          "at": "random place in line",
+          "note": {
+            "text": "Random order: *no prize for refreshing*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "at the rate",
+          "crowd": "off",
+          "packet": {
+            "from": "room",
+            "to": "lb",
+            "label": "next batch",
+            "color": "green"
+          },
+          "status": {
+            "db": "ok"
+          },
+          "meter": {
+            "db": {
+              "value": 0.55,
+              "label": "DB load"
+            },
+            "api": {
+              "value": 0.45,
+              "label": "CPU"
+            }
+          }
+        },
+        {
+          "at": "can handle",
+          "note": {
+            "text": "Let in *what the database can take*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Hold the seat",
+      "narration": "So you don't sell the seat at the click: you hold it. The seat goes from free to held, with an expiry time, while the fan pays. When the payment goes through, it becomes sold.",
+      "steps": [
+        {
+          "at": "you hold it",
+          "status": {
+            "fans": "idle",
+            "api": "idle",
+            "db": "idle"
+          },
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "A12 = held",
+            "color": "yellow"
+          },
+          "note": {
+            "text": "free → *held* → sold",
+            "tone": "info"
+          },
+          "meter": {
+            "db": "off",
+            "api": "off"
+          }
+        },
+        {
+          "at": "with an expiry time",
+          "note": {
+            "text": "Held, *with a timer*",
+            "tone": "warn"
+          },
+          "clock": {
+            "db": {
+              "label": "10 min hold",
+              "over": 6
+            }
+          }
+        },
+        {
+          "at": "while the fan pays",
+          "show": [
+            "pay"
+          ],
+          "packet": {
+            "from": "api",
+            "to": "pay",
+            "label": "pay",
+            "color": "blue"
+          },
+          "status": {
+            "pay": "busy"
+          }
+        },
+        {
+          "at": "payment goes through",
+          "packet": {
+            "from": "pay",
+            "to": "api",
+            "label": "paid",
+            "color": "green"
+          },
+          "status": {
+            "pay": "ok"
+          }
+        },
+        {
+          "at": "becomes sold",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "A12 = sold",
+            "color": "green"
+          },
+          "status": {
+            "db": "ok"
+          },
+          "clock": {
+            "db": "off"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "When they walk away",
+      "narration": "And if the fan closes the tab? A small job checks for expired holds every minute and frees those seats, so nobody keeps a seat they never paid for.",
+      "steps": [
+        {
+          "at": "closes the tab",
+          "status": {
+            "fans": "warn",
+            "pay": "idle",
+            "db": "idle"
+          },
+          "focus": [
+            "fans"
+          ],
+          "clock": {
+            "db": {
+              "label": "hold 10 min",
+              "over": 5.5,
+              "end": "expired"
+            }
+          }
+        },
+        {
+          "at": "A small job",
+          "show": [
+            "expiry"
+          ],
+          "focus": [
+            "expiry",
+            "db"
+          ],
+          "note": {
+            "text": "Expiry job: *every minute*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "frees those seats",
+          "packet": {
+            "from": "expiry",
+            "to": "db",
+            "label": "free expired",
+            "color": "green"
+          },
+          "status": {
+            "expiry": "busy"
+          }
+        },
+        {
+          "at": "never paid for",
+          "focus": [],
+          "status": {
+            "fans": "idle",
+            "expiry": "idle"
+          },
+          "clock": {
+            "db": "off"
+          },
+          "note": {
+            "text": "Expired hold → *free again*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "sequence",
+      "title": "Charged twice",
+      "narration": "And the backend can crash right after charging, before it marks the seat sold. When the request is retried, it must not charge again. So every payment carries an idempotency key, and the provider returns the first result instead of charging twice.",
+      "actors": [
+        {
+          "id": "api",
+          "label": "Backend",
+          "sub": "REST API",
+          "icon": "api"
+        },
+        {
+          "id": "pay",
+          "label": "Payments",
+          "sub": "card · bank",
+          "icon": "external"
+        },
+        {
+          "id": "db",
+          "label": "Database",
+          "sub": "seats",
+          "icon": "db"
+        }
+      ],
+      "steps": [
+        {
+          "at": "the backend can crash",
+          "from": "api",
+          "to": "pay",
+          "label": "pay · key K1"
+        },
+        {
+          "at": "right after charging",
+          "from": "pay",
+          "to": "api",
+          "label": "charged ✓",
+          "kind": "return",
+          "status": {
+            "api": "error"
+          },
+          "note": {
+            "text": "Crash *after* charging",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "marks the seat sold",
+          "from": "api",
+          "to": "db",
+          "label": "mark sold",
+          "kind": "lost"
+        },
+        {
+          "at": "request is retried",
+          "from": "api",
+          "to": "pay",
+          "label": "retry · key K1",
+          "after": "+1 min",
+          "gap": 1.6,
+          "status": {
+            "api": "busy"
+          }
+        },
+        {
+          "at": "idempotency key",
+          "note": {
+            "text": "Idempotency key: *same key, same result*",
+            "tone": "good"
+          },
+          "gap": 0.6
+        },
+        {
+          "at": "returns the first result",
+          "from": "pay",
+          "to": "api",
+          "label": "already paid",
+          "kind": "return",
+          "status": {
+            "api": "ok"
+          },
+          "sfx": "success"
+        },
+        {
+          "at": "instead of charging twice",
+          "from": "api",
+          "to": "db",
+          "label": "mark sold",
+          "note": {
+            "text": "*One charge*, even with retries",
+            "tone": "good"
+          }
+        }
+      ],
+      "spans": [
+        {
+          "actor": "pay",
+          "from": 3,
+          "to": 5,
+          "label": "K1 seen",
+          "tone": "info"
+        }
+      ]
+    }
+  ]
+}

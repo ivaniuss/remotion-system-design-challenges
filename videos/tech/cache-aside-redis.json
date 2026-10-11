@@ -1,0 +1,697 @@
+{
+  "id": "cache-aside-redis",
+  "title": "Cache-aside con Redis: cuándo sirve y dónde falla",
+  "lang": "es",
+  "pack": "tech",
+  "theme": "dark",
+  "board": {
+    "nodes": [
+      {
+        "id": "client",
+        "label": "Cliente",
+        "icon": "client",
+        "sub": "app o web",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "api",
+        "label": "Tu API",
+        "icon": "api",
+        "sub": "backend",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "cache",
+        "label": "Redis",
+        "icon": "cache",
+        "sub": "caché en memoria",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "db",
+        "label": "Base de datos",
+        "icon": "db",
+        "sub": "fuente de verdad",
+        "row": 1,
+        "col": 1
+      }
+    ],
+    "edges": [
+      {
+        "from": "client",
+        "to": "api"
+      },
+      {
+        "from": "api",
+        "to": "cache"
+      },
+      {
+        "from": "api",
+        "to": "db"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "Backend",
+      "heading": "¿Tu API es lenta? Usa *cache-aside*",
+      "icon": "cache",
+      "chapter": "La pregunta",
+      "narration": "Tu API tarda porque cada petición va a la base de datos. ¿Cómo la aceleras con una caché, y dónde se rompe? Primero lo simple, y lo mejoramos cuando falle.",
+      "beats": [
+        {
+          "text": "Petición",
+          "icon": "client",
+          "at": "cada petición"
+        },
+        {
+          "text": "Base de datos",
+          "icon": "db",
+          "at": "a la base"
+        },
+        {
+          "text": "Lenta",
+          "icon": "scheduler",
+          "at": "la aceleras"
+        },
+        {
+          "text": "?",
+          "at": "dónde se rompe"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Sin caché",
+      "chapter": "Empieza sin caché",
+      "narration": "Lo simple: el cliente le pide un usuario a tu API, y la API lo lee de la base de datos. Con poco tráfico, ¿hace falta algo más? No. Una caché es otra pieza que mantener, y puede quedar desactualizada.",
+      "steps": [
+        {
+          "at": "le pide un usuario",
+          "show": [
+            "client",
+            "api",
+            "db"
+          ],
+          "packet": {
+            "from": "client",
+            "to": "api",
+            "label": "GET /users/42",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "lo lee de",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "SELECT",
+            "color": "blue"
+          },
+          "status": {
+            "db": "busy"
+          }
+        },
+        {
+          "at": "poco tráfico",
+          "packet": {
+            "from": "db",
+            "to": "api",
+            "label": "usuario",
+            "color": "green"
+          },
+          "status": {
+            "db": "ok"
+          },
+          "note": {
+            "text": "Poco tráfico: *no hace falta caché*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "puede quedar desactualizada",
+          "note": {
+            "text": "Cada pieza extra: *algo más que operar*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "10k/s",
+      "caption": "el mismo perfil, pedido una y otra vez",
+      "tone": "warn",
+      "icon": "users",
+      "sfx": "impact",
+      "chapter": "Mucho tráfico de lectura",
+      "narration": "Pero, ¿qué pasa si el perfil más visitado se pide diez mil veces por segundo? Casi todo son lecturas del mismo dato, y la base repite el mismo trabajo una y otra vez."
+    },
+    {
+      "type": "board",
+      "title": "Cache-aside",
+      "chapter": "Cómo funciona cache-aside",
+      "narration": "Para eso pones Redis: una base de datos en memoria, rápida, para guardar copias. La API busca primero en Redis. Si el dato está, es un acierto, y responde sin tocar la base. Si no está, es un fallo: lee de la base y guarda una copia para la próxima vez.",
+      "steps": [
+        {
+          "at": "pones Redis",
+          "show": [
+            "cache"
+          ],
+          "status": {
+            "db": "idle"
+          },
+          "focus": [
+            "api",
+            "cache"
+          ],
+          "sfx": "impact"
+        },
+        {
+          "at": "busca primero en Redis",
+          "packet": {
+            "from": "api",
+            "to": "cache",
+            "label": "GET user:42",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "es un acierto",
+          "packet": {
+            "from": "cache",
+            "to": "api",
+            "label": "HIT",
+            "color": "green"
+          },
+          "status": {
+            "cache": "ok"
+          },
+          "note": {
+            "text": "Acierto: *sin tocar la base*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "es un fallo",
+          "focus": [
+            "api",
+            "cache",
+            "db"
+          ],
+          "status": {
+            "cache": "warn"
+          },
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "SELECT",
+            "color": "orange"
+          }
+        },
+        {
+          "at": "guarda una copia",
+          "packet": {
+            "from": "db",
+            "to": "cache",
+            "label": "SET user:42",
+            "color": "green",
+            "via": [
+              "api"
+            ]
+          },
+          "status": {
+            "cache": "ok"
+          },
+          "focus": [],
+          "note": {
+            "text": "Fallo: *lee y guarda una copia*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "title": "El código",
+      "filename": "users.service.ts",
+      "language": "ts",
+      "code": "async function getUser(id: string) {\n  const key = `user:${id}`;\n  const hit = await redis.get(key);\n  if (hit) return JSON.parse(hit);\n\n  const user = await db.user.find(id);\n  await redis.set(key,\n    JSON.stringify(user), 'EX', 60);\n  return user;\n}",
+      "narration": "En código es así de corto. Buscas en Redis. Si no está, consultas la base de datos. Y guardas la copia con un TTL, un tiempo de vida: a los sesenta segundos expira sola.",
+      "steps": [
+        {
+          "at": "Buscas en Redis",
+          "lines": [
+            3,
+            4
+          ],
+          "note": "1. Busca en Redis"
+        },
+        {
+          "at": "consultas la base",
+          "lines": [
+            6
+          ],
+          "note": "2. Si no está, lee de la base"
+        },
+        {
+          "at": "un tiempo de vida",
+          "lines": [
+            7,
+            8
+          ],
+          "note": "3. Guarda con TTL de 60 s"
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "Dato viejo",
+      "caption": "¿y si el usuario cambia su nombre?",
+      "tone": "warn",
+      "icon": "cache",
+      "sfx": "impact",
+      "chapter": "Cuando el dato cambia",
+      "narration": "Ahora, ¿qué pasa si el usuario cambia su nombre? Redis sigue entregando la copia vieja hasta que expire."
+    },
+    {
+      "type": "board",
+      "title": "Invalidar al escribir",
+      "narration": "Tienes dos opciones. Aceptar unos segundos de retraso, si el dato lo permite. O, al escribir, actualizar primero la base y después borrar la clave en Redis. Así, la siguiente lectura falla en la caché y trae el dato nuevo.",
+      "steps": [
+        {
+          "at": "unos segundos de retraso",
+          "note": {
+            "text": "Opción 1: *aceptar unos segundos*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "actualizar primero la base",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "UPDATE",
+            "color": "blue"
+          },
+          "status": {
+            "db": "busy"
+          }
+        },
+        {
+          "at": "borrar la clave",
+          "packet": {
+            "from": "api",
+            "to": "cache",
+            "label": "DEL user:42",
+            "color": "orange"
+          },
+          "status": {
+            "db": "ok"
+          },
+          "note": {
+            "text": "Primero la base, *luego borra la clave*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "trae el dato nuevo",
+          "packet": {
+            "from": "db",
+            "to": "cache",
+            "label": "nuevo",
+            "color": "green",
+            "via": [
+              "api"
+            ]
+          },
+          "status": {
+            "cache": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "La avalancha",
+      "chapter": "Cache stampede",
+      "narration": "Y hay un problema clásico: la clave más popular expira, y en ese instante mil peticiones no la encuentran a la vez. Todas van a la base de datos al mismo tiempo. Se llama cache stampede, una estampida.",
+      "steps": [
+        {
+          "at": "más popular expira",
+          "status": {
+            "cache": "warn"
+          },
+          "focus": [
+            "cache"
+          ]
+        },
+        {
+          "at": "mil peticiones",
+          "focus": [],
+          "packet": {
+            "from": "client",
+            "to": "api",
+            "label": "×1000",
+            "color": "red"
+          }
+        },
+        {
+          "at": "no la encuentran",
+          "packet": {
+            "from": "api",
+            "to": "cache",
+            "label": "MISS ×1000",
+            "color": "red"
+          },
+          "status": {
+            "cache": "error"
+          }
+        },
+        {
+          "at": "al mismo tiempo",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "SELECT ×1000",
+            "color": "red"
+          },
+          "status": {
+            "db": "error"
+          },
+          "sfx": "alarm"
+        },
+        {
+          "at": "cache stampede",
+          "note": {
+            "text": "1000 fallos = *1000 consultas*",
+            "tone": "bad"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Una sola recalcula",
+      "narration": "Para evitarlo, deja que solo una petición recalcule el valor, con un candado, mientras las demás esperan un instante o usan la copia vieja. Y añade algo de aleatoriedad al TTL, para que las claves no expiren todas juntas.",
+      "steps": [
+        {
+          "at": "solo una petición",
+          "status": {
+            "db": "idle",
+            "cache": "idle"
+          },
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "SELECT ×1",
+            "color": "green"
+          },
+          "note": {
+            "text": "Un candado: *solo una recalcula*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "usan la copia vieja",
+          "packet": {
+            "from": "cache",
+            "to": "api",
+            "label": "copia vieja",
+            "color": "teal"
+          },
+          "status": {
+            "cache": "ok"
+          }
+        },
+        {
+          "at": "aleatoriedad al TTL",
+          "note": {
+            "text": "TTL *con aleatoriedad*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "todas juntas",
+          "status": {
+            "db": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Lo que no existe",
+      "chapter": "Claves que no existen",
+      "narration": "Otro caso: piden usuarios que no existen, a veces a propósito. La base no devuelve nada, así que nada se guarda en Redis, y cada petición vuelve a la base. La solución: guarda también la ausencia, con un TTL corto.",
+      "steps": [
+        {
+          "at": "usuarios que no existen",
+          "packet": {
+            "from": "client",
+            "to": "api",
+            "label": "GET /users/9999",
+            "color": "red"
+          },
+          "status": {
+            "db": "idle"
+          }
+        },
+        {
+          "at": "no devuelve nada",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "SELECT",
+            "color": "orange"
+          },
+          "status": {
+            "db": "warn"
+          }
+        },
+        {
+          "at": "vuelve a la base",
+          "note": {
+            "text": "No existe → *siempre va a la base*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "guarda también la ausencia",
+          "packet": {
+            "from": "api",
+            "to": "cache",
+            "label": "SET vacío · 30 s",
+            "color": "green"
+          },
+          "status": {
+            "db": "idle",
+            "cache": "ok"
+          },
+          "note": {
+            "text": "Cachea *la ausencia*, con TTL corto",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Si Redis se cae",
+      "chapter": "¿Y si Redis se cae?",
+      "narration": "¿Y si Redis se cae? La caché es una copia, no la fuente de verdad: tu API debe seguir funcionando leyendo de la base. Pero toda la carga cae de golpe sobre ella, así que limita cuántas consultas dejas pasar, para que una caída no arrastre a la otra.",
+      "steps": [
+        {
+          "at": "Redis se cae",
+          "status": {
+            "cache": "error"
+          },
+          "focus": [
+            "cache"
+          ],
+          "sfx": "alarm"
+        },
+        {
+          "at": "no la fuente de verdad",
+          "focus": [
+            "api",
+            "db"
+          ],
+          "note": {
+            "text": "Redis es una copia: *la base manda*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "leyendo de la base",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "SELECT",
+            "color": "blue"
+          },
+          "status": {
+            "db": "busy"
+          }
+        },
+        {
+          "at": "cae de golpe",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "×10k",
+            "color": "red"
+          },
+          "status": {
+            "db": "warn"
+          }
+        },
+        {
+          "at": "limita cuántas consultas",
+          "status": {
+            "db": "ok"
+          },
+          "focus": [],
+          "note": {
+            "text": "Limita la carga: *que no caigan las dos*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "compare",
+      "title": "¿Qué cachear?",
+      "chapter": "Qué cachear y qué no",
+      "narration": "Entonces, ¿qué cachear? Lo que se lee mucho, cambia poco y tolera unos segundos de retraso. No cachees lo que debe ser exacto al instante, como un saldo, ni datos sensibles. Y mide cuántas lecturas aciertan: si son pocas, la caché no te ayuda.",
+      "left": {
+        "label": "Sí cachear",
+        "tone": "good",
+        "items": [
+          {
+            "text": "Se lee *mucho*",
+            "at": "se lee mucho"
+          },
+          {
+            "text": "Cambia *poco*",
+            "at": "cambia poco"
+          },
+          {
+            "text": "Tolera *unos segundos*",
+            "at": "tolera unos segundos"
+          }
+        ]
+      },
+      "right": {
+        "label": "Mejor no",
+        "tone": "bad",
+        "items": [
+          {
+            "text": "Debe ser *exacto al instante*",
+            "at": "exacto al instante"
+          },
+          {
+            "text": "Datos *sensibles*",
+            "at": "datos sensibles"
+          },
+          {
+            "text": "Pocos aciertos: *mídelo*",
+            "at": "cuántas lecturas aciertan"
+          }
+        ]
+      }
+    },
+    {
+      "type": "summary",
+      "title": "Resumen",
+      "chapter": "Resumen",
+      "narration": "Resumen: lee primero de Redis y, si falla, ve a la base y guarda una copia. Al escribir, actualiza la base y borra la clave. Protege la base de la estampida y de las claves que no existen. Y si Redis se cae, la base sigue mandando. ¿Qué dato de tu app cachearías primero?",
+      "points": [
+        {
+          "text": "Lee de *Redis*; si falla, base + copia",
+          "at": "lee primero de Redis"
+        },
+        {
+          "text": "Al escribir: *base, luego borra*",
+          "at": "Al escribir"
+        },
+        {
+          "text": "Evita *estampidas* y claves vacías",
+          "at": "Protege la base"
+        },
+        {
+          "text": "Redis cae → *la base manda*",
+          "at": "si Redis se cae"
+        }
+      ],
+      "cta": "¿Qué dato cachearías primero?"
+    },
+    {
+      "type": "list",
+      "title": "Antes de irte",
+      "numbered": false,
+      "chapter": "Antes de irte",
+      "narration": "Antes de irte: cuéntame en los comentarios qué cachearías primero, y qué tema quieres ver después: limitar peticiones, colas o balanceo de carga. Si te sirvió, un like y suscribirte ayudan mucho al canal.",
+      "items": [
+        {
+          "text": "Tu respuesta → *comentarios*",
+          "at": "cuéntame en los"
+        },
+        {
+          "text": "Próximo video: *tú eliges*",
+          "at": "qué tema quieres"
+        },
+        {
+          "text": "*Like* y *suscríbete* si te sirvió",
+          "icon": "bell",
+          "at": "un like y"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Cuándo no hace falta: si la consulta ya es rápida (con índices) y el tráfico es bajo, una caché solo añade una pieza más y datos que pueden quedar viejos. Antes de cachear, revisa la consulta y los índices.",
+    "Por qué Redis es rápido: guarda los datos en memoria. Cuánto más rápido que tu base depende de la consulta y de la red; mide tu caso en vez de prometer un número.",
+    "Orden al escribir (Microsoft, patrón Cache-Aside): actualiza la base antes de borrar la clave. Si borras primero, otra petición puede leer el dato viejo de la base y volver a guardarlo en la caché. Aun así quedan ventanas cortas de inconsistencia: cache-aside no garantiza consistencia.",
+    "Borrar en vez de actualizar la clave: si dos escrituras compiten, actualizar la caché puede dejarla con el valor de la escritura que perdió. Borrar es más simple: la siguiente lectura recarga desde la base.",
+    "El TTL equilibra frescura y carga: muy corto, la base trabaja casi como sin caché; muy largo, datos viejos más tiempo. Elige según cuánto retraso tolera cada dato.",
+    "Cache stampede (o thundering herd): cuando expira una clave muy pedida, muchas peticiones fallan a la vez y golpean la base. Mitigaciones: un candado para que solo una recalcule (por ejemplo SET con NX y expiración en Redis), servir la copia vieja mientras se recalcula, refrescar antes de que expire, y TTL con aleatoriedad (jitter) para que no expiren juntas.",
+    "Claves que no existen (cache penetration): guardar la ausencia con un TTL corto evita que la misma petición vuelva siempre a la base. Si alguien prueba identificadores al azar, ayuda también un filtro de Bloom o validar el formato del identificador, y limitar peticiones por cliente.",
+    "Si Redis se cae: la API debe tratar los errores de la caché como un fallo (miss) y leer de la base, con un timeout corto hacia Redis. Para no tumbar la base, limita la concurrencia hacia ella o desactiva temporalmente las rutas más caras. Con varias réplicas de Redis (o un servicio gestionado) la caída es menos probable, pero no imposible.",
+    "Qué no cachear (Microsoft): datos sensibles o de seguridad, que conviene leer siempre de la fuente. Tampoco lo que debe ser exacto al instante, como un saldo o el stock en el momento de comprar: ahí decide la base, como en el video de la venta de entradas.",
+    "Mide el hit ratio (aciertos sobre lecturas). Si la mayoría de las peticiones fallan en la caché, el coste de consultarla y llenarla puede superar el beneficio (Microsoft lo menciona como caso en que el patrón no conviene).",
+    "Alternativas: write-through (escribir en la caché y en la base a la vez) si necesitas leer justo lo que acabas de escribir; caché local en memoria del proceso para datos muy pequeños y estables; CDN para respuestas públicas iguales para todos.",
+    "Memoria llena: con maxmemory, Redis actúa según maxmemory-policy. El valor por defecto (noeviction) rechaza escrituras nuevas; para una caché se suele usar allkeys-lru, que expulsa las claves menos usadas. Una caché no es almacenamiento: cualquier clave puede desaparecer y tu código debe seguir funcionando."
+  ],
+  "publish": {
+    "titles": [
+      "Cache-aside con Redis: cuándo sirve y dónde falla",
+      "Redis como caché: invalidación, estampidas y qué pasa si se cae",
+      "Diseño de sistemas: cómo cachear sin romper tu base de datos"
+    ],
+    "description": "Cache-aside es el patrón de caché más usado: la API busca primero en Redis y, si no está, lee de la base y guarda una copia. Vemos cuándo no hace falta, cómo invalidar al escribir, la estampida cuando expira una clave popular, las claves que no existen y qué pasa si Redis se cae.",
+    "learn": [
+      "Cuándo no necesitas una caché",
+      "Cómo funciona cache-aside con Redis, con código",
+      "TTL: el equilibrio entre frescura y carga",
+      "Invalidar al escribir: por qué primero la base y luego borrar la clave",
+      "Cache stampede: candados y TTL con aleatoriedad",
+      "Claves que no existen: cachear la ausencia",
+      "Qué hacer si Redis se cae",
+      "Qué cachear y qué no"
+    ],
+    "extra": [
+      "Fuente: Microsoft Azure Architecture Center, patrón Cache-Aside (learn.microsoft.com/azure/architecture/patterns/cache-aside): actualizar la base antes de borrar la clave, el equilibrio del TTL, y cuándo no usar el patrón (datos sensibles, pocos aciertos)."
+    ],
+    "comment": "¿Qué dato de tu app cachearías primero? ¿Y qué tema vemos después: limitar peticiones, colas o balanceo de carga?",
+    "hashtags": [
+      "diseñodesistemas",
+      "redis",
+      "backend"
+    ]
+  }
+}

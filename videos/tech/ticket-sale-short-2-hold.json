@@ -1,0 +1,315 @@
+{
+  "id": "ticket-sale-short-2-hold",
+  "title": "Why do ticket sites hold your seat?",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "light",
+  "hook": "interview-question",
+  "board": {
+    "nodes": [
+      {
+        "id": "fans",
+        "label": "Fans",
+        "icon": "users",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "pay",
+        "label": "Payments",
+        "icon": "external",
+        "row": 1,
+        "col": 0,
+        "sub": "card · bank"
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "icon": "api",
+        "row": 1,
+        "col": 1,
+        "sub": "REST API"
+      },
+      {
+        "id": "expiry",
+        "label": "Hold expiry",
+        "icon": "scheduler",
+        "row": 2,
+        "col": 0,
+        "sub": "every minute"
+      },
+      {
+        "id": "db",
+        "label": "Database",
+        "icon": "db",
+        "row": 2,
+        "col": 1,
+        "sub": "seats"
+      }
+    ],
+    "edges": [
+      {
+        "from": "fans",
+        "to": "api"
+      },
+      {
+        "from": "api",
+        "to": "pay"
+      },
+      {
+        "from": "api",
+        "to": "db"
+      },
+      {
+        "from": "expiry",
+        "to": "db"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "Why ticket sites *hold your seat*",
+      "narration": "You pick a seat, and the site gives you a few minutes to pay. Why not just sell it to you right away?",
+      "beats": [
+        {
+          "text": "Pick a seat",
+          "icon": "user",
+          "at": "You pick a seat"
+        },
+        {
+          "text": "A few minutes",
+          "icon": "scheduler",
+          "at": "a few minutes",
+          "sfx": "clock"
+        },
+        {
+          "text": "?",
+          "at": "right away"
+        }
+      ]
+    },
+    {
+      "type": "sequence",
+      "title": "Hold, don't sell",
+      "narration": "Sell at the click, and a fan who walks away without paying still owns the seat. So the site holds it for you instead. Minutes pass. No payment, so the hold expires and the seat is free again.",
+      "actors": [
+        {
+          "id": "fan",
+          "label": "Fan",
+          "icon": "user"
+        },
+        {
+          "id": "api",
+          "label": "Backend",
+          "icon": "api"
+        },
+        {
+          "id": "db",
+          "label": "Database",
+          "sub": "seats",
+          "icon": "db"
+        },
+        {
+          "id": "job",
+          "label": "Expiry job",
+          "sub": "every minute",
+          "icon": "scheduler"
+        }
+      ],
+      "steps": [
+        {
+          "at": "at the click",
+          "from": "fan",
+          "to": "api",
+          "label": "pick A12"
+        },
+        {
+          "at": "walks away",
+          "gap": 0.5,
+          "note": {
+            "text": "Walks away: *still owns the seat*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "holds it for you",
+          "from": "api",
+          "to": "db",
+          "label": "A12 = held",
+          "status": {
+            "db": "busy"
+          },
+          "note": {
+            "text": "Hold, *don't sell*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "hold expires",
+          "from": "job",
+          "to": "db",
+          "label": "free expired",
+          "after": "~5 min",
+          "gap": 1.3,
+          "status": {
+            "db": "ok"
+          },
+          "note": {
+            "text": "Hold expires",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "free again",
+          "gap": 0.5,
+          "note": {
+            "text": "Seat *free again*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Hold, pay, sold",
+      "narration": "When the payment goes through in time, the held seat becomes sold. A small job frees expired holds every minute. The price: while a seat is held, nobody else can buy it. Too long blocks buyers, too short loses payers.",
+      "steps": [
+        {
+          "at": "When the payment",
+          "show": [
+            "fans",
+            "api",
+            "pay",
+            "db"
+          ],
+          "camera": [],
+          "packet": {
+            "from": "api",
+            "to": "pay",
+            "label": "pay",
+            "color": "blue"
+          },
+          "status": {
+            "pay": "busy"
+          },
+          "clock": {
+            "db": {
+              "label": "~5 min hold",
+              "over": 4
+            }
+          }
+        },
+        {
+          "at": "through in time",
+          "packet": {
+            "from": "pay",
+            "to": "api",
+            "label": "paid",
+            "color": "green"
+          },
+          "status": {
+            "pay": "ok"
+          }
+        },
+        {
+          "at": "held seat becomes",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "A12 = sold",
+            "color": "green"
+          },
+          "status": {
+            "db": "ok"
+          },
+          "clock": {
+            "db": "off"
+          }
+        },
+        {
+          "at": "A small job",
+          "show": [
+            "expiry"
+          ],
+          "focus": [
+            "expiry",
+            "db"
+          ],
+          "note": {
+            "text": "Expiry job: *every minute*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "frees expired holds",
+          "packet": {
+            "from": "expiry",
+            "to": "db",
+            "label": "free expired",
+            "color": "green"
+          },
+          "status": {
+            "expiry": "busy"
+          }
+        },
+        {
+          "at": "The price",
+          "focus": [],
+          "status": {
+            "expiry": "idle"
+          },
+          "note": {
+            "text": "Price: held = *blocked for others*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "Too long blocks",
+          "note": {
+            "text": "Too long *blocks*, too short *loses*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "Hold, pay, sell",
+      "narration": "Hold, then pay, then sell, and let expired holds go back on sale. How long would you hold a seat? The full video is on the channel.",
+      "points": [
+        {
+          "text": "Hold *before* you sell",
+          "at": "Hold then pay"
+        },
+        {
+          "text": "Expired holds → *free again*",
+          "at": "expired holds go"
+        }
+      ],
+      "cta": "Full video on the channel ▶"
+    }
+  ],
+  "notes": [
+    "Holds: a held_until timestamp on the seat (reads treat expired holds as free), or a key with a time-to-live in Redis. The expiry job keeps the data clean. The hold length is a product decision, often a few minutes.",
+    "The price of a hold: while a seat is held nobody else can buy it. Too long a hold blocks seats for nothing; too short a hold and fans lose the seat while they type the card.",
+    "The full video covers what happens when the payment arrives after the hold expired, and how to avoid charging twice."
+  ],
+  "publish": {
+    "titles": [
+      "Why Do Ticket Sites Hold Your Seat?",
+      "The Seat Hold Explained in 45 Seconds"
+    ],
+    "description": "You pick a seat and the site gives you a few minutes to pay. Why not sell it right away? The seat hold, the expiry job, and what a hold costs.",
+    "extra": [
+      "🎬 The full video (from 500 seats to millions of fans: atomic updates, seat holds, payments and a waiting room) is on the channel."
+    ],
+    "comment": "How long would you hold a seat?",
+    "hashtags": [
+      "systemdesign",
+      "backend",
+      "programming"
+    ]
+  }
+}

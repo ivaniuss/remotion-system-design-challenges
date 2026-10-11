@@ -1,0 +1,317 @@
+{
+  "id": "ticket-sale-short-3-crash",
+  "title": "Why do big ticket sales crash?",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "light",
+  "hook": "incident",
+  "board": {
+    "nodes": [
+      {
+        "id": "fans",
+        "label": "Fans",
+        "icon": "users",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "room",
+        "label": "Waiting room",
+        "icon": "ratelimit",
+        "row": 0,
+        "col": 1,
+        "sub": "random line"
+      },
+      {
+        "id": "lb",
+        "label": "Load balancer",
+        "icon": "gateway",
+        "row": 1,
+        "col": 1,
+        "sub": "spreads traffic"
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "icon": "api",
+        "row": 2,
+        "col": 0,
+        "sub": "REST API"
+      },
+      {
+        "id": "copies",
+        "label": "More copies",
+        "icon": "instances",
+        "row": 2,
+        "col": 1,
+        "sub": "same backend"
+      },
+      {
+        "id": "db",
+        "label": "Database",
+        "icon": "db",
+        "row": 3,
+        "col": 0.5,
+        "sub": "seats"
+      }
+    ],
+    "edges": [
+      {
+        "from": "fans",
+        "to": "api"
+      },
+      {
+        "from": "fans",
+        "to": "lb"
+      },
+      {
+        "from": "fans",
+        "to": "room"
+      },
+      {
+        "from": "room",
+        "to": "lb"
+      },
+      {
+        "from": "lb",
+        "to": "api"
+      },
+      {
+        "from": "lb",
+        "to": "copies"
+      },
+      {
+        "from": "api",
+        "to": "db"
+      },
+      {
+        "from": "copies",
+        "to": "db"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "Why do big *ticket sales* crash?",
+      "narration": "In 2022, a huge tour's presale overwhelmed the ticket site. Why do big sales crash, and how do you design one that doesn't?",
+      "beats": [
+        {
+          "text": "Fans",
+          "icon": "users",
+          "at": "a huge tour's"
+        },
+        {
+          "text": "Site overloaded",
+          "icon": "api",
+          "at": "overwhelmed the ticket site",
+          "sfx": "impact"
+        },
+        {
+          "text": "?",
+          "at": "design one that"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Everyone at once",
+      "narration": "Everybody arrives in the same minute, fans and bots, hitting refresh. The backend runs out of capacity, and the database drowns in checks for the same seats.",
+      "steps": [
+        {
+          "at": "the same minute",
+          "show": [
+            "fans",
+            "api",
+            "db"
+          ],
+          "camera": [],
+          "crowd": {
+            "from": "fans",
+            "to": "api",
+            "density": "flood",
+            "label": "fans + bots",
+            "color": "red"
+          }
+        },
+        {
+          "at": "hitting refresh",
+          "status": {
+            "api": "busy"
+          },
+          "meter": {
+            "api": {
+              "value": 0.6,
+              "label": "load"
+            }
+          }
+        },
+        {
+          "at": "runs out of capacity",
+          "status": {
+            "api": "error"
+          },
+          "meter": {
+            "api": {
+              "value": 1,
+              "label": "load"
+            }
+          }
+        },
+        {
+          "at": "drowns in checks",
+          "crowd": {
+            "from": "api",
+            "to": "db",
+            "density": "many",
+            "label": "A12? A13? A14?",
+            "color": "orange"
+          },
+          "status": {
+            "db": "error"
+          },
+          "meter": {
+            "db": {
+              "value": 1,
+              "label": "load"
+            }
+          },
+          "sfx": "alarm"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The waiting room",
+      "narration": "You can add servers, but not seats. So put a waiting room in front: at the start, everyone gets a random place in line, so refreshing doesn't help, and you let people in at the rate the database can handle. The price: some fans wait.",
+      "steps": [
+        {
+          "at": "add servers",
+          "show": [
+            "lb",
+            "copies"
+          ],
+          "status": {
+            "api": "idle",
+            "db": "idle"
+          },
+          "meter": {
+            "api": {
+              "value": 0.4,
+              "label": "load"
+            }
+          },
+          "note": {
+            "text": "Add *servers*. Can't add *seats*.",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "waiting room in front",
+          "show": [
+            "room"
+          ],
+          "hide": [
+            "fans->lb"
+          ],
+          "focus": [
+            "fans",
+            "room",
+            "lb"
+          ],
+          "sfx": "impact",
+          "crowd": {
+            "from": "fans",
+            "to": "room",
+            "density": "flood",
+            "label": "fans + bots",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "random place in line",
+          "note": {
+            "text": "Random order: *no prize for refreshing*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "rate the database",
+          "focus": [],
+          "camera": [],
+          "packet": {
+            "from": "room",
+            "to": "lb",
+            "label": "next batch",
+            "color": "green"
+          },
+          "status": {
+            "db": "ok"
+          },
+          "meter": {
+            "db": {
+              "value": 0.55,
+              "label": "DB load · safe"
+            }
+          }
+        },
+        {
+          "at": "some fans wait",
+          "note": {
+            "text": "Price: *some fans wait*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "3.5 billion",
+      "caption": "total system requests · 2022 presale · 4× its previous peak (Ticketmaster)",
+      "tone": "bad",
+      "icon": "users",
+      "sfx": "impact",
+      "countUp": true,
+      "narration": "How big was it? The company reported three and a half billion requests in total, four times its previous peak, bots included. A waiting room turns it into a line."
+    },
+    {
+      "type": "summary",
+      "title": "Line them up",
+      "narration": "Scale what you can, and line up what you can't. Random line, or first come, first served?",
+      "points": [
+        {
+          "text": "Servers → *add copies*",
+          "at": "Scale what you"
+        },
+        {
+          "text": "Seats → *waiting room*",
+          "at": "line up what"
+        }
+      ],
+      "cta": "Full video on the channel ▶"
+    }
+  ],
+  "notes": [
+    "Ticketmaster's explanation (Nov 19, 2022) of the Eras Tour Verified Fan onsale (Nov 15): \"3.5 billion total system requests – 4x our previous peak\", a \"staggering\" number of bot attacks plus fans without codes, about 15% of interactions with issues. It is a total with no period given, not a rate.",
+    "Scaling out works for the reads (copies behind a load balancer, the seat map on a CDN). The seats are the bottleneck: every purchase ends in the same rows of the same database, so more servers do not help.",
+    "Virtual waiting rooms (for example Queue-it): over-capacity visitors wait on a separate page; for scheduled sales, early visitors are randomized at the start; people are let in at a configured rate. A line is predictable and random order removes the advantage of arriving first; error pages would be random and reward whoever retries fastest, often bots.",
+    "The dots and the meters are pictures of magnitude, not measurements. The price of the waiting room: some fans wait, and the room itself becomes a target."
+  ],
+  "publish": {
+    "titles": [
+      "Why Do Big Ticket Sales Crash?",
+      "3.5 Billion Requests: How a Waiting Room Saves a Ticket Sale"
+    ],
+    "description": "In 2022 a huge tour's presale overwhelmed the ticket site. Why big ticket sales crash, and how a virtual waiting room lets everyone in at a pace the system can handle.",
+    "extra": [
+      "🎬 The full video (from 500 seats to millions of fans: atomic updates, seat holds, payments and a waiting room) is on the channel."
+    ],
+    "comment": "Random line or first come, first served?",
+    "hashtags": [
+      "systemdesign",
+      "backend",
+      "programming"
+    ]
+  }
+}

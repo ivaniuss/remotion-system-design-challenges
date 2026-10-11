@@ -1,0 +1,366 @@
+{
+  "id": "report-short-2-queue",
+  "title": "¿Cómo entregas un reporte que tarda 5 minutos?",
+  "lang": "es",
+  "pack": "tech",
+  "theme": "light",
+  "board": {
+    "nodes": [
+      {
+        "id": "frontend",
+        "label": "Frontend",
+        "icon": "client",
+        "row": 0,
+        "col": 0,
+        "sub": "app web"
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "icon": "api",
+        "row": 0,
+        "col": 1,
+        "sub": "API REST"
+      },
+      {
+        "id": "queue",
+        "label": "Cola",
+        "icon": "queue",
+        "row": 1,
+        "col": 1,
+        "sub": "trabajos pendientes"
+      },
+      {
+        "id": "db",
+        "label": "Base de datos",
+        "icon": "db",
+        "row": 1,
+        "col": 2,
+        "sub": "ventas"
+      },
+      {
+        "id": "store",
+        "label": "S3",
+        "icon": "storage",
+        "row": 2,
+        "col": 0,
+        "sub": "archivos"
+      },
+      {
+        "id": "worker",
+        "label": "Worker",
+        "icon": "worker",
+        "row": 2,
+        "col": 1,
+        "sub": "también backend"
+      }
+    ],
+    "edges": [
+      {
+        "from": "frontend",
+        "to": "api"
+      },
+      {
+        "from": "api",
+        "to": "queue"
+      },
+      {
+        "from": "queue",
+        "to": "worker"
+      },
+      {
+        "from": "worker",
+        "to": "db"
+      },
+      {
+        "from": "worker",
+        "to": "store"
+      },
+      {
+        "from": "store",
+        "to": "frontend",
+        "dashed": true
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "¿Cómo entregas un reporte que tarda *5 minutos*?",
+      "narration": "Tu reporte tarda cinco minutos en generarse. Si el usuario espera en la misma conexión, recibe un error 504. ¿Cómo se lo entregas? Como en un restaurante.",
+      "beats": [
+        {
+          "text": "Pedido",
+          "icon": "client",
+          "at": "Tu reporte tarda"
+        },
+        {
+          "text": "5 min",
+          "icon": "scheduler",
+          "at": "cinco minutos",
+          "sfx": "clock"
+        },
+        {
+          "text": "504",
+          "at": "error 504"
+        },
+        {
+          "text": "?",
+          "at": "Cómo se lo"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Asíncrono",
+      "narration": "Te toman el pedido, te dan un número y te avisan cuando está listo. Eso es asíncrono. La API responde al instante con un 202 y un ID de trabajo: tu número de pedido.",
+      "steps": [
+        {
+          "at": "Te toman el",
+          "show": [
+            "frontend",
+            "api"
+          ],
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "label": "GET /reporte",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "Eso es asíncrono",
+          "note": {
+            "text": "*Asíncrono*: no esperas en la línea",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "responde al instante",
+          "packet": {
+            "from": "api",
+            "to": "frontend",
+            "label": "202 + jobId",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          }
+        },
+        {
+          "at": "tu número de pedido",
+          "note": {
+            "text": "jobId = *tu número de pedido*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "La cola",
+      "narration": "El pedido va a una cola: una lista de trabajos pendientes. Sobrevive aunque tu servidor se reinicie, y si llegan muchos, esperan en fila en vez de tumbar la API.",
+      "steps": [
+        {
+          "at": "va a una cola",
+          "show": [
+            "queue"
+          ],
+          "packet": {
+            "from": "api",
+            "to": "queue",
+            "label": "job #8f2a",
+            "color": "yellow"
+          },
+          "status": {
+            "queue": "busy",
+            "frontend": "idle"
+          }
+        },
+        {
+          "at": "trabajos pendientes",
+          "focus": [
+            "queue"
+          ],
+          "note": {
+            "text": "Cola = *lista de trabajos pendientes*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "se reinicie",
+          "note": {
+            "text": "Sobrevive a *reinicios*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "esperan en fila",
+          "focus": [
+            "api",
+            "queue"
+          ],
+          "note": {
+            "text": "Muchos pedidos → *esperan en fila*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "El worker",
+      "narration": "Un worker, otro programa del backend, toma el trabajo, lee las ventas de la base y guarda el archivo en S3. Tarde lo que tarde, nadie espera.",
+      "steps": [
+        {
+          "at": "Un worker",
+          "show": [
+            "worker"
+          ],
+          "focus": [
+            "worker"
+          ]
+        },
+        {
+          "at": "toma el trabajo",
+          "packet": {
+            "from": "queue",
+            "to": "worker",
+            "label": "job #8f2a",
+            "color": "yellow"
+          },
+          "status": {
+            "queue": "idle",
+            "worker": "busy"
+          }
+        },
+        {
+          "at": "lee las ventas",
+          "packet": {
+            "from": "worker",
+            "to": "db",
+            "label": "consulta"
+          },
+          "status": {
+            "db": "busy"
+          }
+        },
+        {
+          "at": "guarda el archivo",
+          "packet": {
+            "from": "worker",
+            "to": "store",
+            "label": "reporte.csv",
+            "color": "green"
+          },
+          "status": {
+            "db": "idle",
+            "worker": "ok",
+            "store": "ok"
+          }
+        },
+        {
+          "at": "nadie espera",
+          "focus": [],
+          "camera": [],
+          "note": {
+            "text": "Tarde lo que tarde: *nadie espera*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Cómo te enteras",
+      "narration": "Y el usuario se entera porque el frontend pregunta cada pocos segundos si ya está, eso es polling, o porque el servidor le avisa con SSE. Entonces lo descarga.",
+      "steps": [
+        {
+          "at": "pregunta cada pocos",
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "label": "¿ya está?",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "eso es polling",
+          "note": {
+            "text": "*Polling*: preguntar cada pocos segundos",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "le avisa con",
+          "packet": {
+            "from": "api",
+            "to": "frontend",
+            "label": "¡listo!",
+            "color": "green"
+          },
+          "sfx": "notify",
+          "note": {
+            "text": "*SSE*: el servidor avisa",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "lo descarga",
+          "packet": {
+            "from": "store",
+            "to": "frontend",
+            "label": "descarga",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "Pedido, número, aviso",
+      "narration": "Pedido, número y aviso: así se entrega lo que tarda. ¿Tú usarías polling o SSE? El video completo está en el canal.",
+      "points": [
+        {
+          "text": "Responde *202 + ID* al instante",
+          "at": "Pedido, número"
+        },
+        {
+          "text": "*Cola + worker* hacen lo pesado",
+          "at": "así se entrega"
+        },
+        {
+          "text": "Avisa con *polling o SSE*",
+          "at": "Tú usarías"
+        }
+      ],
+      "cta": "Video completo en el canal ▶"
+    }
+  ],
+  "notes": [
+    "Colas habituales: SQS, RabbitMQ, Redis (BullMQ, Sidekiq), o Kafka si ya lo tienes. Para algo simple también sirve una tabla de trabajos en la base de datos.",
+    "Un hilo en segundo plano dentro de la API pierde el trabajo si el proceso se reinicia y compite por CPU con las peticiones; la cola separa ambas cosas.",
+    "Polling es lo más simple y funciona detrás de cualquier proxy; SSE evita preguntas vacías; WebSocket es bidireccional y aquí no hace falta.",
+    "S3 (o cualquier almacenamiento de objetos) sirve el archivo directamente, normalmente con una URL firmada que caduca."
+  ],
+  "publish": {
+    "titles": [
+      "¿Cómo entregas un reporte que tarda 5 minutos? (cola + worker)",
+      "Asíncrono explicado con un restaurante"
+    ],
+    "description": "Si algo tarda minutos, no hagas esperar al usuario en la misma conexión: 202 + ID de trabajo, una cola, un worker y un aviso.",
+    "comment": "¿Polling o SSE? ¿Cuál usarías tú?",
+    "hashtags": [
+      "systemdesign",
+      "programacion",
+      "backend"
+    ],
+    "extra": [
+      "🎬 El video completo (de lo simple a cola, worker y cron) está en el canal."
+    ]
+  }
+}

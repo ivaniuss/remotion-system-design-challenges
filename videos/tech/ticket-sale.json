@@ -1,0 +1,1504 @@
+{
+  "id": "ticket-sale",
+  "title": "Why does every ticket sale crash?",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "light",
+  "board": {
+    "nodes": [
+      {
+        "id": "fans",
+        "label": "Fans",
+        "icon": "users",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "room",
+        "label": "Waiting room",
+        "icon": "ratelimit",
+        "row": 0,
+        "col": 1,
+        "sub": "random line"
+      },
+      {
+        "id": "lb",
+        "label": "Load balancer",
+        "icon": "gateway",
+        "row": 0,
+        "col": 2,
+        "sub": "spreads traffic"
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "icon": "api",
+        "row": 0,
+        "col": 3,
+        "sub": "REST API"
+      },
+      {
+        "id": "pay",
+        "label": "Payments",
+        "icon": "external",
+        "row": 0,
+        "col": 4,
+        "sub": "card · bank"
+      },
+      {
+        "id": "cdn",
+        "label": "CDN",
+        "icon": "cdn",
+        "row": 1,
+        "col": 0,
+        "sub": "seat map"
+      },
+      {
+        "id": "copies",
+        "label": "More copies",
+        "icon": "instances",
+        "row": 1,
+        "col": 3,
+        "sub": "same backend"
+      },
+      {
+        "id": "db",
+        "label": "Database",
+        "icon": "db",
+        "row": 1,
+        "col": 4,
+        "sub": "seats"
+      },
+      {
+        "id": "expiry",
+        "label": "Hold expiry",
+        "icon": "scheduler",
+        "row": 2,
+        "col": 4,
+        "sub": "every minute"
+      }
+    ],
+    "edges": [
+      {
+        "from": "fans",
+        "to": "api"
+      },
+      {
+        "from": "fans",
+        "to": "lb"
+      },
+      {
+        "from": "fans",
+        "to": "room"
+      },
+      {
+        "from": "room",
+        "to": "lb"
+      },
+      {
+        "from": "lb",
+        "to": "api"
+      },
+      {
+        "from": "lb",
+        "to": "copies"
+      },
+      {
+        "from": "api",
+        "to": "pay"
+      },
+      {
+        "from": "api",
+        "to": "db"
+      },
+      {
+        "from": "copies",
+        "to": "db"
+      },
+      {
+        "from": "expiry",
+        "to": "db"
+      },
+      {
+        "from": "fans",
+        "to": "cdn"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "Why does every *ticket sale* crash?",
+      "subheading": "From 500 seats to millions of fans",
+      "chapter": "The question",
+      "narration": "Every time a huge tour goes on sale, the site crashes. So how would you design ticket sales? Like a real project: start with something simple that works, and fix it only when it breaks.",
+      "beats": [
+        {
+          "text": "Fans",
+          "icon": "users",
+          "at": "a huge tour"
+        },
+        {
+          "text": "Seats",
+          "icon": "db",
+          "at": "goes on sale"
+        },
+        {
+          "text": "Payment",
+          "icon": "external",
+          "at": "design ticket sales"
+        },
+        {
+          "text": "?",
+          "at": "fix it only"
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "500 seats",
+      "caption": "a local band · a few hundred fans over a day",
+      "tone": "info",
+      "icon": "users",
+      "sfx": "impact",
+      "chapter": "Start simple",
+      "narration": "Start small: a local band, five hundred seats, and a few hundred fans buying over a whole day."
+    },
+    {
+      "type": "board",
+      "title": "The simple version",
+      "narration": "The simple version is three pieces. Fans open the site and pick a seat. The backend checks that the seat is free and marks it sold. And the database keeps every seat with its status.",
+      "steps": [
+        {
+          "at": "three pieces",
+          "show": [
+            "fans",
+            "api",
+            "db"
+          ],
+          "camera": []
+        },
+        {
+          "at": "pick a seat",
+          "packet": {
+            "from": "fans",
+            "to": "api",
+            "label": "buy A12",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "checks that the seat",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "A12 free?",
+            "color": "yellow"
+          },
+          "status": {
+            "db": "busy"
+          }
+        },
+        {
+          "at": "marks it sold",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "A12 = sold",
+            "color": "green"
+          },
+          "status": {
+            "db": "ok"
+          }
+        },
+        {
+          "at": "every seat with",
+          "note": {
+            "text": "Seats: *free* or *sold*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Need anything else?",
+      "narration": "With a few hundred fans spread over a day, that's enough. No queue, no cache, no extra servers. This version works, and you could ship it today.",
+      "steps": [
+        {
+          "at": "that's enough",
+          "status": {
+            "fans": "ok",
+            "api": "ok",
+            "db": "ok"
+          },
+          "note": {
+            "text": "A few hundred fans: *enough*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "No queue",
+          "note": {
+            "text": "Every extra piece = *one more thing to break*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "ship it today",
+          "camera": [],
+          "note": {
+            "text": "Simple version: *works and ships*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "Same seat",
+      "caption": "two fans click A12 at the same moment",
+      "tone": "warn",
+      "icon": "users",
+      "sfx": "impact",
+      "chapter": "Two fans, one seat",
+      "narration": "But what happens when two fans click the same seat at the same moment?"
+    },
+    {
+      "type": "board",
+      "title": "What breaks",
+      "narration": "Both requests ask the database: is A12 free? Both get yes. Both mark it sold. Now two people paid for one seat. That's a race condition: the check and the write were two separate steps.",
+      "steps": [
+        {
+          "at": "Both requests ask",
+          "status": {
+            "fans": "idle",
+            "api": "idle",
+            "db": "idle"
+          },
+          "packet": {
+            "from": "fans",
+            "to": "api",
+            "label": "A12 ×2",
+            "color": "orange"
+          }
+        },
+        {
+          "at": "Both get yes",
+          "packet": {
+            "from": "db",
+            "to": "api",
+            "label": "free · free",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "Both mark it sold",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "sold ×2",
+            "color": "red"
+          },
+          "status": {
+            "db": "error"
+          },
+          "sfx": "riser"
+        },
+        {
+          "at": "for one seat",
+          "note": {
+            "text": "1 seat, *2 tickets*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "two separate steps",
+          "focus": [
+            "api",
+            "db"
+          ],
+          "note": {
+            "text": "Race condition: *check, then write*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "One atomic step",
+      "narration": "The fix: make the check and the write one step. The backend tells the database: mark A12 sold, only if it's still free. The first request wins. The second changes zero rows, and that fan picks another seat.",
+      "steps": [
+        {
+          "at": "the write one step",
+          "status": {
+            "db": "idle"
+          },
+          "note": {
+            "text": "Check + write = *one step*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "only if it's still free",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "sold IF free",
+            "color": "green"
+          }
+        },
+        {
+          "at": "first request wins",
+          "packet": {
+            "from": "db",
+            "to": "api",
+            "label": "updated: 1",
+            "color": "green"
+          },
+          "status": {
+            "fans": "ok"
+          }
+        },
+        {
+          "at": "changes zero rows",
+          "packet": {
+            "from": "db",
+            "to": "api",
+            "label": "updated: 0",
+            "color": "orange"
+          }
+        },
+        {
+          "at": "picks another seat",
+          "focus": [],
+          "note": {
+            "text": "Second fan: *pick another seat*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Four seats together",
+      "narration": "And fans rarely buy one seat; they want four together. If you hold them one by one, the second can fail after the first succeeded, and the fan is left with half a group. So hold all four in one transaction: all or nothing.",
+      "steps": [
+        {
+          "at": "want four together",
+          "packet": {
+            "from": "fans",
+            "to": "api",
+            "label": "4 seats",
+            "color": "blue"
+          },
+          "note": {
+            "text": "Group: *4 seats together*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "one by one",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "A12 ✓  A13 ✗",
+            "color": "orange"
+          },
+          "status": {
+            "db": "warn"
+          }
+        },
+        {
+          "at": "half a group",
+          "note": {
+            "text": "Partial: *half a group*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "one transaction",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "hold 4 IF all free",
+            "color": "green"
+          },
+          "status": {
+            "db": "ok"
+          }
+        },
+        {
+          "at": "all or nothing",
+          "note": {
+            "text": "*All 4 or none*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "Minutes",
+      "caption": "between picking a seat and paying",
+      "tone": "warn",
+      "icon": "external",
+      "sfx": "clock",
+      "chapter": "Hold the seat",
+      "narration": "Next problem: paying isn't instant. Between picking a seat and finishing the payment, a fan needs a few minutes."
+    },
+    {
+      "type": "board",
+      "title": "Hold the seat",
+      "narration": "So you don't sell the seat at the click: you hold it. The seat goes from free to held, with an expiry time, while the fan pays. When the payment goes through, it becomes sold.",
+      "steps": [
+        {
+          "at": "you hold it",
+          "status": {
+            "fans": "idle",
+            "api": "idle",
+            "db": "idle"
+          },
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "A12 = held",
+            "color": "yellow"
+          },
+          "note": {
+            "text": "free → *held* → sold",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "with an expiry time",
+          "note": {
+            "text": "Held, *with a timer*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "while the fan pays",
+          "show": [
+            "pay"
+          ],
+          "packet": {
+            "from": "api",
+            "to": "pay",
+            "label": "pay",
+            "color": "blue"
+          },
+          "status": {
+            "pay": "busy"
+          }
+        },
+        {
+          "at": "payment goes through",
+          "packet": {
+            "from": "pay",
+            "to": "api",
+            "label": "paid",
+            "color": "green"
+          },
+          "status": {
+            "pay": "ok"
+          }
+        },
+        {
+          "at": "becomes sold",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "A12 = sold",
+            "color": "green"
+          },
+          "status": {
+            "db": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "When they walk away",
+      "narration": "And if the fan closes the tab? A small job checks for expired holds every minute and frees those seats, so nobody keeps a seat they never paid for.",
+      "steps": [
+        {
+          "at": "closes the tab",
+          "status": {
+            "fans": "warn",
+            "pay": "idle",
+            "db": "idle"
+          },
+          "focus": [
+            "fans"
+          ]
+        },
+        {
+          "at": "A small job",
+          "show": [
+            "expiry"
+          ],
+          "focus": [
+            "expiry",
+            "db"
+          ],
+          "note": {
+            "text": "Expiry job: *every minute*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "frees those seats",
+          "packet": {
+            "from": "expiry",
+            "to": "db",
+            "label": "free expired",
+            "color": "green"
+          },
+          "status": {
+            "expiry": "busy"
+          }
+        },
+        {
+          "at": "never paid for",
+          "focus": [],
+          "status": {
+            "fans": "idle",
+            "expiry": "idle"
+          },
+          "note": {
+            "text": "Expired hold → *free again*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Paid, but too late",
+      "chapter": "When the payment goes wrong",
+      "narration": "Now a nastier case. The fan pays in the last second, the hold expires while the payment is processing, and another fan takes the seat. Money taken, seat gone. So when the payment confirms, mark the seat sold only if the hold is still theirs. If it isn't, refund.",
+      "steps": [
+        {
+          "at": "pays in the last second",
+          "packet": {
+            "from": "api",
+            "to": "pay",
+            "label": "pay",
+            "color": "blue"
+          },
+          "status": {
+            "pay": "busy",
+            "db": "idle",
+            "fans": "idle"
+          },
+          "focus": [
+            "fans",
+            "api",
+            "pay",
+            "db"
+          ],
+          "note": {
+            "text": "Pays at *the last second*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "another fan takes the seat",
+          "packet": {
+            "from": "expiry",
+            "to": "db",
+            "label": "hold expired",
+            "color": "gray"
+          },
+          "status": {
+            "db": "warn"
+          }
+        },
+        {
+          "at": "Money taken, seat gone",
+          "status": {
+            "pay": "ok",
+            "db": "error"
+          },
+          "note": {
+            "text": "Money taken, *seat gone*",
+            "tone": "bad"
+          },
+          "sfx": "cash"
+        },
+        {
+          "at": "only if the hold is still theirs",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "sold IF mine",
+            "color": "green"
+          },
+          "status": {
+            "db": "idle",
+            "pay": "idle"
+          },
+          "note": {
+            "text": "Confirm *only if the hold is yours*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "refund",
+          "packet": {
+            "from": "pay",
+            "to": "api",
+            "label": "refund",
+            "color": "orange"
+          },
+          "status": {
+            "api": "ok"
+          },
+          "focus": [],
+          "note": {
+            "text": "Not yours? *Refund*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Charged twice",
+      "narration": "And the backend can crash right after charging, before it marks the seat sold. When the request is retried, it must not charge again. So every payment carries an idempotency key, and the provider returns the first result instead of charging twice.",
+      "steps": [
+        {
+          "at": "crash right after charging",
+          "focus": [
+            "api",
+            "pay"
+          ],
+          "packet": {
+            "from": "api",
+            "to": "pay",
+            "label": "pay · key K1",
+            "color": "blue"
+          },
+          "status": {
+            "api": "error",
+            "pay": "ok"
+          },
+          "note": {
+            "text": "Crash *after* charging",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "must not charge again",
+          "status": {
+            "api": "busy"
+          },
+          "packet": {
+            "from": "api",
+            "to": "pay",
+            "label": "retry · key K1",
+            "color": "orange"
+          }
+        },
+        {
+          "at": "idempotency key",
+          "note": {
+            "text": "Idempotency key: *same key, same result*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "instead of charging twice",
+          "packet": {
+            "from": "pay",
+            "to": "api",
+            "label": "already paid",
+            "color": "green"
+          },
+          "status": {
+            "api": "ok",
+            "pay": "ok"
+          },
+          "focus": [],
+          "note": {
+            "text": "*One charge*, even with retries",
+            "tone": "good"
+          },
+          "sfx": "success"
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "3.5 billion",
+      "caption": "requests in one presale · 4× the previous peak",
+      "tone": "bad",
+      "icon": "users",
+      "sfx": "impact",
+      "chapter": "Millions at once",
+      "narration": "Now the big one. In 2022, one presale got three and a half billion requests: four times the ticket company's previous peak. What happens to our design?"
+    },
+    {
+      "type": "board",
+      "title": "What breaks now",
+      "narration": "Everybody arrives in the same minute and keeps hitting refresh. The backend runs out of capacity, the database is flooded with seat checks, and some fans even lose the seats already in their cart.",
+      "steps": [
+        {
+          "at": "the same minute",
+          "camera": [],
+          "packet": {
+            "from": "fans",
+            "to": "api",
+            "label": "×millions",
+            "color": "red"
+          }
+        },
+        {
+          "at": "hitting refresh",
+          "packet": {
+            "from": "fans",
+            "to": "api",
+            "label": "refresh",
+            "color": "red"
+          },
+          "status": {
+            "api": "busy"
+          }
+        },
+        {
+          "at": "runs out of capacity",
+          "status": {
+            "api": "error"
+          }
+        },
+        {
+          "at": "flooded with seat checks",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "A12? A13? A14?",
+            "color": "orange"
+          },
+          "status": {
+            "db": "error"
+          },
+          "sfx": "alarm"
+        },
+        {
+          "at": "already in their cart",
+          "note": {
+            "text": "Random errors, *lost carts*",
+            "tone": "bad"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The numbers",
+      "narration": "Let's size it, with an example. A hundred thousand fans, each refreshing twenty times a minute, is about thirty-three thousand requests per second. And almost all of it is reads: people looking at the seat map. Buying is a small part, fighting for a fixed number of seats.",
+      "steps": [
+        {
+          "at": "A hundred thousand fans",
+          "focus": [
+            "fans"
+          ],
+          "status": {
+            "api": "idle",
+            "db": "idle"
+          },
+          "note": {
+            "text": "Example: *100k fans* × 20 refreshes/min",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "thirty-three thousand requests",
+          "packet": {
+            "from": "fans",
+            "to": "api",
+            "label": "33k req/s",
+            "color": "red"
+          },
+          "note": {
+            "text": "≈ *33k requests per second*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "people looking at",
+          "note": {
+            "text": "Mostly *reads*: the seat map",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "fixed number of seats",
+          "focus": [
+            "fans",
+            "api",
+            "db"
+          ],
+          "note": {
+            "text": "Writes: *few, same seats*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Scale out",
+      "chapter": "Scale out first",
+      "narration": "The first move any engineer makes: scale out. The backend doesn't keep anything between requests, so you can run many copies of it, and put a load balancer in front to spread the traffic across them.",
+      "steps": [
+        {
+          "at": "scale out",
+          "status": {
+            "api": "idle",
+            "db": "idle"
+          },
+          "focus": [
+            "api"
+          ]
+        },
+        {
+          "at": "doesn't keep anything",
+          "note": {
+            "text": "Stateless backend → *add copies*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "many copies of it",
+          "show": [
+            "copies"
+          ],
+          "focus": [
+            "api",
+            "copies"
+          ]
+        },
+        {
+          "at": "a load balancer",
+          "show": [
+            "lb"
+          ],
+          "hide": [
+            "fans->api"
+          ],
+          "focus": [
+            "fans",
+            "lb",
+            "api",
+            "copies"
+          ],
+          "sfx": "impact"
+        },
+        {
+          "at": "spread the traffic",
+          "packet": {
+            "from": "lb",
+            "to": "copies",
+            "label": "requests",
+            "color": "blue"
+          },
+          "status": {
+            "api": "ok",
+            "copies": "ok"
+          },
+          "note": {
+            "text": "Load balancer = *spreads the traffic*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Cache what people look at",
+      "narration": "And most of that traffic is people looking, not buying: the seat map, refreshed again and again. So serve it from a CDN, servers close to the fans that keep a copy. If the map is a few seconds old, that's fine: the one-step write still decides who gets the seat.",
+      "steps": [
+        {
+          "at": "people looking, not buying",
+          "focus": [
+            "fans"
+          ]
+        },
+        {
+          "at": "serve it from a CDN",
+          "show": [
+            "cdn"
+          ],
+          "packet": {
+            "from": "fans",
+            "to": "cdn",
+            "label": "seat map",
+            "color": "teal"
+          },
+          "focus": [
+            "fans",
+            "cdn"
+          ],
+          "status": {
+            "cdn": "busy"
+          }
+        },
+        {
+          "at": "keep a copy",
+          "note": {
+            "text": "Reads → *CDN*, not the backend",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "a few seconds old",
+          "note": {
+            "text": "Map can lag: *the write decides*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "who gets the seat",
+          "focus": [],
+          "camera": [],
+          "status": {
+            "cdn": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Where it still breaks",
+      "narration": "But every purchase still ends in the same database, fighting for the same seats. You can add servers, but you can't add seats. The bottleneck moved: now it's thousands of writes for the same rows, every second.",
+      "steps": [
+        {
+          "at": "every purchase still",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "buy A12",
+            "color": "orange"
+          },
+          "focus": [
+            "api",
+            "copies",
+            "db"
+          ]
+        },
+        {
+          "at": "the same seats",
+          "packet": {
+            "from": "copies",
+            "to": "db",
+            "label": "buy A12",
+            "color": "orange"
+          },
+          "status": {
+            "db": "warn"
+          }
+        },
+        {
+          "at": "can't add seats",
+          "note": {
+            "text": "Servers scale. *Seats don't.*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "The bottleneck moved",
+          "status": {
+            "db": "error"
+          },
+          "focus": [
+            "db"
+          ],
+          "sfx": "riser"
+        },
+        {
+          "at": "the same rows",
+          "note": {
+            "text": "Bottleneck: *writes on the same rows*",
+            "tone": "bad"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Why not shard?",
+      "chapter": "Why not shard the database?",
+      "narration": "Why not split the database into shards? Sharding by event helps when there are many events, but one huge event is a single hot spot: everyone fights for the same rows. And a read replica can't take the purchase: writes for a seat go to one place.",
+      "steps": [
+        {
+          "at": "split the database",
+          "focus": [
+            "api",
+            "copies",
+            "db"
+          ],
+          "note": {
+            "text": "Sharding: *split by event*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "one huge event",
+          "status": {
+            "db": "error"
+          },
+          "note": {
+            "text": "One event = *one hot spot*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "read replica",
+          "status": {
+            "db": "idle"
+          },
+          "note": {
+            "text": "Replicas help *reads*, not the write",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "go to one place",
+          "note": {
+            "text": "Seat writes → *one place*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The waiting room",
+      "chapter": "The waiting room",
+      "narration": "So you control how many get in. Put a waiting room in front. Before the sale, everyone waits on a simple page. At the start, they get a random place in line, so arriving early doesn't help. Then you let people in at the rate your database can handle.",
+      "steps": [
+        {
+          "at": "how many get in",
+          "status": {
+            "db": "idle",
+            "api": "idle",
+            "copies": "idle"
+          },
+          "focus": []
+        },
+        {
+          "at": "waiting room in front",
+          "show": [
+            "room"
+          ],
+          "hide": [
+            "fans->lb"
+          ],
+          "focus": [
+            "fans",
+            "room",
+            "lb"
+          ],
+          "sfx": "impact"
+        },
+        {
+          "at": "waits on a simple page",
+          "packet": {
+            "from": "fans",
+            "to": "room",
+            "label": "wait",
+            "color": "blue"
+          },
+          "status": {
+            "room": "busy"
+          }
+        },
+        {
+          "at": "random place in line",
+          "note": {
+            "text": "Random order: *no prize for refreshing*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "at the rate",
+          "packet": {
+            "from": "room",
+            "to": "lb",
+            "label": "next batch",
+            "color": "green"
+          },
+          "status": {
+            "db": "ok"
+          }
+        },
+        {
+          "at": "can handle",
+          "note": {
+            "text": "Let in *what the database can take*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "A pass to get in",
+      "narration": "Each fan who's let in gets a signed token: a pass the servers check on every request. No token, no shopping, so nobody can jump the line by going straight to the load balancer.",
+      "steps": [
+        {
+          "at": "signed token",
+          "packet": {
+            "from": "room",
+            "to": "fans",
+            "label": "token",
+            "color": "green"
+          },
+          "status": {
+            "room": "idle"
+          }
+        },
+        {
+          "at": "check on every request",
+          "packet": {
+            "from": "fans",
+            "to": "lb",
+            "label": "token ✓",
+            "color": "green",
+            "via": [
+              "room"
+            ]
+          }
+        },
+        {
+          "at": "No token",
+          "note": {
+            "text": "No token, *no shopping*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "jump the line",
+          "note": {
+            "text": "Checked on the server: *no skipping*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "And the bots",
+      "chapter": "Bots",
+      "narration": "One more enemy: bots. A script can open thousands of sessions and grab seats in milliseconds. So big sales ask fans to register before the sale, limit tickets per person, and rate-limit each account, so a bot can't take the whole line.",
+      "steps": [
+        {
+          "at": "One more enemy",
+          "focus": [
+            "fans",
+            "room"
+          ]
+        },
+        {
+          "at": "thousands of sessions",
+          "packet": {
+            "from": "fans",
+            "to": "room",
+            "label": "bot ×1000",
+            "color": "red"
+          },
+          "status": {
+            "room": "warn"
+          }
+        },
+        {
+          "at": "register before the sale",
+          "note": {
+            "text": "Pre-registration: *known fans*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "tickets per person",
+          "note": {
+            "text": "Limit: *tickets per person*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "rate-limit each account",
+          "status": {
+            "room": "ok"
+          },
+          "focus": [],
+          "note": {
+            "text": "Rate limit: *per account and device*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The room is a target too",
+      "narration": "The waiting room is a target too. Serve it as a simple static page from the CDN, so it can take millions of visitors. Make the token expire after a few minutes and tie it to one fan. And give each fan one place in line, however many tabs they open.",
+      "steps": [
+        {
+          "at": "static page from",
+          "focus": [
+            "fans",
+            "cdn",
+            "room"
+          ],
+          "packet": {
+            "from": "fans",
+            "to": "cdn",
+            "label": "waiting page",
+            "color": "teal"
+          },
+          "note": {
+            "text": "Room = *static page on the CDN*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "expire after a few minutes",
+          "packet": {
+            "from": "room",
+            "to": "fans",
+            "label": "token · expires",
+            "color": "green"
+          },
+          "note": {
+            "text": "Token *expires*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "tie it to one fan",
+          "note": {
+            "text": "Token *tied to one fan*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "however many tabs",
+          "packet": {
+            "from": "fans",
+            "to": "room",
+            "label": "10 tabs",
+            "color": "red"
+          },
+          "status": {
+            "room": "ok"
+          },
+          "focus": [],
+          "note": {
+            "text": "10 tabs = *1 place*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The full flow",
+      "chapter": "The full flow",
+      "narration": "Let's run it once. Fans browse the seat map from the CDN, wait in the room, and get in with a token. The load balancer sends them to any copy of the backend, which holds the seat in one atomic step. They pay, and the seat becomes sold. Expired holds go back on sale.",
+      "steps": [
+        {
+          "at": "run it once",
+          "camera": [],
+          "focus": [],
+          "status": {
+            "fans": "idle",
+            "room": "idle",
+            "lb": "idle",
+            "api": "idle",
+            "copies": "idle",
+            "db": "idle",
+            "pay": "idle",
+            "expiry": "idle",
+            "cdn": "idle"
+          }
+        },
+        {
+          "at": "seat map from the CDN",
+          "packet": {
+            "from": "fans",
+            "to": "cdn",
+            "label": "seat map",
+            "color": "teal"
+          }
+        },
+        {
+          "at": "wait in the room",
+          "packet": {
+            "from": "fans",
+            "to": "room",
+            "label": "wait",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "get in with a token",
+          "packet": {
+            "from": "room",
+            "to": "lb",
+            "label": "token ✓",
+            "color": "green"
+          }
+        },
+        {
+          "at": "any copy of the backend",
+          "packet": {
+            "from": "lb",
+            "to": "copies",
+            "label": "buy A12",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "holds the seat",
+          "packet": {
+            "from": "copies",
+            "to": "db",
+            "label": "held IF free",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "They pay",
+          "packet": {
+            "from": "api",
+            "to": "pay",
+            "label": "pay",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "becomes sold",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "sold",
+            "color": "green"
+          },
+          "status": {
+            "db": "ok",
+            "fans": "ok"
+          },
+          "sfx": "success"
+        },
+        {
+          "at": "Expired holds go",
+          "packet": {
+            "from": "expiry",
+            "to": "db",
+            "label": "free expired",
+            "color": "gray"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "The path",
+      "chapter": "Summary",
+      "narration": "Notice the path: we started simple, and each piece arrived when a real problem asked for it. Two clicks on one seat: an atomic update. Payment takes minutes: a hold that expires, and a safe confirm. Millions of visitors: more copies and a CDN. And when the bottleneck moves to the seats themselves: a waiting room. Would you make the line random, or first come, first served?",
+      "points": [
+        {
+          "text": "Two clicks, one seat → *atomic update*",
+          "at": "Two clicks on one seat"
+        },
+        {
+          "text": "Payment takes minutes → *hold + safe confirm*",
+          "at": "Payment takes minutes"
+        },
+        {
+          "text": "Millions of visitors → *copies + CDN*",
+          "at": "Millions of visitors"
+        },
+        {
+          "text": "Seats are the bottleneck → *waiting room*",
+          "at": "bottleneck moves"
+        }
+      ],
+      "cta": "Random line or first come, first served?"
+    },
+    {
+      "type": "list",
+      "title": "Before you go",
+      "numbered": false,
+      "chapter": "Before you go",
+      "narration": "Before you go: tell me in the comments how you'd make the line fair, and which system I should design next. If this helped, a like and a subscribe help the channel a lot.",
+      "items": [
+        {
+          "text": "How to make it fair → *comments*",
+          "at": "tell me in"
+        },
+        {
+          "text": "Next video: *you pick the system*",
+          "at": "which system I"
+        },
+        {
+          "text": "*Like* and *subscribe* if it helped",
+          "icon": "bell",
+          "at": "a like and"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Ticketmaster's explanation (Nov 19, 2022) of the Eras Tour Verified Fan onsale (Nov 15): 3.5 million pre-registrations, ~1.5 million invited, \"3.5 billion total system requests – 4x our previous peak\", a \"staggering\" number of bot attacks, about 15% of interactions had issues (including passcode validation errors that made some fans lose tickets in their carts); still, over 2 million tickets sold that day.",
+    "The atomic step is a conditional update: UPDATE seats SET status='sold' WHERE id='A12' AND status='free', then check the affected row count. Alternatives: a row lock (SELECT … FOR UPDATE) in a transaction, or a version column (optimistic locking).",
+    "Holds: a held_until timestamp on the seat (reads treat expired holds as free), or a key with a TTL in Redis. The expiry job keeps the data clean; the hold length is a product decision (often a few minutes).",
+    "Payments: confirm the hold before charging, and make the payment call idempotent so a retry never charges twice.",
+    "Virtual waiting rooms (e.g. Queue-it): over-capacity visitors wait on a separate page; for scheduled sales, early visitors are randomized at the start; people are let in at a configured rate and come back with a signed token. A check done only in the browser can be skipped; checks at the server, CDN or load balancer can't.",
+    "Bots: pre-registration (like Verified Fan), CAPTCHAs, rate limits per account and device, purchase limits per person.",
+    "More servers do help the read side (seat maps can be cached and served from a CDN); the contention is on the write: each seat can be sold once.",
+    "Fairness: random order is fair to everyone who arrived before the start; first come, first served rewards the fastest connection, the most tabs, and bots.",
+    "Scaling out works because the backend is stateless: any copy can serve any request, so a load balancer can spread traffic with no sticky sessions. Session or cart state lives in the database (or a shared cache), not in the server's memory.",
+    "The seat map is read-heavy: serve it from a CDN or a cache with a short TTL (seconds). Showing a seat as free for a second after it was taken is acceptable because the conditional write is the source of truth; the fan just gets 'taken, pick another'.",
+    "Why not shard the database? Sharding by event spreads different events, but one huge event is a single hot partition: thousands of buyers fight over the same rows. You can split by section, but the contention per seat remains, which is why admission control (the waiting room) is the standard answer.",
+    "Read replicas help the read side too, but a replica can't take the purchase: writes for a seat must go to one place to stay consistent.",
+    "Payment races: store who holds the seat and until when (held_by, held_until). Confirm with a conditional update (sold WHERE held_by = this fan AND held_until > now). If the hold was lost while the payment was processing, refund. Many sites also extend the hold while a payment is in progress.",
+    "Payments are asynchronous too: providers confirm with webhooks that can arrive late or twice, so deduplicate by event id. Use an idempotency key per payment attempt (the provider returns the first result), and a reconciliation job that compares payments with seats to catch the leftovers (charged but not sold, or sold but not charged).",
+    "Group purchases: hold the seats in one transaction, all or nothing. When several buyers lock overlapping seats, lock them in a consistent order (for example sorted by seat id) to avoid deadlocks.",
+    "Capacity: 100,000 fans x 20 refreshes per minute = about 33,000 requests per second; this is an illustrative example, not Ticketmaster's data. The point is the ratio: almost all requests are reads (cacheable), while the writes compete for a fixed set of seats. Size for the peak, not the average.",
+    "Waiting room hardening: serve the room as a static page from a CDN so it does not fall over itself; tokens are signed, short-lived and bound to one fan; one place per account or device so opening ten tabs gives ten chances to nobody. Once inventory hits zero, serve a cached 'sold out' page so the system stops doing seat checks.",
+    "General admission (no numbered seats): a counter with an atomic decrement (for example Redis DECR) can replace per-seat rows; the rule is the same, one writer decides and the check and the write are one step."
+  ],
+  "publish": {
+    "titles": [
+      "Why Every Big Ticket Sale Crashes (System Design Explained)",
+      "Design a Ticket Sale That Survives Millions of Fans",
+      "System Design Interview: Ticket Booking From 500 Seats to Millions"
+    ],
+    "description": "Every time a huge tour goes on sale, the site crashes. We design ticket sales the way a real project grows: a simple version for a local band, then race conditions, seat holds, and a waiting room for millions of fans.",
+    "learn": [
+      "Why the simple design is the right start",
+      "How two fans can buy the same seat (race conditions)",
+      "The one-step fix: an atomic conditional update",
+      "Why sites hold your seat while you pay",
+      "Payment failures: late payments, idempotency keys and refunds",
+      "Scaling out: load balancers, stateless copies and a CDN",
+      "Why the bottleneck moves to the database, and how a waiting room fixes it",
+      "How ticket sales fight bots"
+    ],
+    "extra": [
+      "Real numbers: Ticketmaster reported 3.5 billion system requests (4x its previous peak) in the Eras Tour presale, Nov 2022 (business.ticketmaster.com)."
+    ],
+    "comment": "Random line or first come, first served? Which is fairer?",
+    "hashtags": [
+      "systemdesign",
+      "backend",
+      "programming"
+    ]
+  }
+}

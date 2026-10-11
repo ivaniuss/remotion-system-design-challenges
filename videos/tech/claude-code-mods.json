@@ -1,0 +1,854 @@
+{
+  "id": "claude-code-mods",
+  "title": "Claude Code just got mods",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "light",
+  "board": {
+    "nodes": [
+      {
+        "id": "skill",
+        "label": "Skill",
+        "icon": "file",
+        "row": 0,
+        "col": 0,
+        "sub": "instructions"
+      },
+      {
+        "id": "you",
+        "label": "You",
+        "icon": "user",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "mcp",
+        "label": "MCP server",
+        "icon": "external",
+        "row": 0,
+        "col": 2,
+        "sub": "new tools"
+      },
+      {
+        "id": "hook",
+        "label": "Settings hook",
+        "icon": "worker",
+        "row": 1,
+        "col": 0,
+        "sub": "your script"
+      },
+      {
+        "id": "cc",
+        "label": "Claude Code",
+        "icon": "code",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "model",
+        "label": "Model",
+        "icon": "ai",
+        "row": 1,
+        "col": 2
+      },
+      {
+        "id": "mod",
+        "label": "Mod",
+        "icon": "lambda",
+        "row": 2,
+        "col": 0,
+        "sub": "functions inside"
+      },
+      {
+        "id": "machine",
+        "label": "Your machine",
+        "icon": "container",
+        "row": 2,
+        "col": 1,
+        "sub": "files · commands"
+      },
+      {
+        "id": "secrets",
+        "label": "Your secrets",
+        "icon": "lock",
+        "row": 2,
+        "col": 2,
+        "sub": "API keys"
+      }
+    ],
+    "edges": [
+      {
+        "from": "you",
+        "to": "cc"
+      },
+      {
+        "from": "cc",
+        "to": "model"
+      },
+      {
+        "from": "cc",
+        "to": "machine"
+      },
+      {
+        "from": "skill",
+        "to": "cc"
+      },
+      {
+        "from": "mcp",
+        "to": "cc"
+      },
+      {
+        "from": "cc",
+        "to": "hook"
+      },
+      {
+        "from": "cc",
+        "to": "mod"
+      },
+      {
+        "from": "mod",
+        "to": "machine"
+      },
+      {
+        "from": "machine",
+        "to": "secrets"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "Claude Code",
+      "heading": "Claude Code just got *mods*",
+      "subheading": "What's new, how they work, and the catch",
+      "chapter": "What's new",
+      "narration": "Claude Code just got mods: you can change how it behaves and what it draws on screen. But it already had hooks, skills and MCP. So what's actually new? Let's build it up from the simplest picture.",
+      "beats": [
+        {
+          "text": "Claude Code",
+          "icon": "code",
+          "at": "Claude Code just got"
+        },
+        {
+          "text": "Mods",
+          "icon": "lambda",
+          "at": "change how it behaves",
+          "sfx": "impact"
+        },
+        {
+          "text": "Hooks · Skills · MCP",
+          "icon": "worker",
+          "at": "it already had"
+        },
+        {
+          "text": "?",
+          "at": "actually new"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The agent loop",
+      "chapter": "The agent loop",
+      "narration": "Start with the loop you already know. You type a prompt, and Claude Code sends it to the model. The model answers with a tool call, like running a command or editing a file, and Claude Code runs it on your machine.",
+      "steps": [
+        {
+          "at": "You type a prompt",
+          "show": [
+            "you",
+            "cc"
+          ],
+          "packet": {
+            "from": "you",
+            "to": "cc",
+            "label": "prompt",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "sends it to",
+          "packet": {
+            "from": "cc",
+            "to": "model",
+            "label": "prompt",
+            "color": "blue"
+          },
+          "status": {
+            "model": "busy"
+          }
+        },
+        {
+          "at": "answers with a tool call",
+          "packet": {
+            "from": "model",
+            "to": "cc",
+            "label": "tool call",
+            "color": "yellow"
+          },
+          "status": {
+            "model": "idle"
+          }
+        },
+        {
+          "at": "Claude Code runs it",
+          "packet": {
+            "from": "cc",
+            "to": "machine",
+            "label": "run · edit",
+            "color": "green"
+          },
+          "status": {
+            "machine": "ok"
+          }
+        },
+        {
+          "at": "on your machine",
+          "camera": [],
+          "note": {
+            "text": "Prompt → model → *tool call* → your machine",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Extensions, from the outside",
+      "chapter": "Skills, MCP and settings hooks",
+      "narration": "Until now, you extended it from the outside. A skill is instructions Claude reads. An MCP server is an outside program that gives Claude new tools. And a settings hook runs your script when something happens, like right before a tool call.",
+      "steps": [
+        {
+          "at": "from the outside",
+          "status": {
+            "machine": "idle"
+          }
+        },
+        {
+          "at": "A skill is",
+          "show": [
+            "skill"
+          ],
+          "packet": {
+            "from": "skill",
+            "to": "cc",
+            "label": "SKILL.md",
+            "color": "gray"
+          },
+          "note": {
+            "text": "Skill = *instructions*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "An MCP server",
+          "show": [
+            "mcp"
+          ],
+          "packet": {
+            "from": "mcp",
+            "to": "cc",
+            "label": "new tools",
+            "color": "teal"
+          },
+          "note": {
+            "text": "MCP = *new tools*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "a settings hook",
+          "show": [
+            "hook"
+          ],
+          "note": {
+            "text": "Settings hook = *your script*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "before a tool call",
+          "packet": {
+            "from": "cc",
+            "to": "hook",
+            "label": "tool call?",
+            "color": "yellow"
+          },
+          "status": {
+            "hook": "busy"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "A narrow door",
+      "narration": "Each one talks to Claude Code through a narrow door. A script can say yes or no to a tool call, or change its input. But it can't draw a panel, change the spinner, or take over a command. That's the gap.",
+      "steps": [
+        {
+          "at": "a narrow door",
+          "focus": [
+            "skill",
+            "mcp",
+            "hook",
+            "cc"
+          ]
+        },
+        {
+          "at": "yes or no",
+          "packet": {
+            "from": "hook",
+            "to": "cc",
+            "label": "yes / no",
+            "color": "green"
+          },
+          "status": {
+            "hook": "ok"
+          }
+        },
+        {
+          "at": "change its input",
+          "note": {
+            "text": "Outside: *allow · block · edit input*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "can't draw a panel",
+          "focus": [
+            "cc"
+          ],
+          "status": {
+            "hook": "idle"
+          },
+          "note": {
+            "text": "Can't *draw* or *take over*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "That's the gap",
+          "focus": []
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "Inside",
+      "caption": "a mod's code runs in Claude Code's own process",
+      "tone": "info",
+      "icon": "lambda",
+      "sfx": "impact",
+      "chapter": "Mods: code inside Claude Code",
+      "narration": "So, what if your code could run inside Claude Code itself?"
+    },
+    {
+      "type": "board",
+      "title": "What a mod is",
+      "narration": "That's a mod. It's a plugin with JavaScript or TypeScript functions, and Claude Code calls them when something happens: a tool call, a prompt you send, or a piece of the screen being drawn.",
+      "steps": [
+        {
+          "at": "That's a mod",
+          "show": [
+            "mod"
+          ],
+          "focus": [
+            "cc",
+            "mod"
+          ],
+          "note": {
+            "text": "Mod = *functions inside* Claude Code",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "a tool call",
+          "packet": {
+            "from": "cc",
+            "to": "mod",
+            "label": "tool.call",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "a prompt you send",
+          "packet": {
+            "from": "cc",
+            "to": "mod",
+            "label": "prompt",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "being drawn",
+          "packet": {
+            "from": "cc",
+            "to": "mod",
+            "label": "ui.render",
+            "color": "purple"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Observe, rewrite, or answer",
+      "narration": "The function runs before Claude Code acts, so it decides what happens next. It can just watch. It can rewrite the event. Or it can answer it itself, so the usual behavior never runs.",
+      "steps": [
+        {
+          "at": "runs before Claude Code",
+          "status": {
+            "mod": "busy"
+          }
+        },
+        {
+          "at": "just watch",
+          "packet": {
+            "from": "mod",
+            "to": "cc",
+            "label": "pass",
+            "color": "gray"
+          },
+          "note": {
+            "text": "*Observe*: let it pass",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "rewrite the event",
+          "packet": {
+            "from": "mod",
+            "to": "cc",
+            "label": "changed",
+            "color": "yellow"
+          },
+          "note": {
+            "text": "*Rewrite*: change it",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "answer it itself",
+          "packet": {
+            "from": "mod",
+            "to": "cc",
+            "label": "answer",
+            "color": "green"
+          },
+          "note": {
+            "text": "*Answer*: take over",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "never runs",
+          "status": {
+            "mod": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "A tiny example",
+      "chapter": "Examples",
+      "narration": "The official example is tiny. One function counts every tool call. Another redraws the spinner with that count: thinking, tool calls, three. Two hooks, sharing one variable.",
+      "steps": [
+        {
+          "at": "The official example",
+          "status": {
+            "mod": "idle"
+          },
+          "focus": [
+            "cc",
+            "mod"
+          ]
+        },
+        {
+          "at": "counts every tool call",
+          "packet": {
+            "from": "cc",
+            "to": "mod",
+            "label": "tool.call ×3",
+            "color": "yellow"
+          },
+          "status": {
+            "mod": "busy"
+          }
+        },
+        {
+          "at": "redraws the spinner",
+          "packet": {
+            "from": "mod",
+            "to": "cc",
+            "label": "spinner · 3",
+            "color": "green"
+          },
+          "status": {
+            "mod": "ok"
+          }
+        },
+        {
+          "at": "tool calls, three",
+          "note": {
+            "text": "Thinking · tool calls: *3*…",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "sharing one variable",
+          "note": {
+            "text": "Two hooks, *one shared variable*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Blast radius",
+      "narration": "Anthropic's sample mods go further. One holds a risky command, like a recursive delete or a force push, shows what it would change, and waits for you to press proceed or cancel.",
+      "steps": [
+        {
+          "at": "go further",
+          "status": {
+            "mod": "idle"
+          },
+          "focus": []
+        },
+        {
+          "at": "holds a risky command",
+          "packet": {
+            "from": "model",
+            "to": "cc",
+            "label": "rm -rf",
+            "color": "red"
+          }
+        },
+        {
+          "at": "a recursive delete",
+          "packet": {
+            "from": "cc",
+            "to": "mod",
+            "label": "rm -rf",
+            "color": "red"
+          },
+          "status": {
+            "mod": "warn"
+          },
+          "focus": [
+            "cc",
+            "mod"
+          ]
+        },
+        {
+          "at": "what it would change",
+          "note": {
+            "text": "Held: *what it would change*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "proceed or cancel",
+          "focus": [
+            "you",
+            "cc",
+            "mod"
+          ],
+          "note": {
+            "text": "*Proceed* or *cancel*",
+            "tone": "good"
+          },
+          "sfx": "notify"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Even Claude Code uses them",
+      "narration": "And Anthropic moved some of its own features into mods: the diff pane, loading your AGENTS file, and telemetry. You can turn them off, or replace them with your own.",
+      "steps": [
+        {
+          "at": "its own features",
+          "status": {
+            "mod": "idle"
+          },
+          "focus": [
+            "cc",
+            "mod"
+          ]
+        },
+        {
+          "at": "the diff pane",
+          "note": {
+            "text": "Built-in mod: */diff*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "and telemetry",
+          "note": {
+            "text": "Built-in: */diff · AGENTS.md · telemetry*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "replace them",
+          "focus": [],
+          "camera": [],
+          "note": {
+            "text": "Turn off, or *replace*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "No sandbox",
+      "caption": "a mod runs with your permissions",
+      "tone": "bad",
+      "icon": "lock",
+      "sfx": "impact",
+      "chapter": "The catch: permissions",
+      "narration": "So, what's the catch? Mods aren't sandboxed."
+    },
+    {
+      "type": "board",
+      "title": "What a mod can reach",
+      "narration": "A mod is code that runs with your permissions. It can read and write your files, read secrets like API keys, see every prompt, approve a tool call before you're asked, and spend your usage.",
+      "steps": [
+        {
+          "at": "runs with your permissions",
+          "focus": [
+            "mod"
+          ]
+        },
+        {
+          "at": "read and write your files",
+          "packet": {
+            "from": "mod",
+            "to": "machine",
+            "label": "files",
+            "color": "orange"
+          },
+          "focus": [
+            "mod",
+            "machine"
+          ]
+        },
+        {
+          "at": "read secrets like",
+          "show": [
+            "secrets"
+          ],
+          "packet": {
+            "from": "mod",
+            "to": "secrets",
+            "label": "API key",
+            "color": "red",
+            "via": [
+              "machine"
+            ]
+          },
+          "focus": [
+            "mod",
+            "machine",
+            "secrets"
+          ],
+          "status": {
+            "secrets": "warn"
+          }
+        },
+        {
+          "at": "see every prompt",
+          "packet": {
+            "from": "cc",
+            "to": "mod",
+            "label": "prompt",
+            "color": "blue"
+          },
+          "focus": [
+            "cc",
+            "mod"
+          ]
+        },
+        {
+          "at": "approve a tool call",
+          "packet": {
+            "from": "mod",
+            "to": "cc",
+            "label": "approved",
+            "color": "red"
+          },
+          "status": {
+            "mod": "error"
+          },
+          "sfx": "riser"
+        },
+        {
+          "at": "spend your usage",
+          "packet": {
+            "from": "cc",
+            "to": "model",
+            "label": "your plan",
+            "color": "orange"
+          },
+          "focus": [],
+          "camera": [],
+          "note": {
+            "text": "Your permissions, *no sandbox*",
+            "tone": "bad"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "How to stay safe",
+      "chapter": "How to stay safe",
+      "narration": "So treat a mod like any software you install. Before installing, claude plugin validate lists the events it handles and what it calls. Safe mode starts a session without them. And companies can allow only their own mods.",
+      "steps": [
+        {
+          "at": "any software you install",
+          "status": {
+            "mod": "idle",
+            "secrets": "idle"
+          },
+          "focus": [
+            "mod"
+          ]
+        },
+        {
+          "at": "plugin validate lists",
+          "note": {
+            "text": "plugin validate: *see before installing*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "Safe mode starts",
+          "note": {
+            "text": "--safe-mode: *start without mods*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "allow only their own",
+          "focus": [],
+          "camera": [],
+          "note": {
+            "text": "Companies: *only approved mods*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "list",
+      "title": "Which one do you pick?",
+      "numbered": false,
+      "chapter": "Which one to pick",
+      "narration": "So which one do you pick? A skill changes what Claude knows. MCP changes what it can reach. A settings hook allows, blocks or logs. And a mod changes the behavior and the interface itself.",
+      "items": [
+        {
+          "text": "Skill → what Claude *knows*",
+          "icon": "file",
+          "at": "A skill changes"
+        },
+        {
+          "text": "MCP → what it can *reach*",
+          "icon": "external",
+          "at": "MCP changes"
+        },
+        {
+          "text": "Settings hook → *allow, block, log*",
+          "icon": "worker",
+          "at": "A settings hook"
+        },
+        {
+          "text": "Mod → behavior *and the interface*",
+          "icon": "lambda",
+          "at": "And a mod"
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "The takeaway",
+      "narration": "Mods are code inside Claude Code: powerful, and running with your permissions. Use one when nothing else can do the job. What mod would you build first?",
+      "points": [
+        {
+          "text": "Mods run *inside* Claude Code",
+          "at": "code inside Claude Code"
+        },
+        {
+          "text": "*Observe, rewrite or answer* events",
+          "at": "powerful"
+        },
+        {
+          "text": "Your permissions: *install only what you trust*",
+          "at": "Use one when"
+        }
+      ],
+      "cta": "What mod would you build first?"
+    },
+    {
+      "type": "list",
+      "title": "Before you go",
+      "numbered": false,
+      "chapter": "Before you go",
+      "narration": "Before you go: tell me in the comments what mod you'd build, and which tool you want me to explain next. If this helped, a like and a subscribe help the channel a lot.",
+      "items": [
+        {
+          "text": "Your mod idea → *comments*",
+          "at": "tell me in"
+        },
+        {
+          "text": "Next video: *you pick the tool*",
+          "at": "which tool you"
+        },
+        {
+          "text": "*Like* and *subscribe* if it helped",
+          "icon": "bell",
+          "at": "a like and"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Launched October 1, 2026 (@ClaudeDevs: \"You can now mod Claude Code\"). Needs Claude Code v2.1.287+ in the terminal, v2.1.286+ in the Desktop app's Code tab. On by default.",
+    "Docs: \"A mod is a plugin that changes how Claude Code looks and behaves. It's made of JavaScript or TypeScript event handlers.\" Settings hooks run a shell command, HTTP request or prompt from a settings file; mod handlers are functions inside Claude Code.",
+    "A hook can observe, rewrite or answer an event. To do anything outside its own code (draw, add a command, call a model, read a file, start a process, network) it must call the mods API, which is why `claude plugin validate` can list what a mod does before you install it.",
+    "Official example: count tool calls with a `tool.call` hook and show the count beside the spinner with a `ui.render` hook on the Spinner component; both share one variable.",
+    "Sample mods (anthropics/claude-code-playground, shared as-is, unsupported): token-weather (context forecast above the prompt), blast-radius (holds rm -rf or a force push with proceed/cancel), replay-theater (/replay of the last turn's edits).",
+    "Built-in mods: /diff, AGENTS.md loading, telemetry, the plugin-authoring skill, sec-default (guards what an organization manages from user-installed mods), and an opt-in side agent.",
+    "What a mod can reach (docs): files, processes, network, environment variables and settings (API keys), every prompt and tool call (and rewrite them), approve a tool call before you're asked, spend your usage. Not sandboxed: Bash sandboxing isolates Claude's commands, not processes a mod starts. A mod can't change what the permission prompt shows.",
+    "Controls: claude plugin validate (hooks and calls), --safe-mode, \"disableAllHooks\": true, admins' allowManagedModsOnly, and sec-default loading first on managed setups.",
+    "Where they draw: the terminal and the Desktop app's Code tab; hooks also run without UI in the VS Code extension, claude -p and the Agent SDK.",
+    "When not to write a mod: if a skill, settings hook or MCP server already does it, the docs recommend those."
+  ],
+  "publish": {
+    "titles": [
+      "Claude Code Mods Explained: What's New, How They Work, and the Catch",
+      "Claude Code Just Got Mods. Here's What Changed",
+      "Mods vs Hooks vs Skills vs MCP in Claude Code"
+    ],
+    "description": "Claude Code just got mods: code that runs inside Claude Code and can change how it behaves and what it draws on screen. Here's how they differ from skills, MCP and settings hooks, how a mod handles an event, real examples, and what to check before you install one.",
+    "learn": [
+      "How the Claude Code agent loop works",
+      "Skills vs MCP servers vs settings hooks vs mods",
+      "How a mod can observe, rewrite or answer an event",
+      "Real examples: a tool-call counter and a guard for risky commands",
+      "Why mods run with your permissions, and how to stay safe"
+    ],
+    "extra": [
+      "Source: Claude Code docs → Plugins → Mods (code.claude.com/docs/en/plugins/mods/overview). Mods need Claude Code v2.1.287+ (terminal) or v2.1.286+ (Desktop app, Code tab)."
+    ],
+    "comment": "What mod would you build first?",
+    "hashtags": [
+      "claudecode",
+      "ai",
+      "programming"
+    ]
+  }
+}

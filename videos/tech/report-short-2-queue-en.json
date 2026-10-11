@@ -1,0 +1,366 @@
+{
+  "id": "report-short-2-queue-en",
+  "title": "How do you deliver a report that takes 5 minutes?",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "light",
+  "board": {
+    "nodes": [
+      {
+        "id": "frontend",
+        "label": "Frontend",
+        "icon": "client",
+        "row": 0,
+        "col": 0,
+        "sub": "web app"
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "icon": "api",
+        "row": 0,
+        "col": 1,
+        "sub": "REST API"
+      },
+      {
+        "id": "queue",
+        "label": "Queue",
+        "icon": "queue",
+        "row": 1,
+        "col": 1,
+        "sub": "pending jobs"
+      },
+      {
+        "id": "db",
+        "label": "Database",
+        "icon": "db",
+        "row": 1,
+        "col": 2,
+        "sub": "sales"
+      },
+      {
+        "id": "store",
+        "label": "S3",
+        "icon": "storage",
+        "row": 2,
+        "col": 0,
+        "sub": "files"
+      },
+      {
+        "id": "worker",
+        "label": "Worker",
+        "icon": "worker",
+        "row": 2,
+        "col": 1,
+        "sub": "also backend"
+      }
+    ],
+    "edges": [
+      {
+        "from": "frontend",
+        "to": "api"
+      },
+      {
+        "from": "api",
+        "to": "queue"
+      },
+      {
+        "from": "queue",
+        "to": "worker"
+      },
+      {
+        "from": "worker",
+        "to": "db"
+      },
+      {
+        "from": "worker",
+        "to": "store"
+      },
+      {
+        "from": "store",
+        "to": "frontend",
+        "dashed": true
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "How do you deliver a report that takes *5 minutes*?",
+      "narration": "Your report takes five minutes to generate. If the user waits on the same connection, they get a 504 error. So how do you deliver it? Like a restaurant.",
+      "beats": [
+        {
+          "text": "Request",
+          "icon": "client",
+          "at": "Your report takes"
+        },
+        {
+          "text": "5 min",
+          "icon": "scheduler",
+          "at": "five minutes",
+          "sfx": "clock"
+        },
+        {
+          "text": "504",
+          "at": "a 504 error"
+        },
+        {
+          "text": "?",
+          "at": "how do you deliver"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Asynchronous",
+      "narration": "They take your order, give you a number, and call you when it's ready. That's asynchronous. The API answers right away with a 202 and a job ID: your order number.",
+      "steps": [
+        {
+          "at": "They take your order",
+          "show": [
+            "frontend",
+            "api"
+          ],
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "label": "GET /report",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "That's asynchronous",
+          "note": {
+            "text": "*Async*: you don't wait on the line",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "answers right away",
+          "packet": {
+            "from": "api",
+            "to": "frontend",
+            "label": "202 + jobId",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          }
+        },
+        {
+          "at": "your order number",
+          "note": {
+            "text": "jobId = *your order number*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The queue",
+      "narration": "The request goes into a queue: a list of pending jobs. It survives even if your server restarts, and if lots of requests arrive, they wait in line instead of taking the API down.",
+      "steps": [
+        {
+          "at": "goes into a queue",
+          "show": [
+            "queue"
+          ],
+          "packet": {
+            "from": "api",
+            "to": "queue",
+            "label": "job #8f2a",
+            "color": "yellow"
+          },
+          "status": {
+            "queue": "busy",
+            "frontend": "idle"
+          }
+        },
+        {
+          "at": "pending jobs",
+          "focus": [
+            "queue"
+          ],
+          "note": {
+            "text": "Queue = *a list of pending jobs*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "server restarts",
+          "note": {
+            "text": "Survives *restarts*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "wait in line",
+          "focus": [
+            "api",
+            "queue"
+          ],
+          "note": {
+            "text": "Lots of requests → *they wait in line*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The worker",
+      "narration": "A worker, another program in your backend, takes the job, reads the sales from the database and saves the file to S3. However long it takes, nobody waits.",
+      "steps": [
+        {
+          "at": "A worker",
+          "show": [
+            "worker"
+          ],
+          "focus": [
+            "worker"
+          ]
+        },
+        {
+          "at": "takes the job",
+          "packet": {
+            "from": "queue",
+            "to": "worker",
+            "label": "job #8f2a",
+            "color": "yellow"
+          },
+          "status": {
+            "queue": "idle",
+            "worker": "busy"
+          }
+        },
+        {
+          "at": "reads the sales",
+          "packet": {
+            "from": "worker",
+            "to": "db",
+            "label": "query"
+          },
+          "status": {
+            "db": "busy"
+          }
+        },
+        {
+          "at": "saves the file",
+          "packet": {
+            "from": "worker",
+            "to": "store",
+            "label": "report.csv",
+            "color": "green"
+          },
+          "status": {
+            "db": "idle",
+            "worker": "ok",
+            "store": "ok"
+          }
+        },
+        {
+          "at": "nobody waits",
+          "focus": [],
+          "camera": [],
+          "note": {
+            "text": "However long it takes: *nobody waits*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "How you find out",
+      "narration": "And the user finds out because the frontend asks every few seconds if it's ready, that's polling, or because the server tells it with SSE. Then they download it.",
+      "steps": [
+        {
+          "at": "asks every few seconds",
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "label": "ready yet?",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "that's polling",
+          "note": {
+            "text": "*Polling*: asking every few seconds",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "server tells it",
+          "packet": {
+            "from": "api",
+            "to": "frontend",
+            "label": "ready!",
+            "color": "green"
+          },
+          "sfx": "notify",
+          "note": {
+            "text": "*SSE*: the server tells you",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "download it",
+          "packet": {
+            "from": "store",
+            "to": "frontend",
+            "label": "download",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "Order, number, call",
+      "narration": "Order, number, call: that's how you deliver slow work. Would you use polling or SSE? The full video is on the channel.",
+      "points": [
+        {
+          "text": "Answer *202 + ID* right away",
+          "at": "Order, number"
+        },
+        {
+          "text": "*Queue + worker* do the heavy work",
+          "at": "deliver slow work"
+        },
+        {
+          "text": "Notify with *polling or SSE*",
+          "at": "Would you use"
+        }
+      ],
+      "cta": "Full video on the channel ▶"
+    }
+  ],
+  "notes": [
+    "Common queues: SQS, RabbitMQ, Redis (BullMQ, Sidekiq), or Kafka if you already run it. For something simple, a jobs table in the database also works.",
+    "A background thread inside the API loses the job if the process restarts and competes for CPU with requests; the queue separates the two.",
+    "Polling is the simplest and works behind any proxy; SSE avoids empty checks; WebSocket is two-way and isn't needed here.",
+    "S3 (or any object storage) serves the file directly, usually through a signed URL that expires."
+  ],
+  "publish": {
+    "titles": [
+      "How Do You Deliver a Report That Takes 5 Minutes? (Queue + Worker)",
+      "Async Explained With a Restaurant"
+    ],
+    "description": "If something takes minutes, don't make the user wait on the same connection: 202 + a job ID, a queue, a worker and a notification.",
+    "extra": [
+      "🎬 The full video (from a simple API to a queue, a worker and a cron job) is on the channel."
+    ],
+    "comment": "Polling or SSE? Which would you use?",
+    "hashtags": [
+      "systemdesign",
+      "backend",
+      "programming"
+    ]
+  }
+}

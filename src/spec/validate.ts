@@ -1,0 +1,300 @@
+import {Scene, VideoSpec} from './schema';
+import {FIGURE_INFO, PACKS, PACK_ALIASES, PACK_ICONS, type Pack} from './vocab';
+import {cuePhrases} from '../timeline/cues';
+import {findPhrase, splitWords} from '../timeline/words';
+
+export type Validation = {spec: VideoSpec | null; errors: string[]; warnings: string[]};
+
+const isObj = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null && !Array.isArray(x);
+
+// Aliases depend on the pack ("timer" is a scheduler in tech, a clock in science).
+let packNow: Pack = 'tech';
+const normIcon = (x: unknown) => {
+  if (typeof x !== 'string') return x;
+  const k = x.trim().toLowerCase().replace(/\s+/g, '-');
+  if ((PACK_ICONS[packNow] as readonly string[]).includes(k)) return k;
+  const A = PACK_ALIASES[packNow];
+  return A[k] ?? A[k.replace(/-/g, '')] ?? A[k.replace(/-/g, '_')] ?? k;
+};
+
+// Every {icon} anywhere in the spec, with its path, for the pack check.
+function iconsIn(x: unknown, path: string, out: [string, string][]) {
+  if (Array.isArray(x)) x.forEach((v, i) => iconsIn(v, `${path}[${i}]`, out));
+  else if (isObj(x)) {
+    for (const [k, v] of Object.entries(x)) {
+      if (k === 'icon' && typeof v === 'string') out.push([path ? `${path}.icon` : 'icon', v]);
+      else iconsIn(v, path ? `${path}.${k}` : k, out);
+    }
+  }
+}
+
+const normEdgeRef = (x: unknown) =>
+  typeof x === 'string' ? x.replace(/\s*(->|→|=>|-->)\s*/g, '->').trim() : x;
+
+const normItems = (arr: unknown) =>
+  Array.isArray(arr) ? arr.map((it) => (typeof it === 'string' ? {text: it} : it)) : arr;
+
+// Forgiving pre-pass: fixes the small things LLMs get wrong so the schema can stay strict.
+export function normalizeSpec(raw: unknown): unknown {
+  if (!isObj(raw)) return raw;
+  const spec = {...raw};
+  if (typeof spec.pack === 'string') spec.pack = spec.pack.trim().toLowerCase();
+  packNow = (PACKS as readonly string[]).includes(spec.pack as string) ? (spec.pack as Pack) : 'tech';
+  if (isObj(spec.board) && Array.isArray(spec.board.nodes)) {
+    spec.board = {...spec.board, nodes: spec.board.nodes.map((n) => (isObj(n) ? {...n, icon: normIcon(n.icon)} : n))};
+  }
+  if (!Array.isArray(spec.scenes)) return spec;
+  spec.scenes = spec.scenes.map((s) => {
+    if (!isObj(s)) return s;
+    const sc: Record<string, unknown> = {...s};
+    if (typeof sc.type === 'string') sc.type = sc.type.trim().toLowerCase();
+    if (typeof sc.narration === 'string') sc.narration = sc.narration.replace(/\s+/g, ' ').trim();
+    if ('icon' in sc) sc.icon = normIcon(sc.icon);
+    if ('items' in sc) sc.items = normItems(sc.items);
+    if ('points' in sc) sc.points = normItems(sc.points);
+    for (const side of ['left', 'right']) {
+      if (isObj(sc[side])) sc[side] = {...(sc[side] as object), items: normItems((sc[side] as Record<string, unknown>).items)};
+    }
+    for (const key of ['items', 'points', 'beats']) {
+      if (Array.isArray(sc[key])) sc[key] = (sc[key] as unknown[]).map((it) => (isObj(it) && 'icon' in it ? {...it, icon: normIcon(it.icon)} : it));
+    }
+    if (Array.isArray(sc.nodes)) sc.nodes = sc.nodes.map((n) => (isObj(n) ? {...n, icon: normIcon(n.icon)} : n));
+    if (Array.isArray(sc.steps)) {
+      sc.steps = sc.steps.map((st) => {
+        if (!isObj(st)) return st;
+        const out = {...st};
+        for (const k of ['show', 'hide', 'focus', 'camera']) {
+          if (typeof out[k] === 'string') out[k] = [out[k]];
+          if (Array.isArray(out[k])) out[k] = (out[k] as unknown[]).map(normEdgeRef);
+        }
+        if (typeof out.lines === 'number') out.lines = [out.lines];
+        if (typeof out.note === 'string' && (sc.type === 'flow' || sc.type === 'board' || sc.type === 'sequence')) out.note = {text: out.note};
+        // crowd: false / null / "stop" all mean "off"
+        if ('crowd' in out && (out.crowd === false || out.crowd === null || out.crowd === 'stop')) out.crowd = 'off';
+        return out;
+      });
+    }
+    return sc;
+  });
+  return spec;
+}
+
+const fmtPath = (path: PropertyKey[]) =>
+  path.reduce<string>((acc, p) => (typeof p === 'number' ? `${acc}[${p}]` : acc ? `${acc}.${String(p)}` : String(p)), '');
+
+const MAX_SCENE_WORDS = 75;
+
+export function validateSpec(raw: unknown): Validation {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+  const parsed = VideoSpec.safeParse(normalizeSpec(raw));
+  if (!parsed.success) {
+    for (const issue of parsed.error.issues) {
+      let msg = `${fmtPath(issue.path)}: ${issue.message}`;
+      if (issue.path[issue.path.length - 1] === 'icon') msg += `. Valid ${packNow} icons: ${PACK_ICONS[packNow].join(', ')}`;
+      errors.push(msg);
+    }
+    return {spec: null, errors, warnings};
+  }
+  const spec = parsed.data;
+
+  // Icons from another pack parse fine (one global list) but are not allowed here.
+  const used: [string, string][] = [];
+  iconsIn(spec, '', used);
+  for (const [where, icon] of used) {
+    if (!(PACK_ICONS[spec.pack] as readonly string[]).includes(icon)) {
+      const other = PACKS.find((p) => (PACK_ICONS[p] as readonly string[]).includes(icon));
+      errors.push(`${where}: "${icon}" is a ${other} icon; this video's pack is "${spec.pack}". Valid ${spec.pack} icons: ${PACK_ICONS[spec.pack].join(', ')}`);
+    }
+  }
+  if (errors.length) return {spec: null, errors, warnings};
+
+  const boardScenes = spec.scenes.filter((s) => s.type === 'board').length;
+  if (boardScenes && !spec.board) errors.push('board: scenes of type "board" need a top-level "board" with nodes and edges.');
+  if (spec.board) checkGraph(spec.board.nodes, spec.board.edges, 'board', errors, warnings);
+  if (spec.board && !boardScenes) warnings.push('board: defined but no scene has type "board", so it is never shown.');
+
+  spec.scenes.forEach((scene, si) => {
+    const where = `scenes[${si}] (${scene.type})`;
+    const words = splitWords(scene.narration);
+    if (words.length > MAX_SCENE_WORDS) {
+      warnings.push(`${where}: narration has ${words.length} words; split it into two scenes (max ~${MAX_SCENE_WORDS}).`);
+    }
+    checkCues(scene, words, where, warnings);
+    if (scene.type === 'flow') {
+      checkGraph(scene.nodes, scene.edges, where, errors, warnings);
+      checkSteps(scene.nodes, scene.edges, scene.steps, where, errors);
+    }
+    if (scene.type === 'chart') {
+      const ids = new Set(scene.series.map((x) => x.id));
+      if (ids.size !== scene.series.length) errors.push(`${where}: series ids must be unique.`);
+      scene.series.forEach((x, k) => {
+        for (let q = 1; q < x.points.length; q++)
+          if (x.points[q][0] < x.points[q - 1][0]) errors.push(`${where}.series[${k}]: x values must not decrease (point ${q}).`);
+      });
+      scene.steps.forEach((st, k) => {
+        for (const id of [...(st.draw ?? []), ...(st.focus ?? []), ...(st.mark?.series ? [st.mark.series] : [])])
+          if (!ids.has(id)) errors.push(`${where}.steps[${k}]: unknown series "${id}". Series: ${[...ids].join(', ')}`);
+      });
+      if (!scene.schematic && !scene.y.ticks && spec.pack === 'science')
+        warnings.push(`${where}: a chart with numbers needs a source in notes; if the shape is illustrative set "schematic": true.`);
+    }
+    if (scene.type === 'figure') {
+      const info = FIGURE_INFO[scene.figure];
+      if (info.pack !== spec.pack) errors.push(`${where}: figure "${scene.figure}" belongs to the ${info.pack} pack; this video's pack is "${spec.pack}".`);
+      const ok = (r: string) => info.regions.includes(r);
+      scene.steps.forEach((st, k) => {
+        const used = [...(st.glow ?? []), ...(st.label ? [st.label.region] : []), ...(st.signal ? [st.signal.from, st.signal.to] : []), ...(st.zoom ? [st.zoom] : [])];
+        for (const r of used) if (!ok(r)) errors.push(`${where}.steps[${k}]: "${r}" is not a region of ${scene.figure}. Regions: ${info.regions.join(', ')}`);
+      });
+    }
+    if (scene.type === 'board' && spec.board) checkSteps(spec.board.nodes, spec.board.edges, scene.steps, where, errors);
+    if (scene.type === 'sequence') checkSequence(scene, where, errors, warnings);
+    if (scene.type === 'code') {
+      const lines = scene.code.replace(/\n+$/, '').split('\n');
+      if (lines.length > 18) warnings.push(`${where}: ${lines.length} code lines; keep it under 16 so it stays readable.`);
+      const longest = Math.max(...lines.map((l) => l.length));
+      if (longest > 48) warnings.push(`${where}: longest code line has ${longest} chars; the font shrinks above ~44 on vertical video.`);
+      scene.steps.forEach((st, k) => {
+        for (const ln of st.lines) {
+          if (ln > lines.length) errors.push(`${where}.steps[${k}].lines: line ${ln} does not exist (code has ${lines.length} lines).`);
+        }
+      });
+    }
+  });
+
+  return {spec: errors.length ? null : spec, errors, warnings};
+}
+
+function checkCues(scene: Scene, words: string[], where: string, warnings: string[]) {
+  let cursor = 0;
+  for (const p of cuePhrases(scene)) {
+    if (!p) continue;
+    const i = findPhrase(words, p, cursor);
+    if (i < 0) {
+      const anywhere = findPhrase(words, p, 0) >= 0;
+      warnings.push(
+        anywhere
+          ? `${where}: cue "${p}" is out of order (it appears before the previous cue). It will be spread evenly.`
+          : `${where}: cue "${p}" is not in the narration. Copy 2-4 exact words from it. It will be spread evenly.`,
+      );
+      continue;
+    }
+    cursor = i + 1;
+  }
+}
+
+type GraphNode = {id: string; row?: number; col?: number};
+type GraphEdge = {from: string; to: string};
+type Step = {
+  show?: string[];
+  hide?: string[];
+  focus?: string[];
+  camera?: string[];
+  status?: Record<string, string>;
+  packet?: {from: string; to: string; via?: string[]};
+  crowd?: 'off' | {from: string; to: string; via?: string[]};
+  meter?: Record<string, unknown>;
+  clock?: Record<string, unknown>;
+  note?: {near?: string};
+};
+
+function checkGraph(nodes: GraphNode[], edges: GraphEdge[], where: string, errors: string[], warnings: string[]) {
+  const ids = new Set<string>();
+  for (const n of nodes) {
+    if (ids.has(n.id)) errors.push(`${where}: duplicate node id "${n.id}".`);
+    ids.add(n.id);
+  }
+  edges.forEach((e, k) => {
+    if (!ids.has(e.from)) errors.push(`${where}.edges[${k}]: unknown node "${e.from}".`);
+    if (!ids.has(e.to)) errors.push(`${where}.edges[${k}]: unknown node "${e.to}".`);
+    if (e.from === e.to) errors.push(`${where}.edges[${k}]: self-loops are not supported.`);
+  });
+  const placed = nodes.filter((n) => n.row !== undefined && n.col !== undefined);
+  if (placed.length && placed.length !== nodes.length) {
+    warnings.push(`${where}: only ${placed.length}/${nodes.length} nodes have row and col; the grid is used only when all of them do.`);
+  }
+  if (placed.length === nodes.length) {
+    const cells = new Map<string, string>();
+    for (const n of nodes) {
+      const key = `${n.row},${n.col}`;
+      const other = cells.get(key);
+      if (other) errors.push(`${where}: nodes "${other}" and "${n.id}" share the same cell (row ${n.row}, col ${n.col}).`);
+      cells.set(key, n.id);
+    }
+    for (const a of nodes) {
+      for (const b of nodes) {
+        if (a.id < b.id && Math.abs(a.row! - b.row!) < 1 && Math.abs(a.col! - b.col!) < 1 && cells.get(`${a.row},${a.col}`) !== b.id) {
+          errors.push(`${where}: nodes "${a.id}" and "${b.id}" overlap; keep at least 1 row or 1 col between them.`);
+        }
+      }
+    }
+    const cols = Math.max(...nodes.map((n) => n.col!)) + 1;
+    if (cols > 3) warnings.push(`${where}: ${cols} columns; 3 or fewer read much better on a phone (rows are fine).`);
+  }
+  const max = where === 'board' ? 12 : 7;
+  if (nodes.length > max) warnings.push(`${where}: ${nodes.length} nodes; ${max} or fewer reads much better on a phone.`);
+}
+
+function checkSteps(nodes: GraphNode[], edges: GraphEdge[], steps: Step[], where: string, errors: string[]) {
+  const ids = new Set(nodes.map((n) => n.id));
+  const edgeIds = new Set(edges.map((e) => `${e.from}->${e.to}`));
+  const known = (ref: string) => ids.has(ref) || edgeIds.has(ref);
+  steps.forEach((st, k) => {
+    const sw = `${where}.steps[${k}]`;
+    for (const key of ['show', 'hide'] as const) {
+      for (const ref of st[key] ?? []) {
+        if (!known(ref)) errors.push(`${sw}.${key}: "${ref}" is not a node id or an edge id ("from->to").`);
+      }
+    }
+    for (const key of ['focus', 'camera'] as const) {
+      for (const ref of st[key] ?? []) if (!ids.has(ref)) errors.push(`${sw}.${key}: unknown node "${ref}".`);
+    }
+    for (const ref of Object.keys(st.status ?? {})) if (!ids.has(ref)) errors.push(`${sw}.status: unknown node "${ref}".`);
+    if (st.packet) {
+      for (const ref of [st.packet.from, ...(st.packet.via ?? []), st.packet.to]) {
+        if (!ids.has(ref)) errors.push(`${sw}.packet: unknown node "${ref}".`);
+      }
+    }
+    if (st.note?.near && !ids.has(st.note.near)) errors.push(`${sw}.note.near: unknown node "${st.note.near}".`);
+    if (st.crowd && st.crowd !== 'off') {
+      for (const ref of [st.crowd.from, ...(st.crowd.via ?? []), st.crowd.to]) if (!ids.has(ref)) errors.push(`${sw}.crowd: unknown node "${ref}".`);
+    }
+    for (const ref of Object.keys(st.meter ?? {})) if (!ids.has(ref)) errors.push(`${sw}.meter: unknown node "${ref}".`);
+    for (const ref of Object.keys(st.clock ?? {})) if (!ids.has(ref)) errors.push(`${sw}.clock: unknown node "${ref}".`);
+  });
+}
+
+function checkSequence(scene: Extract<Scene, {type: 'sequence'}>, where: string, errors: string[], warnings: string[]) {
+  const ids = new Set<string>();
+  for (const a of scene.actors) {
+    if (ids.has(a.id)) errors.push(`${where}: duplicate actor id "${a.id}".`);
+    ids.add(a.id);
+  }
+  scene.steps.forEach((st, k) => {
+    const sw = `${where}.steps[${k}]`;
+    for (const [key, ref] of [['from', st.from], ['to', st.to]] as const) if (ref && !ids.has(ref)) errors.push(`${sw}.${key}: unknown actor "${ref}". Actors: ${[...ids].join(', ')}`);
+    if (st.kind === 'self') {
+      if (!st.from) errors.push(`${sw}: a "self" step needs "from".`);
+    } else if ((st.from && !st.to) || (!st.from && st.to)) {
+      errors.push(`${sw}: a message needs both "from" and "to" (or neither, for a note-only step).`);
+    }
+    for (const ref of Object.keys(st.status ?? {})) if (!ids.has(ref)) errors.push(`${sw}.status: unknown actor "${ref}".`);
+    if (st.from && st.kind !== 'self' && st.from === st.to) errors.push(`${sw}: from and to are the same actor; use kind "self".`);
+  });
+  scene.spans.forEach((sp, k) => {
+    const sw = `${where}.spans[${k}]`;
+    if (!ids.has(sp.actor)) errors.push(`${sw}: unknown actor "${sp.actor}".`);
+    if (sp.to <= sp.from) errors.push(`${sw}: "to" must be greater than "from" (step indices, 0-based).`);
+    if (sp.to >= scene.steps.length) errors.push(`${sw}: step ${sp.to} does not exist (the scene has ${scene.steps.length} steps).`);
+  });
+  const total = scene.steps.reduce((a, st) => a + st.gap, 0);
+  if (total > 9) warnings.push(`${where}: the steps add up to ${total.toFixed(1)} rows of height; the messages will be squeezed. Use fewer steps or smaller gaps.`);
+}
+
+export function formatIssues(v: Validation): string {
+  const lines: string[] = [];
+  for (const e of v.errors) lines.push(`  ✖ ${e}`);
+  for (const w of v.warnings) lines.push(`  ⚠ ${w}`);
+  return lines.join('\n');
+}

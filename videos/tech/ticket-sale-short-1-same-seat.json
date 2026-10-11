@@ -1,0 +1,218 @@
+{
+  "id": "ticket-sale-short-1-same-seat",
+  "title": "Two fans click the same seat. Who gets it?",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "light",
+  "hook": "broken-thing",
+  "board": {
+    "nodes": [
+      {
+        "id": "fans",
+        "label": "Fans",
+        "icon": "users",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "icon": "api",
+        "row": 1,
+        "col": 1,
+        "sub": "REST API"
+      },
+      {
+        "id": "db",
+        "label": "Database",
+        "icon": "db",
+        "row": 2,
+        "col": 1,
+        "sub": "seats"
+      }
+    ],
+    "edges": [
+      {
+        "from": "fans",
+        "to": "api"
+      },
+      {
+        "from": "api",
+        "to": "db"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "Two fans click the *same seat*",
+      "narration": "Two fans click the same concert seat at the same moment. Your code checks that it's free, then sells it. So who gets the seat?",
+      "beats": [
+        {
+          "text": "Two fans",
+          "icon": "users",
+          "at": "Two fans click"
+        },
+        {
+          "text": "Seat A12",
+          "icon": "db",
+          "at": "same concert seat"
+        },
+        {
+          "text": "?",
+          "at": "who gets the"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "title": "Check, then write",
+      "filename": "seats.sql",
+      "language": "sql",
+      "code": "-- two steps: both fans see \"free\"\nSELECT status FROM seats WHERE id = 'A12';\nUPDATE seats SET status = 'sold'\n  WHERE id = 'A12';\n\n-- one step: only one can win\nUPDATE seats SET status = 'sold'\n  WHERE id = 'A12' AND status = 'free';",
+      "narration": "Checking, then writing, is two steps, so both fans see it's free, and both write: two tickets, one seat. The fix is one statement: mark that seat sold, only where it's still free.",
+      "steps": [
+        {
+          "at": "Checking then writing",
+          "lines": [
+            2
+          ],
+          "note": "Step 1: check"
+        },
+        {
+          "at": "both fans see",
+          "lines": [
+            2
+          ],
+          "note": "Both read: free"
+        },
+        {
+          "at": "both write",
+          "lines": [
+            3,
+            4
+          ],
+          "note": "Both write: two tickets"
+        },
+        {
+          "at": "one statement",
+          "lines": [
+            7,
+            8
+          ],
+          "note": "One statement"
+        },
+        {
+          "at": "where it's still free",
+          "lines": [
+            8
+          ],
+          "note": "AND status = 'free'"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "One winner",
+      "narration": "The database runs it as one step. The first request changes one row and wins. The second changes zero rows, so that fan picks another seat. That's the price of never selling twice.",
+      "steps": [
+        {
+          "at": "database runs it",
+          "show": [
+            "fans",
+            "api",
+            "db"
+          ],
+          "camera": [],
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "sold IF free",
+            "color": "green"
+          }
+        },
+        {
+          "at": "as one step",
+          "note": {
+            "text": "Check + write = *one step*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "first request changes",
+          "packet": {
+            "from": "db",
+            "to": "api",
+            "label": "updated: 1",
+            "color": "green"
+          },
+          "status": {
+            "db": "ok",
+            "fans": "ok"
+          }
+        },
+        {
+          "at": "second changes zero",
+          "packet": {
+            "from": "db",
+            "to": "api",
+            "label": "updated: 0",
+            "color": "orange"
+          }
+        },
+        {
+          "at": "picks another seat",
+          "note": {
+            "text": "Second fan: *picks another seat*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "price of never",
+          "note": {
+            "text": "Price: *the loser picks again*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "One winner",
+      "narration": "Check and write in one step: one fan wins, the other picks again. Have you ever been double-booked? The full video is on the channel.",
+      "points": [
+        {
+          "text": "Check + write → *one step*",
+          "at": "Check and write"
+        },
+        {
+          "text": "The loser → *picks again*",
+          "at": "other picks again"
+        }
+      ],
+      "cta": "Full video on the channel ▶"
+    }
+  ],
+  "notes": [
+    "The atomic step is a conditional update, then check the affected row count. In PostgreSQL (Read Committed) the second UPDATE waits for the first, re-checks its WHERE on the new row version and changes zero rows. Alternatives: a row lock (SELECT … FOR UPDATE) or a version column (optimistic locking).",
+    "The price: the fan who loses the race has to pick another seat. For groups, sell all the seats in one transaction, all or nothing; the rows stay locked a little longer, so other buyers wait.",
+    "The full video covers what comes next: holding the seat while the fan pays, payment failures, and the traffic of a huge sale."
+  ],
+  "publish": {
+    "titles": [
+      "Two Fans Click the Same Seat. Who Gets It?",
+      "Race Conditions Explained in 50 Seconds"
+    ],
+    "description": "Two fans click the same concert seat at the same moment. How a one-step conditional update makes sure only one of them gets it, and what that costs.",
+    "extra": [
+      "🎬 The full video (from 500 seats to millions of fans: atomic updates, seat holds, payments and a waiting room) is on the channel."
+    ],
+    "comment": "Have you ever been double-booked?",
+    "hashtags": [
+      "systemdesign",
+      "backend",
+      "sql"
+    ]
+  }
+}

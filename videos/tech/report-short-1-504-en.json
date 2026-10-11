@@ -1,0 +1,340 @@
+{
+  "id": "report-short-1-504-en",
+  "title": "Why does your report return a 504?",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "light",
+  "board": {
+    "nodes": [
+      {
+        "id": "frontend",
+        "label": "Frontend",
+        "icon": "client",
+        "row": 0,
+        "col": 0,
+        "sub": "web app"
+      },
+      {
+        "id": "proxy",
+        "label": "Proxy",
+        "icon": "gateway",
+        "row": 0,
+        "col": 1,
+        "sub": "hosting · Cloudflare · nginx"
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "icon": "api",
+        "row": 0,
+        "col": 2,
+        "sub": "REST API"
+      },
+      {
+        "id": "db",
+        "label": "Database",
+        "icon": "db",
+        "row": 1,
+        "col": 2,
+        "sub": "sales"
+      }
+    ],
+    "edges": [
+      {
+        "from": "frontend",
+        "to": "api"
+      },
+      {
+        "from": "frontend",
+        "to": "proxy"
+      },
+      {
+        "from": "proxy",
+        "to": "api"
+      },
+      {
+        "from": "api",
+        "to": "db"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "Why does your report return *504*?",
+      "narration": "You export the yearly sales report: fifty million rows. It takes minutes. And right at the one-minute mark, the user gets a 504 error. Why, if your code didn't fail?",
+      "beats": [
+        {
+          "text": "Sales",
+          "icon": "db",
+          "at": "yearly sales report"
+        },
+        {
+          "text": "Minutes",
+          "icon": "scheduler",
+          "at": "It takes minutes",
+          "sfx": "clock"
+        },
+        {
+          "text": "504",
+          "at": "a 504 error",
+          "sfx": "impact"
+        },
+        {
+          "text": "?",
+          "at": "if your code"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "What your diagram doesn't show",
+      "narration": "Your diagram has a frontend, a backend and a database. But between the frontend and your API there's almost always a middleman: your hosting, Cloudflare or nginx. It's called a proxy.",
+      "steps": [
+        {
+          "at": "Your diagram has",
+          "show": [
+            "frontend",
+            "api",
+            "db"
+          ],
+          "camera": []
+        },
+        {
+          "at": "almost always a",
+          "show": [
+            "proxy"
+          ],
+          "hide": [
+            "frontend->api"
+          ],
+          "focus": [
+            "frontend",
+            "proxy",
+            "api"
+          ],
+          "sfx": "impact"
+        },
+        {
+          "at": "Cloudflare or nginx",
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "via": [
+              "proxy"
+            ],
+            "label": "HTTPS",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "called a proxy",
+          "focus": [
+            "proxy"
+          ],
+          "note": {
+            "text": "It's there even if *you didn't add it*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "What breaks",
+      "narration": "And a proxy doesn't wait forever. If the connection stays silent for a minute or two, it cuts it. Error 504: the proxy got tired of waiting.",
+      "steps": [
+        {
+          "at": "doesn't wait forever",
+          "focus": [
+            "frontend",
+            "proxy",
+            "api",
+            "db"
+          ]
+        },
+        {
+          "at": "a minute or two",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "slow query",
+            "color": "yellow"
+          },
+          "status": {
+            "frontend": "busy",
+            "api": "busy",
+            "db": "busy"
+          },
+          "note": {
+            "text": "nginx *60 s* · Cloudflare *100 s*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "Error 504",
+          "status": {
+            "proxy": "error",
+            "frontend": "error"
+          },
+          "packet": {
+            "from": "proxy",
+            "to": "frontend",
+            "label": "504",
+            "color": "red"
+          },
+          "sfx": "riser"
+        },
+        {
+          "at": "got tired of waiting",
+          "note": {
+            "text": "504 = the proxy *got tired of waiting*",
+            "tone": "bad"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "What if I raise the timeout?",
+      "narration": "So, raise the timeout? Your server stays busy for minutes, and if the user closes the tab, all that work is lost. The problem is waiting on the same connection.",
+      "steps": [
+        {
+          "at": "raise the timeout",
+          "status": {
+            "proxy": "idle",
+            "frontend": "idle"
+          },
+          "focus": [
+            "proxy"
+          ],
+          "note": {
+            "text": "A *10-minute* timeout?",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "stays busy for minutes",
+          "focus": [
+            "api",
+            "db"
+          ],
+          "status": {
+            "api": "busy"
+          },
+          "sfx": "cash"
+        },
+        {
+          "at": "closes the tab",
+          "focus": [
+            "frontend",
+            "api"
+          ],
+          "status": {
+            "frontend": "warn",
+            "api": "warn"
+          },
+          "note": {
+            "text": "Tab closed → *work lost*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "The problem is",
+          "focus": [],
+          "camera": [],
+          "note": {
+            "text": "The problem: *waiting on the same connection*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The way out",
+      "narration": "The way out: the API answers right away with a 202, received but not ready, and builds the report separately. I'll show you how in the next short.",
+      "steps": [
+        {
+          "at": "The way out",
+          "status": {
+            "frontend": "idle",
+            "proxy": "idle",
+            "api": "idle",
+            "db": "idle"
+          }
+        },
+        {
+          "at": "answers right away",
+          "hide": [
+            "api->db"
+          ],
+          "packet": {
+            "from": "api",
+            "to": "frontend",
+            "via": [
+              "proxy"
+            ],
+            "label": "202 + jobId",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          }
+        },
+        {
+          "at": "received but not",
+          "note": {
+            "text": "*202* = received, not ready yet",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "builds the report separately",
+          "note": {
+            "text": "Heavy work, *separately*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "Remember",
+      "narration": "Remember: a 504 isn't your code, it's a proxy that got tired of waiting. Has it happened to you? The full design, step by step, is on the channel.",
+      "points": [
+        {
+          "text": "504 = a proxy *got tired of waiting*",
+          "at": "a 504 isn't"
+        },
+        {
+          "text": "Slow work: *answer 202* and do it separately",
+          "at": "got tired of waiting"
+        }
+      ],
+      "cta": "Full video on the channel ▶"
+    }
+  ],
+  "notes": [
+    "Default timeouts: nginx proxy_read_timeout 60 s; AWS ALB idle timeout 60 s (configurable up to 4000 s); Cloudflare 100 s (returns 524, not 504); API Gateway REST historically 29 s.",
+    "The 504 comes from the middleman (Gateway Timeout), not your app: your backend may keep working after the user already got the error.",
+    "Raising the timeout is fine for something just over the limit, but it doesn't scale: it ties up connections and server workers, and it doesn't survive the user closing the tab."
+  ],
+  "publish": {
+    "titles": [
+      "Why Your Report Returns 504 (It's Not Your Code)",
+      "504 Gateway Timeout Explained in 50 Seconds"
+    ],
+    "description": "Your report takes minutes, and at the one-minute mark you get a 504. Your code didn't fail: a proxy got tired of waiting. Here's why, and how to avoid it.",
+    "extra": [
+      "🎬 The full video (from a simple API to a queue, a worker and a cron job) is on the channel."
+    ],
+    "comment": "Have you ever hit a 504 in production?",
+    "hashtags": [
+      "systemdesign",
+      "backend",
+      "programming"
+    ]
+  }
+}

@@ -1,0 +1,383 @@
+{
+  "id": "report-short-3-cron",
+  "title": "200 personas piden el mismo reporte: ¿lo generas 200 veces?",
+  "lang": "es",
+  "pack": "tech",
+  "theme": "light",
+  "board": {
+    "nodes": [
+      {
+        "id": "frontend",
+        "label": "Frontend",
+        "icon": "client",
+        "row": 0,
+        "col": 0,
+        "sub": "app web"
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "icon": "api",
+        "row": 0,
+        "col": 1,
+        "sub": "API REST"
+      },
+      {
+        "id": "queue",
+        "label": "Cola",
+        "icon": "queue",
+        "row": 1,
+        "col": 1,
+        "sub": "trabajos pendientes"
+      },
+      {
+        "id": "db",
+        "label": "Base de datos",
+        "icon": "db",
+        "row": 1,
+        "col": 2,
+        "sub": "ventas"
+      },
+      {
+        "id": "store",
+        "label": "S3",
+        "icon": "storage",
+        "row": 2,
+        "col": 0,
+        "sub": "archivos"
+      },
+      {
+        "id": "worker",
+        "label": "Worker",
+        "icon": "worker",
+        "row": 2,
+        "col": 1,
+        "sub": "también backend"
+      },
+      {
+        "id": "cron",
+        "label": "Cron",
+        "icon": "scheduler",
+        "row": 2,
+        "col": 2,
+        "sub": "cada noche"
+      }
+    ],
+    "edges": [
+      {
+        "from": "frontend",
+        "to": "api"
+      },
+      {
+        "from": "api",
+        "to": "queue"
+      },
+      {
+        "from": "queue",
+        "to": "worker"
+      },
+      {
+        "from": "worker",
+        "to": "db"
+      },
+      {
+        "from": "worker",
+        "to": "store"
+      },
+      {
+        "from": "store",
+        "to": "frontend",
+        "dashed": true
+      },
+      {
+        "from": "cron",
+        "to": "worker"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "*200* personas piden el mismo reporte",
+      "narration": "Lunes, nueve de la mañana: doscientas personas piden el mismo reporte de ventas, que tarda minutos en generarse. ¿Lo generas doscientas veces?",
+      "beats": [
+        {
+          "text": "×200",
+          "icon": "users",
+          "at": "doscientas personas piden"
+        },
+        {
+          "text": "Reporte",
+          "icon": "file",
+          "at": "el mismo reporte"
+        },
+        {
+          "text": "Minutos",
+          "icon": "scheduler",
+          "at": "tarda minutos",
+          "sfx": "clock"
+        },
+        {
+          "text": "?",
+          "at": "Lo generas"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "El diseño de hoy",
+      "narration": "Ya tienes una cola y un worker: cada pedido se encola, y el worker lo genera aparte y lo deja en S3. Con pocos pedidos, funciona perfecto.",
+      "steps": [
+        {
+          "at": "Ya tienes una",
+          "show": [
+            "frontend",
+            "api",
+            "queue",
+            "worker",
+            "db",
+            "store"
+          ],
+          "camera": []
+        },
+        {
+          "at": "cada pedido se encola",
+          "packet": {
+            "from": "api",
+            "to": "queue",
+            "label": "job",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "lo genera aparte",
+          "packet": {
+            "from": "queue",
+            "to": "worker",
+            "label": "job",
+            "color": "yellow"
+          },
+          "status": {
+            "worker": "busy"
+          }
+        },
+        {
+          "at": "lo deja en",
+          "packet": {
+            "from": "worker",
+            "to": "store",
+            "label": "reporte.csv",
+            "color": "green"
+          },
+          "status": {
+            "worker": "ok",
+            "store": "ok"
+          }
+        },
+        {
+          "at": "funciona perfecto",
+          "note": {
+            "text": "Pocos pedidos: *funciona*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Su límite",
+      "narration": "Pero llegan doscientos pedidos iguales: el mismo trabajo pesado doscientas veces. La cola se llena y la base sufre. Todo para doscientos archivos idénticos.",
+      "steps": [
+        {
+          "at": "llegan doscientos pedidos",
+          "status": {
+            "worker": "idle",
+            "store": "idle"
+          },
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "label": "×200",
+            "color": "orange"
+          }
+        },
+        {
+          "at": "doscientas veces",
+          "packet": {
+            "from": "api",
+            "to": "queue",
+            "label": "×200",
+            "color": "orange"
+          },
+          "status": {
+            "queue": "warn",
+            "worker": "busy"
+          },
+          "note": {
+            "text": "200 pedidos iguales = *200 × el trabajo*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "La cola se llena",
+          "status": {
+            "queue": "error"
+          }
+        },
+        {
+          "at": "la base sufre",
+          "status": {
+            "db": "error"
+          },
+          "sfx": "alarm"
+        },
+        {
+          "at": "archivos idénticos",
+          "focus": [
+            "store"
+          ],
+          "note": {
+            "text": "Mismo resultado: *¿para qué repetirlo?*",
+            "tone": "bad"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Genéralo una vez",
+      "narration": "Mejor genéralo una sola vez. Un cron, que es una tarea programada, lo prepara cada noche, cuando casi nadie usa el sistema, y lo deja en S3.",
+      "steps": [
+        {
+          "at": "genéralo una sola",
+          "status": {
+            "queue": "idle",
+            "db": "idle",
+            "worker": "idle"
+          },
+          "focus": []
+        },
+        {
+          "at": "Un cron",
+          "show": [
+            "cron"
+          ],
+          "focus": [
+            "cron",
+            "worker"
+          ],
+          "note": {
+            "text": "Cron = *tarea programada*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "cada noche",
+          "packet": {
+            "from": "cron",
+            "to": "worker",
+            "label": "00:00",
+            "color": "gray"
+          },
+          "status": {
+            "worker": "busy"
+          }
+        },
+        {
+          "at": "lo deja en",
+          "packet": {
+            "from": "worker",
+            "to": "store",
+            "label": "reporte.csv",
+            "color": "green"
+          },
+          "status": {
+            "worker": "ok",
+            "store": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Todos, al instante",
+      "narration": "El lunes, todos lo descargan al instante, y la cola ya no hace falta para esto. Ojo: si cada usuario pide filtros distintos, vuelves a la cola.",
+      "steps": [
+        {
+          "at": "todos lo descargan",
+          "focus": [
+            "store",
+            "frontend"
+          ],
+          "packet": {
+            "from": "store",
+            "to": "frontend",
+            "label": "descarga",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          },
+          "sfx": "success"
+        },
+        {
+          "at": "ya no hace",
+          "hide": [
+            "queue"
+          ],
+          "focus": [],
+          "camera": [],
+          "note": {
+            "text": "*1 vez* para todos",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "filtros distintos",
+          "note": {
+            "text": "Filtros distintos → *vuelve la cola*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "No lo repitas",
+      "narration": "Si todos piden lo mismo, no lo repitas: precalcúlalo. ¿Qué otra app crees que hace esto? El diseño completo está en el canal.",
+      "points": [
+        {
+          "text": "Todos piden lo mismo → *precalcula*",
+          "at": "Si todos piden"
+        },
+        {
+          "text": "Cada uno distinto → *cola + worker*",
+          "at": "precalcúlalo"
+        }
+      ],
+      "cta": "Video completo en el canal ▶"
+    }
+  ],
+  "notes": [
+    "Precalcular encaja cuando el resultado es igual para todos y puede tener unas horas de antigüedad; si cada usuario necesita datos al minuto o filtros propios, vuelves a cola + worker.",
+    "Alternativa intermedia: deduplicar pedidos iguales en la cola (una clave por reporte) y servir el mismo archivo a todos los que lo pidieron, o cachear el resultado con un TTL.",
+    "Cron puede ser un cron de Linux, un job programado del proveedor (EventBridge Scheduler, Cloud Scheduler) o el scheduler de tu framework."
+  ],
+  "publish": {
+    "titles": [
+      "200 personas piden el mismo reporte: ¿lo generas 200 veces?",
+      "Precalcular con un cron: el truco que salva tu base de datos"
+    ],
+    "description": "Si todos piden el mismo resultado pesado, no lo generes una vez por pedido: prepáralo de noche con un cron y sírvelo al instante.",
+    "comment": "¿Qué otra app crees que precalcula así?",
+    "hashtags": [
+      "systemdesign",
+      "programacion",
+      "backend"
+    ],
+    "extra": [
+      "🎬 El video completo (de lo simple a cola, worker y cron) está en el canal."
+    ]
+  }
+}

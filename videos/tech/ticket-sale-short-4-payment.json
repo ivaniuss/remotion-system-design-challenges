@@ -1,0 +1,313 @@
+{
+  "id": "ticket-sale-short-4-payment",
+  "title": "You paid, but the seat is gone?",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "light",
+  "hook": "broken-thing",
+  "board": {
+    "nodes": [
+      {
+        "id": "fans",
+        "label": "Fans",
+        "icon": "users",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "pay",
+        "label": "Payments",
+        "icon": "external",
+        "row": 1,
+        "col": 0,
+        "sub": "card · bank"
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "icon": "api",
+        "row": 1,
+        "col": 1,
+        "sub": "REST API"
+      },
+      {
+        "id": "expiry",
+        "label": "Hold expiry",
+        "icon": "scheduler",
+        "row": 2,
+        "col": 0,
+        "sub": "every minute"
+      },
+      {
+        "id": "db",
+        "label": "Database",
+        "icon": "db",
+        "row": 2,
+        "col": 1,
+        "sub": "seats"
+      }
+    ],
+    "edges": [
+      {
+        "from": "fans",
+        "to": "api"
+      },
+      {
+        "from": "api",
+        "to": "pay"
+      },
+      {
+        "from": "api",
+        "to": "db"
+      },
+      {
+        "from": "expiry",
+        "to": "db"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "You *paid*, but the seat is gone?",
+      "narration": "You pay for a seat, and the site says it's gone. But your card was charged. How do ticket sites avoid that?",
+      "beats": [
+        {
+          "text": "Paid",
+          "icon": "external",
+          "at": "You pay for"
+        },
+        {
+          "text": "Seat gone",
+          "icon": "db",
+          "at": "it's gone"
+        },
+        {
+          "text": "?",
+          "at": "avoid that"
+        }
+      ]
+    },
+    {
+      "type": "compare",
+      "title": "Sell blindly, or check the hold?",
+      "narration": "The site holds your seat for a few minutes. Charge the card, then mark it sold, and if the hold expired, another fan took it: money taken, seat gone. The fix: confirm only if the hold is yours, else refund.",
+      "left": {
+        "label": "Sell blindly",
+        "tone": "bad",
+        "items": [
+          {
+            "text": "Charge the card first",
+            "at": "charge the card"
+          },
+          {
+            "text": "Hold *expires* meanwhile",
+            "at": "the hold expired"
+          },
+          {
+            "text": "Money taken, *seat gone*",
+            "at": "money taken seat gone"
+          }
+        ]
+      },
+      "right": {
+        "label": "Check the hold",
+        "tone": "good",
+        "items": [
+          {
+            "text": "Sell *only if the hold is yours*",
+            "at": "only if the hold"
+          },
+          {
+            "text": "Not yours? *Refund*",
+            "at": "else refund"
+          }
+        ]
+      }
+    },
+    {
+      "type": "board",
+      "title": "Confirm only if it's yours",
+      "narration": "The fan pays, and the backend asks the database: sold only if the hold is mine. If not, it refunds. The price: that fan is charged, then refunded.",
+      "steps": [
+        {
+          "at": "The fan pays",
+          "show": [
+            "fans",
+            "api",
+            "pay",
+            "db"
+          ],
+          "camera": [],
+          "packet": {
+            "from": "api",
+            "to": "pay",
+            "label": "pay",
+            "color": "blue"
+          },
+          "status": {
+            "pay": "busy"
+          }
+        },
+        {
+          "at": "asks the database",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "sold IF mine",
+            "color": "green"
+          },
+          "status": {
+            "pay": "ok",
+            "db": "ok"
+          },
+          "note": {
+            "text": "Hold still yours: *sold*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "If not it refunds",
+          "packet": {
+            "from": "api",
+            "to": "pay",
+            "label": "refund",
+            "color": "orange"
+          },
+          "status": {
+            "db": "idle"
+          },
+          "note": {
+            "text": "Not yours? *Refund*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "that fan is charged",
+          "note": {
+            "text": "Price: *charged, then refunded*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "And if it crashes?",
+      "narration": "If the backend crashes after charging, the retry must not charge again. So every payment carries an idempotency key, like a receipt number the retry reuses. The payment provider returns the same result. The price: keys are remembered only for a while.",
+      "steps": [
+        {
+          "at": "crashes after charging",
+          "focus": [
+            "api",
+            "pay"
+          ],
+          "packet": {
+            "from": "api",
+            "to": "pay",
+            "label": "pay · key K1",
+            "color": "blue"
+          },
+          "status": {
+            "api": "error",
+            "pay": "ok"
+          },
+          "note": {
+            "text": "Crash *after* charging",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "must not charge",
+          "status": {
+            "api": "busy"
+          },
+          "packet": {
+            "from": "api",
+            "to": "pay",
+            "label": "retry · key K1",
+            "color": "orange"
+          }
+        },
+        {
+          "at": "idempotency key",
+          "note": {
+            "text": "Idempotency key: *same key, same result*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "receipt number",
+          "note": {
+            "text": "Analogy: a *receipt number*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "returns the same",
+          "packet": {
+            "from": "pay",
+            "to": "api",
+            "label": "already paid",
+            "color": "green"
+          },
+          "status": {
+            "api": "ok"
+          },
+          "focus": [],
+          "note": {
+            "text": "*One charge*, even with retries",
+            "tone": "good"
+          },
+          "sfx": "success"
+        },
+        {
+          "at": "remembered only for",
+          "note": {
+            "text": "Price: *keys expire*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "Safe payment",
+      "narration": "Confirm only if the hold is yours, and give every payment an idempotency key. What else could go wrong when paying?",
+      "points": [
+        {
+          "text": "Confirm *only if it's yours*",
+          "at": "Confirm only if"
+        },
+        {
+          "text": "Every payment → *idempotency key*",
+          "at": "every payment an"
+        }
+      ],
+      "cta": "Full video on the channel ▶"
+    }
+  ],
+  "notes": [
+    "Payment races: store who holds the seat and until when (held_by, held_until). Confirm with a conditional update (sold WHERE held_by = this fan AND held_until > now). If the hold was lost while the payment was processing, refund. Many sites also extend the hold while a payment is in progress.",
+    "Another option: authorize first and capture after the seat is confirmed; it avoids the refund, at the cost of more states to manage and an authorization that can expire.",
+    "Idempotency keys are documented by Stripe, Adyen and PayPal. The price: the provider remembers each key for a limited time, so a retry has to arrive inside that window. Store the key with the order before calling the provider.",
+    "Payments are asynchronous too: webhooks can arrive late or twice, so deduplicate by event id, and run a reconciliation job to catch charged-but-not-sold seats."
+  ],
+  "publish": {
+    "titles": [
+      "You Paid for the Ticket but the Seat Is Gone? (System Design)",
+      "How Ticket Sites Avoid Charging You Twice"
+    ],
+    "description": "You pay in the last second and the site says the seat is gone, but your card was charged. Confirm-only-if-it-is-yours and idempotency keys, explained.",
+    "extra": [
+      "🎬 The full video (from 500 seats to millions of fans: atomic updates, seat holds, payments and a waiting room) is on the channel."
+    ],
+    "comment": "What else could go wrong when paying?",
+    "hashtags": [
+      "systemdesign",
+      "backend",
+      "payments"
+    ]
+  }
+}

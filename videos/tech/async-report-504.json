@@ -1,0 +1,1785 @@
+{
+  "id": "async-report-504",
+  "title": "Diseña la exportación del reporte anual de ventas",
+  "lang": "es",
+  "theme": "light",
+  "board": {
+    "nodes": [
+      {
+        "id": "frontend",
+        "label": "Frontend",
+        "icon": "client",
+        "row": 0,
+        "col": 0,
+        "sub": "app web"
+      },
+      {
+        "id": "proxy",
+        "label": "Proxy",
+        "icon": "gateway",
+        "row": 0,
+        "col": 1,
+        "sub": "hosting · Cloudflare · nginx"
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "icon": "api",
+        "row": 0,
+        "col": 2,
+        "sub": "API REST"
+      },
+      {
+        "id": "store",
+        "label": "S3",
+        "icon": "storage",
+        "row": 1,
+        "col": 0,
+        "sub": "archivos"
+      },
+      {
+        "id": "queue",
+        "label": "Cola",
+        "icon": "queue",
+        "row": 1,
+        "col": 1,
+        "sub": "trabajos pendientes"
+      },
+      {
+        "id": "db",
+        "label": "Base de datos",
+        "icon": "db",
+        "row": 1,
+        "col": 2,
+        "sub": "ventas"
+      },
+      {
+        "id": "worker",
+        "label": "Worker",
+        "icon": "worker",
+        "row": 2,
+        "col": 1,
+        "sub": "también backend"
+      },
+      {
+        "id": "cron",
+        "label": "Cron",
+        "icon": "scheduler",
+        "row": 2,
+        "col": 2,
+        "sub": "cada noche"
+      },
+      {
+        "id": "dlq",
+        "label": "Cola de errores",
+        "icon": "queue",
+        "sub": "dead letter queue",
+        "row": 2,
+        "col": 0
+      }
+    ],
+    "edges": [
+      {
+        "from": "frontend",
+        "to": "api"
+      },
+      {
+        "from": "frontend",
+        "to": "proxy"
+      },
+      {
+        "from": "proxy",
+        "to": "api"
+      },
+      {
+        "from": "api",
+        "to": "db"
+      },
+      {
+        "from": "api",
+        "to": "queue"
+      },
+      {
+        "from": "queue",
+        "to": "worker"
+      },
+      {
+        "from": "worker",
+        "to": "db"
+      },
+      {
+        "from": "worker",
+        "to": "store"
+      },
+      {
+        "from": "store",
+        "to": "frontend",
+        "dashed": true
+      },
+      {
+        "from": "cron",
+        "to": "worker"
+      },
+      {
+        "from": "queue",
+        "to": "dlq"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "Pregunta de entrevista",
+      "heading": "Diseña la exportación del *reporte anual de ventas*",
+      "subheading": "De lo más simple que funciona a lo que escala",
+      "icon": "file",
+      "beats": [
+        {
+          "text": "Ventas",
+          "icon": "db",
+          "at": "tiene que generar"
+        },
+        {
+          "text": "Reporte anual",
+          "icon": "file",
+          "at": "reporte anual de"
+        },
+        {
+          "text": "Usuario",
+          "icon": "user",
+          "at": "entregárselo al usuario"
+        },
+        {
+          "text": "?",
+          "at": "Cómo lo diseñas"
+        }
+      ],
+      "narration": "Pregunta de entrevista: tu sistema tiene que generar el reporte anual de ventas y entregárselo al usuario. ¿Cómo lo diseñas? Como en un proyecto real: primero algo simple que funcione, y lo mejoramos cuando haga falta.",
+      "chapter": "La pregunta de entrevista"
+    },
+    {
+      "type": "callout",
+      "text": "10 mil ventas",
+      "caption": "al año · 5 personas usan el sistema",
+      "tone": "info",
+      "icon": "users",
+      "sfx": "impact",
+      "narration": "Empecemos con una empresa pequeña: diez mil ventas al año y cinco personas que usan el sistema.",
+      "chapter": "Empieza simple: frontend, backend y base de datos"
+    },
+    {
+      "type": "board",
+      "title": "El frontend",
+      "narration": "Empecemos por lo mínimo. Primero, el frontend: la app web que corre en el navegador del usuario. Muestra las ventas y el botón de descargar. Pero el navegador no puede hablar directo con la base de datos: sería darle las llaves a cualquiera.",
+      "steps": [
+        {
+          "at": "Primero, el frontend",
+          "show": [
+            "frontend"
+          ],
+          "focus": [
+            "frontend"
+          ]
+        },
+        {
+          "at": "corre en el navegador",
+          "note": {
+            "text": "Corre en el *navegador* del usuario",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "no puede hablar",
+          "show": [
+            "db"
+          ],
+          "focus": [
+            "frontend",
+            "db"
+          ],
+          "status": {
+            "db": "warn"
+          }
+        },
+        {
+          "at": "darle las llaves",
+          "note": {
+            "text": "Navegador → base de datos: *nunca*",
+            "tone": "bad"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "El backend",
+      "narration": "Por eso existe el backend: un servidor con la lógica, y el único con permiso para tocar la base de datos. El frontend le habla a través de su API REST: las rutas a las que le hace pedidos. Y la base de datos guarda las ventas.",
+      "steps": [
+        {
+          "at": "existe el backend",
+          "show": [
+            "api"
+          ],
+          "focus": [
+            "api"
+          ],
+          "status": {
+            "db": "idle"
+          }
+        },
+        {
+          "at": "el único con permiso",
+          "focus": [
+            "api",
+            "db"
+          ],
+          "note": {
+            "text": "Solo el backend toca la *base de datos*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "le habla a través",
+          "focus": [
+            "frontend",
+            "api"
+          ],
+          "note": {
+            "text": "API REST = las *rutas* que expone",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "guarda las ventas",
+          "focus": [
+            "db"
+          ],
+          "note": {
+            "text": "Guarda las *ventas*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Cómo se hablan",
+      "narration": "¿Cómo se hablan? El usuario pulsa descargar y el frontend le hace una petición HTTP a la API. La API consulta la base, arma el archivo y lo devuelve en la respuesta. Pides y esperas en la misma conexión: eso es síncrono.",
+      "steps": [
+        {
+          "at": "pulsa descargar",
+          "status": {
+            "frontend": "busy"
+          }
+        },
+        {
+          "at": "una petición HTTP",
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "label": "GET /reporte",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "consulta la base",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "consulta"
+          },
+          "status": {
+            "api": "busy",
+            "db": "busy"
+          }
+        },
+        {
+          "at": "arma el archivo",
+          "packet": {
+            "from": "db",
+            "to": "api",
+            "label": "ventas"
+          },
+          "status": {
+            "db": "idle"
+          }
+        },
+        {
+          "at": "lo devuelve en",
+          "packet": {
+            "from": "api",
+            "to": "frontend",
+            "label": "reporte.csv",
+            "color": "green"
+          },
+          "status": {
+            "api": "idle",
+            "frontend": "ok"
+          }
+        },
+        {
+          "at": "eso es síncrono",
+          "note": {
+            "text": "*Síncrono*: pides y esperas la respuesta",
+            "tone": "info"
+          }
+        }
+      ],
+      "chapter": "Cómo se comunican (síncrono)"
+    },
+    {
+      "type": "board",
+      "title": "¿Hace falta más?",
+      "narration": "Con diez mil ventas, esto tarda un par de segundos. ¿Hace falta algo más? No. Cada pieza extra es algo más que mantener y que puede fallar. Esta versión funciona, y ya la puedes entregar. En una entrevista, empezar así es justo lo que buscan.",
+      "steps": [
+        {
+          "at": "un par de segundos",
+          "status": {
+            "frontend": "ok",
+            "api": "ok",
+            "db": "ok"
+          },
+          "note": {
+            "text": "Tarda *segundos* → listo",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "Cada pieza extra",
+          "note": {
+            "text": "Cada pieza extra = *algo más que puede fallar*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "ya la puedes entregar",
+          "note": {
+            "text": "Versión simple: *funciona y se entrega*",
+            "tone": "good"
+          },
+          "camera": []
+        },
+        {
+          "at": "empezar así",
+          "note": {
+            "text": "Empieza por *lo simple que funciona*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "50M ventas",
+      "caption": "¿Y si la empresa crece? El reporte tarda minutos",
+      "tone": "warn",
+      "icon": "db",
+      "sfx": "clock",
+      "narration": "Pero, ¿qué pasa si la empresa crece? Cincuenta millones de ventas. Generar el reporte ya no tarda segundos: tarda minutos. ¿Aguanta este diseño?",
+      "chapter": "¿Y si la empresa crece? El proxy oculto"
+    },
+    {
+      "type": "board",
+      "title": "Lo que tu diagrama no muestra",
+      "narration": "Para responder, mira algo que tu diagrama no muestra: entre el frontend y tu API casi siempre hay un intermediario. Tu hosting, Cloudflare o un nginx, que reciben el tráfico, ponen el HTTPS y se lo pasan a tu servidor. Se llama proxy.",
+      "steps": [
+        {
+          "at": "tu diagrama no muestra",
+          "status": {
+            "frontend": "idle",
+            "api": "idle",
+            "db": "idle"
+          }
+        },
+        {
+          "at": "casi siempre hay",
+          "show": [
+            "proxy"
+          ],
+          "hide": [
+            "frontend->api"
+          ],
+          "focus": [
+            "frontend",
+            "proxy",
+            "api"
+          ],
+          "sfx": "impact"
+        },
+        {
+          "at": "reciben el tráfico",
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "via": [
+              "proxy"
+            ],
+            "label": "HTTPS",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "Se llama proxy",
+          "focus": [
+            "proxy"
+          ],
+          "note": {
+            "text": "Está ahí aunque *no lo pongas tú*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Qué se rompe",
+      "narration": "Y un proxy no espera para siempre. Si la conexión pasa uno o dos minutos en silencio, la corta, para no quedarse atado a servidores colgados. Es como llamar a soporte y no decir nada: te cuelgan. Error 504: el proxy se cansó de esperar.",
+      "steps": [
+        {
+          "at": "no espera para siempre",
+          "focus": [
+            "frontend",
+            "proxy",
+            "api",
+            "db"
+          ]
+        },
+        {
+          "at": "uno o dos minutos",
+          "packet": {
+            "from": "api",
+            "to": "db",
+            "label": "consulta lenta",
+            "color": "yellow"
+          },
+          "status": {
+            "frontend": "busy",
+            "api": "busy",
+            "db": "busy"
+          }
+        },
+        {
+          "at": "la corta",
+          "status": {
+            "proxy": "warn"
+          },
+          "note": {
+            "text": "nginx *60 s* · AWS ALB *60 s*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "te cuelgan",
+          "focus": [
+            "frontend",
+            "proxy"
+          ]
+        },
+        {
+          "at": "Error 504",
+          "status": {
+            "proxy": "error",
+            "frontend": "error"
+          },
+          "packet": {
+            "from": "proxy",
+            "to": "frontend",
+            "label": "504",
+            "color": "red"
+          },
+          "sfx": "riser"
+        },
+        {
+          "at": "se cansó de esperar",
+          "note": {
+            "text": "504 = el proxy *se cansó de esperar*",
+            "tone": "bad"
+          }
+        }
+      ],
+      "chapter": "El error 504 y por qué subir el timeout no basta"
+    },
+    {
+      "type": "board",
+      "title": "¿Y si subo el timeout?",
+      "narration": "¿Y subir el timeout? Podrías, pero tu servidor queda ocupado minutos con un solo pedido, el usuario mira un spinner, y si cierra la pestaña, se pierde todo el trabajo. El problema no es el número: es esperar en la misma conexión.",
+      "steps": [
+        {
+          "at": "subir el timeout",
+          "status": {
+            "proxy": "idle",
+            "frontend": "idle"
+          },
+          "focus": [
+            "proxy"
+          ],
+          "note": {
+            "text": "¿Timeout de *10 minutos*?",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "queda ocupado minutos",
+          "focus": [
+            "api",
+            "db"
+          ],
+          "status": {
+            "api": "busy"
+          },
+          "sfx": "cash"
+        },
+        {
+          "at": "mira un spinner",
+          "focus": [
+            "frontend"
+          ],
+          "status": {
+            "frontend": "busy"
+          }
+        },
+        {
+          "at": "cierra la pestaña",
+          "status": {
+            "frontend": "warn",
+            "api": "warn"
+          },
+          "note": {
+            "text": "Cierra la pestaña → *trabajo perdido*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "El problema no",
+          "focus": [],
+          "camera": [],
+          "note": {
+            "text": "El problema: *esperar en la misma conexión*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "La cuenta",
+      "narration": "Y hay una cuenta que lo empeora. Si piden un reporte por segundo y cada uno retiene una conexión cinco minutos, o sea trescientos segundos, tienes trescientos en curso a la vez. Tu API puede quedarse sin conexiones libres, y el resto de la aplicación se arrastra con ella.",
+      "steps": [
+        {
+          "at": "una cuenta que",
+          "focus": [
+            "api"
+          ],
+          "note": {
+            "text": "En curso = *pedidos/s × duración*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "un reporte por segundo",
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "label": "1 por s",
+            "color": "blue",
+            "via": [
+              "proxy"
+            ]
+          }
+        },
+        {
+          "at": "trescientos segundos",
+          "status": {
+            "api": "busy"
+          },
+          "note": {
+            "text": "*1/s × 300 s* = 300 en curso",
+            "tone": "warn"
+          },
+          "sfx": "cash"
+        },
+        {
+          "at": "sin conexiones libres",
+          "status": {
+            "api": "warn"
+          },
+          "note": {
+            "text": "Sin conexiones → *todo se arrastra*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "se arrastra con ella",
+          "focus": [],
+          "camera": []
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Asíncrono",
+      "narration": "Cambiemos la idea. Como en un restaurante: te toman el pedido, te dan un número y te avisan cuando está listo. Eso es asíncrono. La API responde al instante con un 202, que significa recibido pero aún no listo, y un ID de trabajo: tu número de pedido.",
+      "steps": [
+        {
+          "at": "Cambiemos la idea",
+          "status": {
+            "frontend": "idle",
+            "proxy": "idle",
+            "api": "idle",
+            "db": "idle"
+          }
+        },
+        {
+          "at": "te toman el pedido",
+          "note": {
+            "text": "Pedido → número → *te avisan*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "Eso es asíncrono",
+          "note": {
+            "text": "*Asíncrono*: no esperas en la línea",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "responde al instante",
+          "hide": [
+            "api->db"
+          ],
+          "packet": {
+            "from": "api",
+            "to": "frontend",
+            "via": [
+              "proxy"
+            ],
+            "label": "202 + jobId",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          }
+        },
+        {
+          "at": "recibido pero aún",
+          "note": {
+            "text": "*202* = recibido, aún no listo",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "tu número de pedido",
+          "focus": [
+            "frontend"
+          ],
+          "note": {
+            "text": "jobId = *tu número de pedido*",
+            "tone": "good"
+          }
+        }
+      ],
+      "chapter": "Asíncrono: 202 + ID de trabajo"
+    },
+    {
+      "type": "board",
+      "title": "La cola",
+      "narration": "El pedido va a una cola: una lista de trabajos pendientes. ¿Por qué no hacerlo en segundo plano dentro de la API? Porque la cola guarda el pedido aunque tu servidor se reinicie, y si llegan muchos, esperan en fila en vez de tumbar la API.",
+      "steps": [
+        {
+          "at": "va a una cola",
+          "show": [
+            "queue"
+          ],
+          "packet": {
+            "from": "api",
+            "to": "queue",
+            "label": "job #8f2a",
+            "color": "yellow"
+          },
+          "status": {
+            "queue": "busy"
+          }
+        },
+        {
+          "at": "trabajos pendientes",
+          "focus": [
+            "queue"
+          ],
+          "note": {
+            "text": "Cola = *lista de trabajos pendientes*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "en segundo plano",
+          "focus": [
+            "api"
+          ],
+          "note": {
+            "text": "¿Y un hilo *dentro de la API*?",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "se reinicie",
+          "focus": [
+            "queue"
+          ],
+          "note": {
+            "text": "Sobrevive a *reinicios*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "esperan en fila",
+          "focus": [
+            "api",
+            "queue"
+          ],
+          "note": {
+            "text": "Muchos pedidos → *esperan en fila*",
+            "tone": "good"
+          }
+        }
+      ],
+      "chapter": "La cola"
+    },
+    {
+      "type": "board",
+      "title": "El worker",
+      "narration": "Un worker es otro programa del backend: toma trabajos de la cola, lee las ventas de la base y genera el reporte. Así tu backend queda en dos partes: la API, libre para atender a todos, y el worker, que hace lo pesado a su ritmo. Ya da igual si tarda cinco minutos o una hora.",
+      "steps": [
+        {
+          "at": "Un worker es",
+          "show": [
+            "worker"
+          ],
+          "focus": [
+            "worker"
+          ]
+        },
+        {
+          "at": "toma trabajos de",
+          "packet": {
+            "from": "queue",
+            "to": "worker",
+            "label": "job #8f2a",
+            "color": "yellow"
+          },
+          "status": {
+            "queue": "idle",
+            "worker": "busy"
+          }
+        },
+        {
+          "at": "lee las ventas",
+          "packet": {
+            "from": "worker",
+            "to": "db",
+            "label": "consulta"
+          },
+          "status": {
+            "db": "busy"
+          }
+        },
+        {
+          "at": "dos partes",
+          "focus": [
+            "api",
+            "worker"
+          ],
+          "note": {
+            "text": "Backend = *API + worker*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "libre para atender",
+          "status": {
+            "api": "ok"
+          }
+        },
+        {
+          "at": "a su ritmo",
+          "focus": [
+            "worker",
+            "db"
+          ]
+        },
+        {
+          "at": "o una hora",
+          "camera": [],
+          "focus": [],
+          "note": {
+            "text": "Tarde lo que tarde: *nadie espera*",
+            "tone": "good"
+          }
+        }
+      ],
+      "chapter": "El worker"
+    },
+    {
+      "type": "board",
+      "title": "Dónde queda el archivo",
+      "narration": "El archivo pesa mucho, y la base de datos es para datos, no para archivos gigantes. Así que el worker lo guarda en S3, el almacenamiento de archivos de Amazon: barato, y hecho para descargas grandes.",
+      "steps": [
+        {
+          "at": "El archivo pesa",
+          "focus": [
+            "worker",
+            "db"
+          ],
+          "status": {
+            "db": "idle"
+          }
+        },
+        {
+          "at": "es para datos",
+          "note": {
+            "text": "Base de datos: *datos*, no archivos gigantes",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "lo guarda en",
+          "show": [
+            "store"
+          ],
+          "packet": {
+            "from": "worker",
+            "to": "store",
+            "label": "reporte.csv",
+            "color": "green"
+          },
+          "status": {
+            "worker": "ok",
+            "store": "ok"
+          }
+        },
+        {
+          "at": "almacenamiento de archivos",
+          "focus": [
+            "worker",
+            "store"
+          ],
+          "note": {
+            "text": "S3: *almacenamiento de archivos*",
+            "tone": "good"
+          }
+        }
+      ],
+      "chapter": "Guardar el archivo en S3"
+    },
+    {
+      "type": "board",
+      "title": "Cómo te enteras",
+      "narration": "¿Y cómo se entera el usuario? Lo más simple: el frontend pregunta cada pocos segundos si ya está, eso es polling. O el servidor se lo dice: con SSE, un canal de una sola vía, o con WebSocket, de ida y vuelta. Para esto, polling o SSE bastan.",
+      "steps": [
+        {
+          "at": "cómo se entera",
+          "focus": [
+            "frontend",
+            "proxy",
+            "api"
+          ]
+        },
+        {
+          "at": "pregunta cada pocos",
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "via": [
+              "proxy"
+            ],
+            "label": "¿ya está?",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "eso es polling",
+          "packet": {
+            "from": "api",
+            "to": "frontend",
+            "via": [
+              "proxy"
+            ],
+            "label": "todavía no",
+            "color": "gray"
+          },
+          "note": {
+            "text": "*Polling*: preguntar cada pocos segundos",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "el servidor se",
+          "packet": {
+            "from": "api",
+            "to": "frontend",
+            "via": [
+              "proxy"
+            ],
+            "label": "¡listo! + link",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          },
+          "sfx": "notify"
+        },
+        {
+          "at": "una sola vía",
+          "note": {
+            "text": "*SSE*: el servidor avisa, un sentido",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "ida y vuelta",
+          "note": {
+            "text": "*WebSocket*: ida y vuelta",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "polling o SSE",
+          "note": {
+            "text": "Para esto: *polling o SSE* bastan",
+            "tone": "good"
+          }
+        }
+      ],
+      "chapter": "Polling vs SSE vs WebSocket"
+    },
+    {
+      "type": "board",
+      "title": "La descarga",
+      "narration": "Fíjate en ese enlace: no es el archivo, es un enlace temporal a S3. Antes de dártelo, la API comprueba que tengas permiso, y el enlace expira. El navegador descarga directo desde S3, sin pasar por tu servidor.",
+      "steps": [
+        {
+          "at": "un enlace temporal",
+          "focus": [
+            "api",
+            "store"
+          ],
+          "note": {
+            "text": "*Enlace temporal* a S3",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "comprueba que tengas permiso",
+          "focus": [
+            "api"
+          ],
+          "note": {
+            "text": "La API *comprueba permisos*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "el enlace expira",
+          "note": {
+            "text": "El enlace *expira*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "descarga directo",
+          "focus": [
+            "store",
+            "frontend"
+          ],
+          "packet": {
+            "from": "store",
+            "to": "frontend",
+            "label": "reporte.csv",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          }
+        },
+        {
+          "at": "sin pasar por",
+          "camera": [],
+          "focus": [],
+          "note": {
+            "text": "El archivo *no pasa por tu API*",
+            "tone": "good"
+          }
+        }
+      ],
+      "chapter": "Descargar con un enlace temporal"
+    },
+    {
+      "type": "board",
+      "title": "El flujo completo",
+      "narration": "Repasemos el flujo completo. El frontend pide, la API encola y responde al instante, el worker genera el archivo y lo guarda en S3, y el frontend se entera y lo descarga. Cada pieza hace una sola cosa, y ahora el reporte puede tardar lo que haga falta.",
+      "steps": [
+        {
+          "at": "Repasemos el flujo",
+          "camera": [],
+          "status": {
+            "frontend": "idle",
+            "proxy": "idle",
+            "api": "idle",
+            "db": "idle",
+            "queue": "idle",
+            "worker": "idle",
+            "store": "idle"
+          }
+        },
+        {
+          "at": "El frontend pide",
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "via": [
+              "proxy"
+            ],
+            "label": "pedido",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "la API encola",
+          "packet": {
+            "from": "api",
+            "to": "queue",
+            "label": "job",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "responde al instante",
+          "packet": {
+            "from": "api",
+            "to": "frontend",
+            "via": [
+              "proxy"
+            ],
+            "label": "202",
+            "color": "green"
+          }
+        },
+        {
+          "at": "el worker genera",
+          "packet": {
+            "from": "queue",
+            "to": "worker",
+            "label": "job",
+            "color": "yellow"
+          },
+          "status": {
+            "worker": "busy"
+          }
+        },
+        {
+          "at": "lo guarda en",
+          "packet": {
+            "from": "worker",
+            "to": "store",
+            "label": "reporte.csv",
+            "color": "green"
+          },
+          "status": {
+            "worker": "ok",
+            "store": "ok"
+          }
+        },
+        {
+          "at": "lo descarga",
+          "packet": {
+            "from": "store",
+            "to": "frontend",
+            "label": "descarga",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          },
+          "sfx": "success"
+        },
+        {
+          "at": "una sola cosa",
+          "note": {
+            "text": "Cada pieza, *una sola tarea*",
+            "tone": "good"
+          }
+        }
+      ],
+      "chapter": "El flujo completo"
+    },
+    {
+      "type": "callout",
+      "text": "¿Y si falla?",
+      "caption": "el worker se cae a mitad del reporte",
+      "tone": "bad",
+      "icon": "worker",
+      "sfx": "impact",
+      "narration": "Y ahora, ¿qué pasa si el worker se cae a mitad del reporte, por un deploy o por falta de memoria?",
+      "chapter": "¿Y si el worker falla? Reintentos y cola de errores"
+    },
+    {
+      "type": "board",
+      "title": "Reintentos",
+      "narration": "Las colas suelen entregar al menos una vez: si un worker no confirma que terminó, el trabajo vuelve a la cola y otro lo reintenta. Y se reintenta con esperas cada vez mayores, para no martillar algo que ya está fallando.",
+      "steps": [
+        {
+          "at": "al menos una vez",
+          "focus": [
+            "queue"
+          ],
+          "note": {
+            "text": "Cola: entrega *al menos una vez*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "no confirma que",
+          "focus": [
+            "worker"
+          ],
+          "status": {
+            "worker": "error"
+          }
+        },
+        {
+          "at": "vuelve a la cola",
+          "packet": {
+            "from": "worker",
+            "to": "queue",
+            "label": "reintento",
+            "color": "yellow"
+          },
+          "status": {
+            "queue": "busy",
+            "worker": "idle"
+          }
+        },
+        {
+          "at": "otro lo reintenta",
+          "packet": {
+            "from": "queue",
+            "to": "worker",
+            "label": "reintento",
+            "color": "yellow"
+          },
+          "status": {
+            "queue": "idle",
+            "worker": "busy"
+          }
+        },
+        {
+          "at": "esperas cada vez",
+          "note": {
+            "text": "Reintentos con *espera creciente*",
+            "tone": "info"
+          },
+          "sfx": "clock"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Cola de errores",
+      "narration": "Pero si falla siempre, no puedes reintentar para siempre. Después de varios intentos, el trabajo pasa a una cola de errores, la dead letter queue, para que una persona lo revise sin frenar al resto.",
+      "steps": [
+        {
+          "at": "falla siempre",
+          "focus": [
+            "worker"
+          ],
+          "status": {
+            "worker": "warn"
+          }
+        },
+        {
+          "at": "reintentar para siempre",
+          "note": {
+            "text": "No se reintenta *para siempre*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "una cola de errores",
+          "focus": [
+            "queue",
+            "dlq"
+          ],
+          "packet": {
+            "from": "queue",
+            "to": "dlq",
+            "label": "sin éxito",
+            "color": "red"
+          },
+          "status": {
+            "dlq": "warn",
+            "queue": "idle"
+          },
+          "note": {
+            "text": "Cola de errores: *nada se pierde*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "una persona lo revise",
+          "focus": [
+            "dlq"
+          ],
+          "note": {
+            "text": "Una persona *lo revisa*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "sin frenar al resto",
+          "focus": [],
+          "camera": [],
+          "status": {
+            "worker": "idle"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Idempotente",
+      "narration": "Y como un trabajo puede ejecutarse dos veces, el worker debe ser idempotente: procesarlo dos veces da el mismo resultado, sin duplicar nada. Por ejemplo, el archivo se guarda siempre con el mismo nombre, así que la segunda vez lo sobrescribe.",
+      "steps": [
+        {
+          "at": "puede ejecutarse dos veces",
+          "focus": [
+            "queue",
+            "worker"
+          ],
+          "packet": {
+            "from": "queue",
+            "to": "worker",
+            "label": "job #8f2a",
+            "color": "yellow"
+          },
+          "status": {
+            "worker": "busy"
+          },
+          "note": {
+            "text": "Puede llegar *2 veces*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "debe ser idempotente",
+          "focus": [
+            "worker"
+          ],
+          "note": {
+            "text": "*Idempotente*: 2 veces = 1 resultado",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "sin duplicar nada",
+          "packet": {
+            "from": "worker",
+            "to": "store",
+            "label": "reporte.csv",
+            "color": "green"
+          },
+          "status": {
+            "worker": "ok",
+            "store": "ok"
+          }
+        },
+        {
+          "at": "el mismo nombre",
+          "focus": [
+            "store"
+          ],
+          "note": {
+            "text": "Mismo nombre → *se sobrescribe*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "lo sobrescribe",
+          "camera": [],
+          "focus": []
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "×200",
+      "caption": "el mismo reporte, el lunes a las 9",
+      "tone": "warn",
+      "icon": "users",
+      "sfx": "impact",
+      "narration": "Ahora, ¿qué pasa si un lunes a las nueve, doscientas personas del equipo de ventas piden el mismo reporte?",
+      "chapter": "200 personas piden el mismo reporte"
+    },
+    {
+      "type": "board",
+      "title": "Su límite",
+      "narration": "Llegan doscientos pedidos y lo generas doscientas veces: el mismo trabajo pesado repetido, la cola crece y la base sufre. Y todo para doscientos archivos idénticos. No es un problema de tráfico: la API responde al instante. Es trabajo repetido.",
+      "steps": [
+        {
+          "at": "Llegan doscientos pedidos",
+          "status": {
+            "frontend": "idle",
+            "proxy": "idle",
+            "api": "idle",
+            "db": "idle",
+            "queue": "idle",
+            "worker": "idle",
+            "store": "idle"
+          },
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "via": [
+              "proxy"
+            ],
+            "label": "×200",
+            "color": "orange"
+          }
+        },
+        {
+          "at": "doscientas veces",
+          "packet": {
+            "from": "api",
+            "to": "queue",
+            "label": "×200",
+            "color": "orange"
+          },
+          "status": {
+            "queue": "warn"
+          }
+        },
+        {
+          "at": "trabajo pesado repetido",
+          "focus": [
+            "queue",
+            "worker",
+            "db"
+          ],
+          "status": {
+            "worker": "busy"
+          },
+          "note": {
+            "text": "200 pedidos iguales = *200 × el trabajo*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "la cola crece",
+          "status": {
+            "queue": "error"
+          }
+        },
+        {
+          "at": "la base sufre",
+          "status": {
+            "db": "error"
+          },
+          "sfx": "alarm"
+        },
+        {
+          "at": "archivos idénticos",
+          "focus": [
+            "store"
+          ],
+          "note": {
+            "text": "Mismo resultado: *¿para qué repetirlo?*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "problema de tráfico",
+          "focus": [],
+          "camera": [],
+          "note": {
+            "text": "No es tráfico: *es trabajo repetido*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Evitar trabajo repetido",
+      "narration": "Primero, deduplica. Guarda una clave por tipo de reporte y periodo, y si ya hay un trabajo en marcha, devuelve su ID en vez de encolar otro. Y limita cuántos reportes puede pedir cada usuario, para que nadie llene la cola de trabajo repetido.",
+      "steps": [
+        {
+          "at": "Primero, deduplica",
+          "focus": [
+            "api"
+          ],
+          "status": {
+            "queue": "idle",
+            "db": "idle",
+            "worker": "idle"
+          },
+          "note": {
+            "text": "*Deduplicar* pedidos iguales",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "una clave por tipo",
+          "note": {
+            "text": "clave: *ventas-2025*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "devuelve su ID",
+          "packet": {
+            "from": "api",
+            "to": "frontend",
+            "label": "mismo jobId",
+            "color": "green",
+            "via": [
+              "proxy"
+            ]
+          }
+        },
+        {
+          "at": "en vez de encolar",
+          "focus": [
+            "queue"
+          ],
+          "note": {
+            "text": "*1 trabajo* en vez de 200",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "limita cuántos reportes",
+          "focus": [
+            "frontend",
+            "api"
+          ],
+          "note": {
+            "text": "Límite *por usuario*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "llene la cola",
+          "focus": [],
+          "camera": []
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Genéralo una vez",
+      "narration": "Y si el reporte es igual para todos, ni siquiera hace falta generarlo por pedido. Un cron, que es una tarea programada, lo prepara cada noche cuando casi nadie usa el sistema, y lo deja en S3. Todos lo descargan al instante, y nadie espera a que se genere.",
+      "steps": [
+        {
+          "at": "igual para todos",
+          "status": {
+            "frontend": "idle",
+            "proxy": "idle",
+            "api": "idle",
+            "db": "idle",
+            "queue": "idle",
+            "worker": "idle",
+            "store": "idle"
+          }
+        },
+        {
+          "at": "Un cron",
+          "show": [
+            "cron"
+          ],
+          "focus": [
+            "cron",
+            "worker"
+          ],
+          "note": {
+            "text": "Cron = *tarea programada*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "cada noche cuando",
+          "packet": {
+            "from": "cron",
+            "to": "worker",
+            "label": "00:00",
+            "color": "gray"
+          },
+          "status": {
+            "worker": "busy"
+          },
+          "note": {
+            "text": "Lo genera *de noche*, sin prisa",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "lo deja en",
+          "packet": {
+            "from": "worker",
+            "to": "store",
+            "label": "reporte.csv",
+            "color": "green"
+          },
+          "status": {
+            "worker": "ok",
+            "store": "ok"
+          }
+        },
+        {
+          "at": "Todos lo descargan",
+          "focus": [
+            "store",
+            "frontend"
+          ],
+          "packet": {
+            "from": "store",
+            "to": "frontend",
+            "label": "descarga",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          },
+          "note": {
+            "text": "Todos descargan *al instante*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "nadie espera a",
+          "hide": [
+            "queue",
+            "dlq"
+          ],
+          "focus": [],
+          "camera": [],
+          "note": {
+            "text": "*1 vez* para todos",
+            "tone": "good"
+          }
+        }
+      ],
+      "chapter": "Precalcularlo una vez con un cron"
+    },
+    {
+      "type": "board",
+      "title": "Cuando cambia el reporte",
+      "narration": "Precalcular tiene un límite: si cada usuario filtra el reporte a su manera, no puedes tenerlos todos listos. Entonces vuelves a la cola, deduplicando por filtros, o mantienes tablas de resumen, para que el reporte vuelva a tardar segundos.",
+      "steps": [
+        {
+          "at": "tiene un límite",
+          "focus": [
+            "cron",
+            "store"
+          ],
+          "note": {
+            "text": "Precalcular *tiene un límite*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "filtra el reporte",
+          "focus": [
+            "frontend",
+            "api"
+          ],
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "label": "filtros",
+            "color": "orange",
+            "via": [
+              "proxy"
+            ]
+          },
+          "note": {
+            "text": "Cada usuario, *sus filtros*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "vuelves a la cola",
+          "show": [
+            "queue"
+          ],
+          "focus": [
+            "api",
+            "queue"
+          ],
+          "packet": {
+            "from": "api",
+            "to": "queue",
+            "label": "job",
+            "color": "yellow"
+          },
+          "note": {
+            "text": "Cola + *deduplicar por filtros*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "tablas de resumen",
+          "focus": [
+            "db"
+          ],
+          "note": {
+            "text": "Tablas de resumen: *segundos otra vez*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "tardar segundos",
+          "focus": [],
+          "camera": []
+        }
+      ]
+    },
+    {
+      "type": "compare",
+      "title": "¿Cuándo basta lo simple?",
+      "chapter": "¿Cuándo basta lo simple?",
+      "narration": "Ojo: nada de esto es obligatorio siempre. Si responde en uno o dos segundos y no lo piden muchos a la vez, quédate con lo síncrono: es más simple y tiene menos piezas que operar. Si supera el timeout, o no sabes cuánto va a tardar, asíncrono. En medio, depende del tráfico.",
+      "left": {
+        "label": "Síncrono basta",
+        "tone": "good",
+        "items": [
+          {
+            "text": "Responde en *1–3 s*",
+            "at": "uno o dos segundos"
+          },
+          {
+            "text": "Pocos pedidos a la vez",
+            "at": "no lo piden muchos"
+          },
+          {
+            "text": "Menos piezas que operar",
+            "at": "menos piezas que operar"
+          }
+        ]
+      },
+      "right": {
+        "label": "Asíncrono",
+        "tone": "info",
+        "items": [
+          {
+            "text": "Supera el *timeout*",
+            "at": "supera el timeout"
+          },
+          {
+            "text": "Duración impredecible",
+            "at": "no sabes cuánto"
+          },
+          {
+            "text": "En medio: *depende del tráfico*",
+            "at": "depende del tráfico"
+          }
+        ]
+      }
+    },
+    {
+      "type": "summary",
+      "title": "El camino",
+      "narration": "Fíjate en el camino: empezamos simple, y cada pieza llegó cuando un problema real la pidió. Si tarda segundos, síncrono. Si tarda minutos, cola y worker. Si falla, reintentos e idempotencia. Si todos piden lo mismo, precalcúlalo. ¿Tú qué habrías hecho distinto?",
+      "points": [
+        {
+          "text": "Tarda segundos → *síncrono*",
+          "at": "Si tarda segundos"
+        },
+        {
+          "text": "Tarda minutos → *cola + worker*",
+          "at": "Si tarda minutos"
+        },
+        {
+          "text": "Falla → *reintentos + idempotencia*",
+          "at": "Si falla"
+        },
+        {
+          "text": "Todos piden lo mismo → *precalcular*",
+          "at": "Si todos piden"
+        }
+      ],
+      "cta": "¿Tú qué habrías hecho distinto?",
+      "chapter": "Resumen"
+    },
+    {
+      "type": "list",
+      "title": "Antes de irte",
+      "numbered": false,
+      "narration": "Déjame tu respuesta en los comentarios, y dime qué sistema quieres que diseñemos en el próximo video: un acortador de URLs, un chat, un sistema de pagos. Si te sirvió, un like y suscribirte ayudan muchísimo al canal. Nos vemos en el siguiente.",
+      "items": [
+        {
+          "text": "Tu respuesta → *comentarios*",
+          "at": "Déjame tu respuesta"
+        },
+        {
+          "text": "Próximo video: *tú eliges el sistema*",
+          "at": "qué sistema quieres"
+        },
+        {
+          "text": "*Like* y *suscríbete* si te sirvió",
+          "icon": "bell",
+          "at": "un like y"
+        }
+      ],
+      "chapter": "¿Qué diseñamos en el próximo video?"
+    }
+  ],
+  "notes": [
+    "En una entrevista real te dan algo abierto (diseña la exportación de reportes) y tú mejoras el diseño según los requisitos que vas descubriendo: cuántos usuarios, cuántos datos, cuánto tarda, si el resultado es igual para todos. Decir en voz alta 'empiezo por lo simple y su límite es X' es exactamente lo que evalúan.",
+    "Backend vs API: el backend es todo lo que corre en tu servidor (lógica, acceso a datos, workers); la API es su puerta, las rutas que expone al frontend. En la versión simple el backend es solo un servidor con su API, por eso suelen decirse como si fueran lo mismo. Con el worker, el backend ya son dos procesos: la API y el worker.",
+    "Por qué el navegador no habla con la base: las credenciales quedarían en el código del cliente, cualquiera podría leer o borrar todo, y no tendrías dónde poner validaciones ni permisos por usuario.",
+    "La versión simple también depende del tráfico (ley de Little): pedidos en curso = pedidos por segundo × duración. Con 10 pedidos/s que tardan 20 s tienes 200 pedidos ocupando conexiones e hilos a la vez, aunque ninguno llegue al timeout. Con 1 pedido por minuto de 20 s, casi nunca hay más de uno en curso.",
+    "Lo más simple de verdad es una API REST y una base de datos, y no es mala práctica. Pero en producción casi siempre hay algo delante aunque no lo pongas tú: el router de tu hosting, Cloudflare, un nginx para HTTPS, el load balancer de tu nube. Todos tienen timeout: nginx (proxy_read_timeout 60 s por defecto, medido entre lecturas), un ALB de AWS (60 s de inactividad por defecto, configurable hasta 4000 s), API Gateway REST (29 s durante años; hoy ampliable en APIs regionales y privadas), Cloudflare 125 s (error 524).",
+    "¿Por qué no un hilo en segundo plano dentro de la API? Funciona para cosas pequeñas, pero si el proceso se reinicia (un deploy, un crash) el trabajo se pierde, y compite por CPU y memoria con las peticiones normales. La cola (SQS, RabbitMQ, Redis) persiste el pedido y desacopla la API del trabajo pesado.",
+    "Cómo avisar: polling (GET /reportes/{jobId} cada pocos segundos; lo más simple y suele bastar), SSE (el servidor empuja eventos en un solo sentido sobre HTTP, con reconexión automática), WebSocket (bidireccional; excesivo solo para un aviso salvo que la app ya lo use) o email si el usuario ya se fue.",
+    "S3 o cualquier almacenamiento de objetos (Google Cloud Storage, Azure Blob, Cloudflare R2). El frontend descarga con una URL prefirmada que expira, así el archivo no pasa por tu API.",
+    "La versión con cola, robusta: deduplicar pedidos iguales con una clave de idempotencia (devuelve el jobId que ya existe), reintentos con backoff, dead letter queue para los trabajos que fallan siempre, timeout por trabajo y worker idempotente. El endpoint de estado devuelve pending, running, done o failed.",
+    "Precalcular tiene límite: si cada usuario tiene sus propios filtros, no puedes precalcular todo; vuelves a la cola con deduplicación y caché por combinación de filtros, o mantienes agregados incrementales (vistas materializadas o tablas de resumen) para que el reporte vuelva a tardar segundos y a ser síncrono.",
+    "Formato: un Excel admite como máximo 1.048.576 filas por hoja; para millones de filas, CSV o un reporte agregado.",
+    "Preguntas que suele hacer el entrevistador: ¿qué pasa si el worker muere a mitad del trabajo?, ¿cómo limitas cuántos reportes pide un usuario?, ¿cuánto tiempo guardas los archivos generados?",
+    "Qué pasa si la API retiene la conexión (ley de Little, otra vez): pedidos en curso = pedidos por segundo × duración. Con 1 reporte por segundo de 300 s son 300 conexiones abiertas a la vez; el límite real depende del servidor (hilos, workers, descriptores de archivo). El proxy corta a los 60 s, pero tu API sigue trabajando para nadie, así que el trabajo se acumula.",
+    "Autorizar la descarga: la API comprueba que ese usuario puede ver ese reporte antes de crear la URL prefirmada de S3. La URL expira (tú eliges cuánto) y la subida/bajada va directa entre el navegador y S3, sin gastar ancho de banda ni conexiones de tu API. Guarda los archivos bajo una ruta por trabajo (reportes/{jobId}.csv) y define una regla de ciclo de vida para borrarlos pasado un tiempo.",
+    "Fallos del worker: las colas estándar (por ejemplo SQS) entregan al menos una vez. Si el worker no borra el mensaje a tiempo (visibility timeout), vuelve a la cola y lo recibe otro. Con reintentos y backoff (esperas crecientes, mejor con algo de aleatoriedad) no martillas un servicio que ya falla.",
+    "Cola de errores (dead letter queue): un mensaje que se recibe más de N veces sin completarse pasa a otra cola para inspección. Alerta cuando no esté vacía; reencolar a mano cuando arregles el bug. Sin ella, un mensaje venenoso se reintenta eternamente y consume workers.",
+    "Idempotencia: como puede haber entregas duplicadas, procesar dos veces el mismo trabajo no debe duplicar efectos. Para un archivo basta una ruta determinista (por jobId) que se sobrescribe; con efectos externos (cobros, correos) guarda qué trabajos ya procesaste o usa una clave de idempotencia.",
+    "Deduplicar y limitar: la clave (tipo de reporte + periodo + filtros) evita encolar lo que ya existe o ya está listo. El límite por usuario o cuenta (responde 429 Too Many Requests, con Retry-After) protege la cola de abuso o de un cliente con un bucle. 200 pedidos no tumban la API porque responde 202 en milisegundos: el coste es el trabajo repetido, no el tráfico.",
+    "Leer de una réplica: el worker puede consultar una réplica de lectura de la base para que una consulta de minutos no compita con las transacciones normales; a cambio, los datos pueden ir un poco atrasados, algo aceptable en un reporte anual. Por qué no más réplicas ni caché ahora: el cuello de botella era la espera en la conexión, no la lectura.",
+    "Qué es un 202: aceptado para procesar, pero el procesamiento puede no haber terminado ni empezado, y puede fallar después (MDN, que remite a RFC 9110). Por eso la respuesta debe incluir el jobId o una URL para consultar el estado. Regla práctica sync/async: de 1 a 3 s, síncrono; entre unos segundos y el timeout, depende del tráfico y de lo predecible que sea la duración; si supera el timeout o es impredecible, asíncrono. Si el reporte es igual para todos, además del cron puedes servir el archivo desde un CDN."
+  ],
+  "publish": {
+    "titles": [
+      "Entrevista de diseño de sistemas: exportar un reporte que tarda minutos",
+      "Por qué tu API da error 504 (y cómo lo arreglan las colas)",
+      "De una API simple a colas y workers: diseñando la exportación de un reporte"
+    ],
+    "description": "Tu sistema tiene que generar el reporte anual de ventas y entregárselo al usuario. ¿Cómo lo diseñas? Empezamos por lo más simple que funciona y lo mejoramos solo cuando un problema real lo pide, como lo responderías en una entrevista de diseño de sistemas.",
+    "learn": [
+      "Por qué una API REST + base de datos es la primera respuesta correcta",
+      "El proxy oculto delante de tu API y de dónde sale el error 504",
+      "Por qué subir el timeout no lo arregla",
+      "Procesamiento asíncrono: 202 + ID de trabajo, cola, worker y S3",
+      "Polling vs SSE vs WebSocket: cuál necesitas de verdad",
+      "Descargar con un enlace temporal, sin pasar por tu API",
+      "Si el worker muere: reintentos, cola de errores e idempotencia",
+      "Deduplicar y limitar pedidos, y cuándo precalcular con un cron"
+    ],
+    "extra": [
+      "Timeouts reales (por defecto): nginx proxy_read_timeout 60 s, AWS ALB 60 s de inactividad, Cloudflare 125 s (error 524).",
+      "Fuentes: AWS ALB, tiempo de inactividad por defecto 60 s (repost.aws/knowledge-center/504-error-alb) · Cloudflare, error 524 tras 125 s por defecto (developers.cloudflare.com/support/troubleshooting/http-status-codes/cloudflare-5xx-errors/error-524) · SQS, entrega al menos una vez y colas de mensajes muertos (docs.aws.amazon.com/AWSSimpleQueueService)."
+    ],
+    "comment": "¿Tú qué habrías hecho distinto? ¿Y qué sistema diseñamos en el próximo video: un acortador de URLs, un chat, un sistema de pagos?",
+    "hashtags": [
+      "diseñodesistemas",
+      "arquitecturadesoftware",
+      "backend"
+    ]
+  }
+}

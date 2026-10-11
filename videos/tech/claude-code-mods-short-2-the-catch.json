@@ -1,0 +1,345 @@
+{
+  "id": "claude-code-mods-short-2-the-catch",
+  "title": "The catch with Claude Code mods",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "light",
+  "board": {
+    "nodes": [
+      {
+        "id": "you",
+        "label": "You",
+        "icon": "user",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "cc",
+        "label": "Claude Code",
+        "icon": "code",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "model",
+        "label": "Model",
+        "icon": "ai",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "mod",
+        "label": "Mod",
+        "icon": "lambda",
+        "row": 1,
+        "col": 1,
+        "sub": "functions inside"
+      },
+      {
+        "id": "machine",
+        "label": "Your machine",
+        "icon": "container",
+        "row": 2,
+        "col": 0,
+        "sub": "files · commands"
+      },
+      {
+        "id": "secrets",
+        "label": "Your secrets",
+        "icon": "lock",
+        "row": 2,
+        "col": 2,
+        "sub": "API keys"
+      }
+    ],
+    "edges": [
+      {
+        "from": "you",
+        "to": "cc"
+      },
+      {
+        "from": "cc",
+        "to": "model"
+      },
+      {
+        "from": "cc",
+        "to": "mod"
+      },
+      {
+        "from": "mod",
+        "to": "machine"
+      },
+      {
+        "from": "mod",
+        "to": "secrets"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "Claude Code",
+      "heading": "Claude Code mods can *approve for you*",
+      "narration": "Claude Code mods can approve a tool call before you're even asked. That's not a bug: it's how they work. Here's why, and how to stay safe.",
+      "beats": [
+        {
+          "text": "Mod",
+          "icon": "lambda",
+          "at": "Claude Code mods"
+        },
+        {
+          "text": "Tool call",
+          "icon": "code",
+          "at": "approve a tool call"
+        },
+        {
+          "text": "Approved",
+          "icon": "lock",
+          "at": "before you're even",
+          "sfx": "impact"
+        },
+        {
+          "text": "?",
+          "at": "Here's why"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "What a mod is",
+      "narration": "A mod is a plugin with functions that run inside Claude Code. Claude Code calls them on every event, like a tool call, and they decide what happens next.",
+      "steps": [
+        {
+          "at": "A mod is",
+          "show": [
+            "cc",
+            "mod"
+          ],
+          "note": {
+            "text": "Mod = *functions inside* Claude Code",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "run inside Claude Code",
+          "focus": [
+            "cc",
+            "mod"
+          ]
+        },
+        {
+          "at": "like a tool call",
+          "packet": {
+            "from": "cc",
+            "to": "mod",
+            "label": "tool.call",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "what happens next",
+          "packet": {
+            "from": "mod",
+            "to": "cc",
+            "label": "next",
+            "color": "green"
+          },
+          "focus": []
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "What it can reach",
+      "narration": "And it runs with your permissions. It can read and write your files, read secrets like API keys, see every prompt, and approve a tool call before you're asked.",
+      "steps": [
+        {
+          "at": "runs with your permissions",
+          "focus": [
+            "mod"
+          ],
+          "status": {
+            "mod": "warn"
+          }
+        },
+        {
+          "at": "read and write your files",
+          "show": [
+            "machine"
+          ],
+          "packet": {
+            "from": "mod",
+            "to": "machine",
+            "label": "files",
+            "color": "orange"
+          },
+          "focus": [
+            "mod",
+            "machine"
+          ]
+        },
+        {
+          "at": "read secrets like",
+          "show": [
+            "secrets"
+          ],
+          "packet": {
+            "from": "mod",
+            "to": "secrets",
+            "label": "API key",
+            "color": "red"
+          },
+          "focus": [
+            "mod",
+            "secrets"
+          ],
+          "status": {
+            "secrets": "warn"
+          }
+        },
+        {
+          "at": "see every prompt",
+          "show": [
+            "you"
+          ],
+          "packet": {
+            "from": "you",
+            "to": "cc",
+            "label": "prompt",
+            "color": "blue"
+          },
+          "focus": [
+            "you",
+            "cc",
+            "mod"
+          ]
+        },
+        {
+          "at": "approve a tool call",
+          "packet": {
+            "from": "mod",
+            "to": "cc",
+            "label": "approved",
+            "color": "red"
+          },
+          "status": {
+            "mod": "error"
+          },
+          "sfx": "riser",
+          "focus": [],
+          "camera": []
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "No sandbox",
+      "narration": "It isn't sandboxed either. The sandbox isolates the commands Claude runs, not the programs a mod starts. And it can't change what the permission prompt shows you.",
+      "steps": [
+        {
+          "at": "isn't sandboxed",
+          "status": {
+            "mod": "warn"
+          },
+          "note": {
+            "text": "*No sandbox* for mods",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "isolates the commands",
+          "focus": [
+            "cc"
+          ]
+        },
+        {
+          "at": "the programs a mod",
+          "focus": [
+            "mod",
+            "machine"
+          ]
+        },
+        {
+          "at": "can't change what",
+          "focus": [],
+          "note": {
+            "text": "Permission prompt: *off-limits*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Stay safe",
+      "narration": "So check before you install: claude plugin validate lists the events a mod handles and what it calls. Safe mode starts without mods, and companies can allow only their own.",
+      "steps": [
+        {
+          "at": "check before you install",
+          "status": {
+            "mod": "idle",
+            "secrets": "idle"
+          }
+        },
+        {
+          "at": "plugin validate lists",
+          "note": {
+            "text": "plugin validate: *see before installing*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "Safe mode starts",
+          "note": {
+            "text": "--safe-mode: *start without mods*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "allow only their own",
+          "camera": [],
+          "note": {
+            "text": "Companies: *only approved mods*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "They run as you",
+      "narration": "Mods are powerful because they run as you. Would you install one from a stranger? The full video is on the channel.",
+      "points": [
+        {
+          "text": "Mods run *as you*",
+          "at": "they run as you"
+        },
+        {
+          "text": "Check first: *plugin validate*",
+          "at": "Would you install"
+        }
+      ],
+      "cta": "Full video on the channel ▶"
+    }
+  ],
+  "notes": [
+    "What a mod can reach (docs): files, processes, network, environment variables and settings (API keys), every prompt and tool call (and rewrite them), approve a tool call before you're asked, spend your usage. Not sandboxed: Bash sandboxing isolates Claude's commands, not processes a mod starts. A mod can't change what the permission prompt shows.",
+    "Controls: claude plugin validate (hooks and calls), --safe-mode, \"disableAllHooks\": true, admins' allowManagedModsOnly, and sec-default loading first on managed setups."
+  ],
+  "publish": {
+    "titles": [
+      "The Catch With Claude Code Mods (They Run as You)",
+      "Claude Code Mods Can Approve for You. Here's Why"
+    ],
+    "description": "A Claude Code mod runs inside Claude Code with your permissions: it can read your files and secrets and approve tool calls. Here's what it can reach and how to stay safe.",
+    "extra": [
+      "🎬 The full video (the agent loop, skills vs MCP vs hooks vs mods, examples and the catch) is on the channel."
+    ],
+    "comment": "Would you install a mod from a stranger?",
+    "hashtags": [
+      "claudecode",
+      "ai",
+      "security"
+    ]
+  }
+}

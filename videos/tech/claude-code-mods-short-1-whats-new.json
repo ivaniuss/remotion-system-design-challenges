@@ -1,0 +1,337 @@
+{
+  "id": "claude-code-mods-short-1-whats-new",
+  "title": "Claude Code just got mods: what's new?",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "light",
+  "board": {
+    "nodes": [
+      {
+        "id": "skill",
+        "label": "Skill",
+        "icon": "file",
+        "row": 0,
+        "col": 0,
+        "sub": "instructions"
+      },
+      {
+        "id": "cc",
+        "label": "Claude Code",
+        "icon": "code",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "mcp",
+        "label": "MCP server",
+        "icon": "external",
+        "row": 0,
+        "col": 2,
+        "sub": "new tools"
+      },
+      {
+        "id": "hook",
+        "label": "Settings hook",
+        "icon": "worker",
+        "row": 1,
+        "col": 0,
+        "sub": "your script"
+      },
+      {
+        "id": "mod",
+        "label": "Mod",
+        "icon": "lambda",
+        "row": 1,
+        "col": 2,
+        "sub": "functions inside"
+      }
+    ],
+    "edges": [
+      {
+        "from": "skill",
+        "to": "cc"
+      },
+      {
+        "from": "mcp",
+        "to": "cc"
+      },
+      {
+        "from": "cc",
+        "to": "hook"
+      },
+      {
+        "from": "cc",
+        "to": "mod"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "Claude Code",
+      "heading": "Claude Code just got *mods*",
+      "narration": "Claude Code just got mods. It already had skills, MCP and hooks, so what's actually new? The answer is where your code runs.",
+      "beats": [
+        {
+          "text": "Claude Code",
+          "icon": "code",
+          "at": "Claude Code just got"
+        },
+        {
+          "text": "Skills · MCP · Hooks",
+          "icon": "worker",
+          "at": "It already had"
+        },
+        {
+          "text": "Mods",
+          "icon": "lambda",
+          "at": "actually new",
+          "sfx": "impact"
+        },
+        {
+          "text": "?",
+          "at": "where your code runs"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "From the outside",
+      "narration": "Until now, you extended it from the outside: a skill gives Claude instructions, MCP gives it tools, and a settings hook runs your script, which can say yes or no to a tool call.",
+      "steps": [
+        {
+          "at": "from the outside",
+          "show": [
+            "cc"
+          ]
+        },
+        {
+          "at": "a skill gives",
+          "show": [
+            "skill"
+          ],
+          "packet": {
+            "from": "skill",
+            "to": "cc",
+            "label": "instructions",
+            "color": "gray"
+          }
+        },
+        {
+          "at": "MCP gives it tools",
+          "show": [
+            "mcp"
+          ],
+          "packet": {
+            "from": "mcp",
+            "to": "cc",
+            "label": "tools",
+            "color": "teal"
+          }
+        },
+        {
+          "at": "a settings hook",
+          "show": [
+            "hook"
+          ],
+          "packet": {
+            "from": "cc",
+            "to": "hook",
+            "label": "tool call?",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "yes or no",
+          "packet": {
+            "from": "hook",
+            "to": "cc",
+            "label": "yes / no",
+            "color": "green"
+          },
+          "note": {
+            "text": "Outside: *allow or block*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Inside",
+      "narration": "A mod runs inside Claude Code. It's a set of functions Claude Code calls on every event: a tool call, a prompt, or a piece of the screen being drawn.",
+      "steps": [
+        {
+          "at": "runs inside",
+          "show": [
+            "mod"
+          ],
+          "focus": [
+            "cc",
+            "mod"
+          ],
+          "sfx": "impact",
+          "note": {
+            "text": "Mod = *functions inside* Claude Code",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "a tool call",
+          "packet": {
+            "from": "cc",
+            "to": "mod",
+            "label": "tool.call",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "a prompt",
+          "packet": {
+            "from": "cc",
+            "to": "mod",
+            "label": "prompt",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "being drawn",
+          "packet": {
+            "from": "cc",
+            "to": "mod",
+            "label": "ui.render",
+            "color": "purple"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Observe, rewrite, answer",
+      "narration": "Each function can just watch, rewrite the event, or answer it itself, so the usual behavior never runs. That is how a mod adds panels, changes the spinner, or stops a risky command.",
+      "steps": [
+        {
+          "at": "just watch",
+          "status": {
+            "mod": "busy"
+          },
+          "note": {
+            "text": "*Observe*: let it pass",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "rewrite the event",
+          "packet": {
+            "from": "mod",
+            "to": "cc",
+            "label": "changed",
+            "color": "yellow"
+          },
+          "note": {
+            "text": "*Rewrite*: change it",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "answer it itself",
+          "packet": {
+            "from": "mod",
+            "to": "cc",
+            "label": "answer",
+            "color": "green"
+          },
+          "note": {
+            "text": "*Answer*: take over",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "adds panels",
+          "status": {
+            "mod": "ok"
+          },
+          "focus": [],
+          "camera": [],
+          "note": {
+            "text": "Panels · spinner · *guards*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The catch",
+      "narration": "The catch: a mod runs with your permissions and isn't sandboxed, so install only the mods you trust.",
+      "steps": [
+        {
+          "at": "your permissions",
+          "status": {
+            "mod": "warn"
+          },
+          "focus": [
+            "mod"
+          ],
+          "note": {
+            "text": "Your permissions, *no sandbox*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "install only the",
+          "note": {
+            "text": "Install *only what you trust*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "In one line",
+      "narration": "Skills teach, MCP connects, hooks guard, and mods change Claude Code itself. What mod would you build? The full video is on the channel.",
+      "points": [
+        {
+          "text": "Skill: *teaches*",
+          "at": "Skills teach"
+        },
+        {
+          "text": "MCP: *connects*",
+          "at": "MCP connects"
+        },
+        {
+          "text": "Settings hook: *guards*",
+          "at": "hooks guard"
+        },
+        {
+          "text": "Mod: changes *Claude Code itself*",
+          "at": "mods change"
+        }
+      ],
+      "cta": "Full video on the channel ▶"
+    }
+  ],
+  "notes": [
+    "Launched October 1, 2026 (@ClaudeDevs: \"You can now mod Claude Code\"). Needs Claude Code v2.1.287+ in the terminal, v2.1.286+ in the Desktop app's Code tab. On by default.",
+    "Docs: \"A mod is a plugin that changes how Claude Code looks and behaves. It's made of JavaScript or TypeScript event handlers.\" Settings hooks run a shell command, HTTP request or prompt from a settings file; mod handlers are functions inside Claude Code.",
+    "A hook can observe, rewrite or answer an event. To do anything outside its own code (draw, add a command, call a model, read a file, start a process, network) it must call the mods API, which is why `claude plugin validate` can list what a mod does before you install it.",
+    "Official example: count tool calls with a `tool.call` hook and show the count beside the spinner with a `ui.render` hook on the Spinner component; both share one variable."
+  ],
+  "publish": {
+    "titles": [
+      "Claude Code Just Got Mods: What's Actually New?",
+      "Mods vs Skills vs MCP vs Hooks in 50 Seconds"
+    ],
+    "description": "Claude Code already had skills, MCP and hooks. Mods are different: they run inside Claude Code and can observe, rewrite or answer every event.",
+    "extra": [
+      "🎬 The full video (the agent loop, skills vs MCP vs hooks vs mods, examples and the catch) is on the channel."
+    ],
+    "comment": "What mod would you build?",
+    "hashtags": [
+      "claudecode",
+      "ai",
+      "programming"
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "handle": null,
+  "cta": null,
+  "formats": [
+    "vertical"
+  ],
+  "captions": {
+    "vertical": true,
+    "horizontal": false
+  },
+  "voice": {
+    "mode": "auto",
+    "rate": "+10%",
+    "voices": {
+      "en": "en-US-AndrewNeural",
+      "es": "es-MX-JorgeNeural",
+      "pt": "pt-BR-AntonioNeural"
+    }
+  },
+  "python": "python3",
+  "sfx": true,
+  "music": {
+    "file": "music/ambient.wav",
+    "volume": 0.14
+  }
+}
