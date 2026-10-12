@@ -693,5 +693,21 @@
       "redis",
       "backend"
     ]
+  },
+  "thumbnail": {
+    "text": "¿API lenta? Usa *cache-aside*",
+    "kicker": "Backend",
+    "number": "10k/s",
+    "tone": "info",
+    "icons": [
+      {
+        "icon": "api",
+        "status": "busy"
+      },
+      {
+        "icon": "cache",
+        "status": "ok"
+      }
+    ]
   }
 }

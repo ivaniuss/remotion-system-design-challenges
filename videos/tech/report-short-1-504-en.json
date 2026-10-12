@@ -336,5 +336,20 @@
       "backend",
       "programming"
     ]
+  },
+  "thumbnail": {
+    "text": "Why your report *times out*",
+    "kicker": "System design",
+    "number": "504",
+    "tone": "bad",
+    "icons": [
+      {
+        "icon": "file"
+      },
+      {
+        "icon": "gateway",
+        "status": "error"
+      }
+    ]
   }
 }

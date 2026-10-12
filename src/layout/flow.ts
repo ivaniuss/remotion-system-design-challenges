@@ -94,7 +94,7 @@ function orderLayers(ids: string[], edges: FlowEdge[], layer: Map<string, number
 
 // Unscaled node centers. Uses the author's grid (row/col) when every node has one,
 // otherwise a layered layout computed from the edges.
-function rawCenters(nodes: FlowNode[], edges: FlowEdge[], vertical: boolean): Map<string, Pt> {
+function rawCenters(nodes: FlowNode[], edges: FlowEdge[], vertical: boolean, flowUp = false): Map<string, Pt> {
   const ids = nodes.map((n) => n.id);
   const raw = new Map<string, Pt>();
 
@@ -110,13 +110,16 @@ function rawCenters(nodes: FlowNode[], edges: FlowEdge[], vertical: boolean): Ma
       const flip = fit(rows * (CARD.w + GAP.horizontal.x) + CARD.w, cols * (CARD.h + GAP.horizontal.y) + CARD.h);
       transpose = flip > keep * 1.15;
     }
+    // A board whose story flows up puts its bottom row on the left when transposed.
+    const maxRow = Math.max(...nodes.map((n) => n.row!));
     for (const n of nodes) {
+      const across = flowUp ? maxRow - n.row! : n.row!;
       raw.set(
         n.id,
         vertical
           ? {x: n.col! * (CARD.w + GAP.vertical.x), y: n.row! * (CARD.h + GAP.vertical.y)}
           : transpose
-            ? {x: n.row! * (CARD.w + GAP.horizontal.x), y: n.col! * (CARD.h + GAP.horizontal.y)}
+            ? {x: across * (CARD.w + GAP.horizontal.x), y: n.col! * (CARD.h + GAP.horizontal.y)}
             : {x: n.col! * (CARD.w + GAP.horizontal.x), y: n.row! * (CARD.h + GAP.horizontal.y)},
       );
     }
@@ -154,9 +157,9 @@ function rawCenters(nodes: FlowNode[], edges: FlowEdge[], vertical: boolean): Ma
 
 // Layout in world units (cards at their natural size). Edges are routed here, so the
 // same routes can be scaled to a box (flow scenes) or moved by a camera (board).
-export function layoutWorld(nodes: FlowNode[], edges: FlowEdge[], vertical: boolean): FlowLayout {
+export function layoutWorld(nodes: FlowNode[], edges: FlowEdge[], vertical: boolean, flowUp = false): FlowLayout {
   const ids = nodes.map((n) => n.id);
-  const raw = rawCenters(nodes, edges, vertical);
+  const raw = rawCenters(nodes, edges, vertical, flowUp);
   const out: Record<string, NodeLayout> = {};
   for (const id of ids) {
     const p = raw.get(id)!;

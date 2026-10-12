@@ -214,5 +214,19 @@
       "backend",
       "sql"
     ]
+  },
+  "thumbnail": {
+    "text": "Same seat, *two fans*",
+    "kicker": "System design",
+    "number": "Who wins?",
+    "tone": "warn",
+    "icons": [
+      {
+        "icon": "users"
+      },
+      {
+        "icon": "db"
+      }
+    ]
   }
 }

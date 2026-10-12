@@ -362,5 +362,21 @@
       "backend",
       "programming"
     ]
+  },
+  "thumbnail": {
+    "text": "A report that takes *5 minutes*",
+    "kicker": "System design",
+    "number": "202",
+    "tone": "good",
+    "icons": [
+      {
+        "icon": "queue",
+        "status": "busy"
+      },
+      {
+        "icon": "worker",
+        "status": "busy"
+      }
+    ]
   }
 }

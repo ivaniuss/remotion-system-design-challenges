@@ -35,7 +35,8 @@ The short version of the workflow:
 4. **Review, don't render:** the user runs `npm run preview -- videos/<pack>/<id>.json`
    (Remotion Studio, both compositions). Render only when asked:
    `npm run make -- videos/<pack>/<id>.json --format both|horizontal|vertical`.
-5. **Deliver** the sheets, `out/<id>/script.md` (teleprompter + talking points) and
+5. **Deliver** the sheets, the thumbnail and Short cover (`out/<id>/<theme>.thumbnail.png`,
+   `<theme>.cover.png`), `out/<id>/script.md` (teleprompter + talking points) and
    `out/<id>/youtube.md` (titles, description, chapters timed from the voice).
 
 ## Rules the user cares about (details in the guide)

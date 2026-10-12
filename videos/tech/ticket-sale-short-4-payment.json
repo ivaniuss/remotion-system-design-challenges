@@ -309,5 +309,18 @@
       "backend",
       "payments"
     ]
+  },
+  "thumbnail": {
+    "text": "Paid, but *no seat*?",
+    "kicker": "System design",
+    "tone": "bad",
+    "icons": [
+      {
+        "icon": "external"
+      },
+      {
+        "icon": "db"
+      }
+    ]
   }
 }

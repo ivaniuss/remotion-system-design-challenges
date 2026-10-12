@@ -311,5 +311,18 @@
       "backend",
       "programming"
     ]
+  },
+  "thumbnail": {
+    "text": "Why sites *hold your seat*",
+    "kicker": "System design",
+    "icons": [
+      {
+        "icon": "user"
+      },
+      {
+        "icon": "scheduler",
+        "status": "busy"
+      }
+    ]
   }
 }

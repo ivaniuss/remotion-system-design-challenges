@@ -167,7 +167,7 @@ function prepare(tl: Timeline, box: Box, vertical: boolean): Cache {
   const hit = byKey.get(key);
   if (hit) return hit;
 
-  const layout = layoutWorld(tl.board!.nodes, tl.board!.edges, vertical);
+  const layout = layoutWorld(tl.board!.nodes, tl.board!.edges, vertical, tl.board!.flowUp);
   const events = boardEvents(tl);
   const maxZoom = vertical ? 1.3 : 1.2;
   const minZoom = 0.3;
@@ -221,8 +221,8 @@ export function boardCamera(keys: Cache['keys'], t: number): Camera {
 }
 
 // The zoom at which the whole board fits (what `camera: []` shows).
-export function fullBoardZoom(board: {nodes: FlowNode[]; edges: FlowEdge[]}, box: Box, vertical: boolean): number {
-  const b = layoutBounds(layoutWorld(board.nodes, board.edges, vertical))!;
+export function fullBoardZoom(board: {nodes: FlowNode[]; edges: FlowEdge[]; flowUp?: boolean}, box: Box, vertical: boolean): number {
+  const b = layoutBounds(layoutWorld(board.nodes, board.edges, vertical, board.flowUp))!;
   return Math.max(0.3, Math.min(vertical ? 1.3 : 1.2, box.w / (b.x1 - b.x0 + PAD.x * 2), box.h / (b.y1 - b.y0 + PAD.y * 2)));
 }
 

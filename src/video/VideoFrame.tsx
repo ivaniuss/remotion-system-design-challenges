@@ -219,7 +219,7 @@ export const VideoFrame: React.FC<{tl: Timeline; t: number; frame: Frame; words?
   const local = t - scene.start;
   const isLast = scene.index === tl.scenes.length - 1;
   // Scene transition: quick fade/slide in, fade out at the end. The first scene is
-  // fully there on frame 0: the first frame is the thumbnail and the hook.
+  // fully there on frame 0: the first frame is what the feed shows (the hook).
   const inK = scene.index === 0 ? 1 : easeOut(clamp01(local / 0.35));
   const outK = isLast ? 1 : clamp01((scene.duration - local) / 0.25);
   const danger = dangerAt(dangerMoments(tl), t);

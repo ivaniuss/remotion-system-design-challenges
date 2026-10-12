@@ -362,5 +362,21 @@
     "extra": [
       "🎬 El video completo (de lo simple a cola, worker y cron) está en el canal."
     ]
+  },
+  "thumbnail": {
+    "text": "Un reporte de *5 minutos*",
+    "kicker": "System design",
+    "number": "202",
+    "tone": "good",
+    "icons": [
+      {
+        "icon": "queue",
+        "status": "busy"
+      },
+      {
+        "icon": "worker",
+        "status": "busy"
+      }
+    ]
   }
 }

@@ -1,12 +1,14 @@
 // npm run stills -- videos/<pack>/<id>.json [--format vertical|horizontal|both] [--every 3]
 // A quick visual check without rendering the whole video (seconds instead of minutes):
 // renders one small frame every N seconds of the timeline and, when ffmpeg is installed,
-// tiles them into a contact sheet: out/<id>/<theme>.<format>.sheet.png.
+// tiles them into a contact sheet: out/<id>/<theme>.<format>.sheet.png. It also renders the
+// thumbnail (out/<id>/<theme>.thumbnail.png) and the Short cover (out/<id>/<theme>.cover.png).
 import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
 import {bundle} from '@remotion/bundler';
 import {renderStill, selectComposition} from '@remotion/renderer';
+import {renderThumbnails} from './lib/thumbs';
 
 const args = process.argv.slice(2);
 const opt = (name: string) => {
@@ -62,3 +64,6 @@ for (const format of formats) {
     console.log(`✔ frames in ${dir} (install ffmpeg to get a single contact sheet)`);
   }
 }
+
+// The designed thumbnail and the Short cover (two stills, a few seconds).
+for (const f of await renderThumbnails(serveUrl, tl, browserExecutable)) console.log(`✔ ${f}`);

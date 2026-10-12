@@ -1791,5 +1791,20 @@
       "softwarearchitecture",
       "backend"
     ]
+  },
+  "thumbnail": {
+    "text": "Your report takes *minutes*",
+    "kicker": "System design interview",
+    "number": "504",
+    "tone": "bad",
+    "icons": [
+      {
+        "icon": "file"
+      },
+      {
+        "icon": "gateway",
+        "status": "error"
+      }
+    ]
   }
 }

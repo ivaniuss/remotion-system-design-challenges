@@ -92,6 +92,12 @@ Numbers, time and failure should be **seen**:
   a quantity that should feel big → a `callout` with `countUp`;
 - a number that appears only in the voice (not on screen, not in a note) is a finding;
 - a scene where nothing changes for more than ~3 s is a finding.
+- science: the story is told on a drawing (`figure`) and curves (`chart`), not on boxes and
+  arrows; a science video that looks like a software diagram (mostly `board` scenes) is a
+  finding, and so is a science video that does not start from a moment the viewer has lived;
+- the thumbnail (draft: its line; spec: the `thumbnail` block) says the hook in 2–6 words, with
+  one clear picture and the number if there is one; a thumbnail that repeats the title, or
+  promises something the video does not show, is a finding.
 
 ### 7. Variety
 Read the fingerprint. Does the video differ from the most recent long video in at least two axes

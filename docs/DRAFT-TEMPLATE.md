@@ -19,6 +19,8 @@ nothing until the user approves the narration. A finished example (progressive s
   exists, the last video's shape/hook/theme) and name the ≥ 2 axes that differ from it.
 - **Signature visuals used:** crowd · meter · clock · sequence · code · chart · compare · flow
   (which ones, and on which scene)
+- **Thumbnail:** the 2–6 big words (the hook, not the title), the picture (1–3 icons A → B, or
+  a figure) and the number for the sticker, for the long video and for each Short.
 
 ## Question
 

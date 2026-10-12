@@ -313,5 +313,20 @@
       "backend",
       "programming"
     ]
+  },
+  "thumbnail": {
+    "text": "Why ticket sites *crash*",
+    "kicker": "System design",
+    "number": "3.5 billion",
+    "tone": "bad",
+    "icons": [
+      {
+        "icon": "users"
+      },
+      {
+        "icon": "instances",
+        "status": "error"
+      }
+    ]
   }
 }

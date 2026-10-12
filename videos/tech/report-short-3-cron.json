@@ -379,5 +379,17 @@
     "extra": [
       "🎬 El video completo (de lo simple a cola, worker y cron) está en el canal."
     ]
+  },
+  "thumbnail": {
+    "text": "¿Generarlo *200 veces*?",
+    "kicker": "System design",
+    "icons": [
+      {
+        "icon": "users"
+      },
+      {
+        "icon": "file"
+      }
+    ]
   }
 }

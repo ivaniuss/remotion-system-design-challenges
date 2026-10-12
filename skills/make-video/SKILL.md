@@ -51,8 +51,8 @@ editing an existing video, do phase A and stop:
   each turn → what changes → **what it costs** → its limit), each scene as
   `title — narration` plus a one-line visual note (which crowd / meter / clock /
   sequence shows the number), the claims to verify, the talking points (with sources for
-  science), and the estimated length (words ÷ 3 s). A finished example:
-  `videos/tech/async-report-504.draft.md`.
+  science), the thumbnail (big words, picture, number), and the estimated length (words ÷ 3 s).
+  A finished example: `videos/tech/async-report-504.draft.md`.
   **Reviewer pass before the user sees it** (`docs/REVIEWER.md`): start a separate agent
   with the role and rubric in that file and give it only the draft, the pack guide,
   `docs/SHAPES.md` and the fingerprint output — not your reasoning. If the platform cannot
@@ -192,6 +192,11 @@ Follow `docs/AUTHORING.md` and the pack guide exactly. The parts that matter mos
   notes; the `comment` question; 2–4 `hashtags`) and a `chapter` on the scenes that
   start a section. `make`/`preview` then write `out/<id>/youtube.md` with the
   description and the chapters timed from the real voice, ready to paste.
+- **Thumbnail**: add a `thumbnail` block to every video and every Short (`docs/AUTHORING.md`
+  → "thumbnail"): 2–6 big words that are the hook (not the title), the icons or the figure
+  that tell the story at a glance (A → B), and the sticker with the number. `stills`, `make`
+  and `npm run thumbnail` write `out/<id>/<theme>.thumbnail.png` (1280×720) and
+  `out/<id>/<theme>.cover.png` (1080×1920). Look at both before delivering.
 
 ### Tech pack (`docs/packs/tech.md`)
 - **The hook is a real question about the system.** In the `progressive` shape it is an open
@@ -228,11 +233,18 @@ Follow `docs/AUTHORING.md` and the pack guide exactly. The parts that matter mos
 - **The hook is the viewer's real problem or curiosity** ("Llevas años estudiando un
   idioma y no lo hablas"), never brain clickbait ("tu cerebro te engaña", "hackea tu
   cerebro").
-- **A model, not anatomy**: the board is a simplified model (organs, processes,
-  habits, kinds of memory); say so once. No shaky "this region lights up" claims.
-- **Close-ups and curves**: a `figure` scene (the illustrated `brain`: regions glow, get
-  labels, pass signals, zoom) for 1–3 well-established moments, and a `chart` scene
-  for curves over time (`schematic: true` unless the numbers have a source).
+- **Told with illustrations, not boxes**: science looks like the neuron film, not like a
+  software diagram. The same `figure` carries the story (`body` for reflexes, pain, touch
+  and movement; `neuron` for one cell; `brain` for which part does what): regions glow, get
+  labels, pass signals along the real nerves, zoom. `chart` scenes for anything over time or
+  "how much" (`schematic: true` unless the numbers have a source), `callout` for the number.
+  The `board` only for a model with no drawing (kinds of memory, a habit loop);
+  `npm run validate` warns when a science video is mostly boards. A missing drawing is drawn
+  once as a new figure and reused. Say once that the drawing is simplified; no shaky "this
+  region lights up" claims.
+- **An everyday anchor**, like the ticket sale in tech: tell the mechanism through something
+  every viewer has lived (a hot pan, a stubbed toe, coffee at night), not through anatomy
+  first. Example draft: `videos/science/hot-pan.draft.md`.
 - **Sources for every claim**, in `notes`; strength words match the evidence ("está
   muy estudiado" vs "algunos estudios sugieren"); numbers only from sources, rounded
   honestly. Never state a myth as fact (the guide lists them: 10 % of the brain,
@@ -255,7 +267,7 @@ Render the MP4s only when the user asks for them ("render", "listo", "ya está")
 ```bash
 npm run validate -- videos/<pack>/<id>.json     # fix every ✖ and every ⚠ cue warning
 npm run fingerprint -- videos/<pack>/<id>.json  # ≥ 2 of 5 axes differ from the previous video
-npm run stills -- videos/<pack>/<id>.json       # out/<id>/<theme>.vertical.sheet.png + horizontal
+npm run stills -- videos/<pack>/<id>.json       # out/<id>/<theme>.vertical.sheet.png + horizontal + thumbnail
 ```
 Then open the Studio for the user: `npm run preview -- videos/<pack>/<id>.json`
 (timeline with voice + script). After later edits: add `--no-studio`.
@@ -281,11 +293,17 @@ Final render, when asked: `npm run make -- videos/<pack>/<id>.json --format both
    npx tsx scripts/make.ts videos/<pack>/<id>.json --voice none --no-render   # timeline + script.md
    npx tsx scripts/stills.ts videos/<pack>/<id>.json     # add --format horizontal for YouTube-only
    ```
-   Look at the sheets (step "Inspect" below) and fix the spec until they are right.
+   Look at the sheets and the thumbnail (step "Inspect" below) and fix the spec until they are right.
 5. Write the final `videos/<pack>/<id>.json` to the computer (in `device_bash`, or
-   `device_commit_files` from `/mnt/user-data/outputs/…`), plus `out/<id>/script.md`.
+   `device_commit_files` from `/mnt/user-data/outputs/…`), plus `out/<id>/script.md`
+   and the thumbnail PNGs.
    The user previews on their Mac with `npm run preview -- videos/<pack>/<id>.json`
    (with voice, because their Mac can reach the voice service).
+   **Before writing back, check the computer has not changed since you copied it**: other
+   sessions and the user edit the project too. Compare hashes (`shasum -a 256` there,
+   `sha256sum` here) or list files newer than your copy (`find . -newer <file>`); for every
+   file that changed there, start from their version and re-apply your edits, never
+   overwrite it with your older copy.
    Stage every copy from a **new** folder (`/mnt/user-data/outputs/v<N>/…`): a reused
    staging path can deliver an old version. After committing, compare `shasum -a 256`
    on the device with the container's `sha256sum` for every text file. Binary files
@@ -306,8 +324,9 @@ final overview (too many rows/cols), packets or notes covering labels, notes tha
 linger after the idea changed, a still opening (the title beats must appear with the
 voice), long stretches where nothing moves, empty scenes, wrong language, a number that
 is only spoken (should it be a `crowd`, `meter`, `clock` or `countUp`?), crowds or clock
-rings covering a label. Fix the spec and run `stills` again. `npm run check` also flags
-diagrams that had to shrink a lot.
+rings covering a label. Also look at `<theme>.thumbnail.png` and `<theme>.cover.png`: the
+big words readable at a small size, nothing touching the picture. Fix the spec and run
+`stills` again. `npm run check` also flags diagrams that had to shrink a lot.
 
 **Second reviewer pass, on the spec** (`docs/REVIEWER.md`): give a separate agent the spec,
 `out/<id>/script.md`, the pack guide and the fingerprint output. It checks what the draft
@@ -316,7 +335,8 @@ Fix its "must fix" items before delivering.
 
 ## 5. Deliver
 
-- Send the contact sheets, `out/<id>/script.md` and `out/<id>/youtube.md` to the user
+- Send the contact sheets, the thumbnail and cover (`out/<id>/<theme>.thumbnail.png`,
+  `<theme>.cover.png`), `out/<id>/script.md` and `out/<id>/youtube.md` to the user
   (in the app: `SendUserFile`), and the MP4s only if you rendered them.
 - One short message: the topic and estimated length, the shape and hook you chose (and how
   it differs from the previous video), the scene list in one line, the claims you verified

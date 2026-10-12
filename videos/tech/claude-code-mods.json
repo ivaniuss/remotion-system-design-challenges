@@ -850,5 +850,22 @@
       "ai",
       "programming"
     ]
+  },
+  "thumbnail": {
+    "text": "Claude Code *mods*, explained",
+    "kicker": "Claude Code",
+    "number": "No sandbox",
+    "tone": "bad",
+    "icons": [
+      {
+        "icon": "code"
+      },
+      {
+        "icon": "lambda"
+      },
+      {
+        "icon": "worker"
+      }
+    ]
   }
 }

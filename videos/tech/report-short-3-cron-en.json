@@ -379,5 +379,17 @@
       "backend",
       "programming"
     ]
+  },
+  "thumbnail": {
+    "text": "Generate it *200 times*?",
+    "kicker": "System design",
+    "icons": [
+      {
+        "icon": "users"
+      },
+      {
+        "icon": "file"
+      }
+    ]
   }
 }

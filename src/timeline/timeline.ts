@@ -1,4 +1,4 @@
-import type {BoardSpec, Scene, VideoSpec} from '../spec/schema';
+import type {BoardSpec, Scene, ThumbnailSpec, VideoSpec} from '../spec/schema';
 import type {ThemeName} from '../spec/vocab';
 import {cuePhrases, resolveCues} from './cues';
 import {estimateWords, round, Word} from './words';
@@ -32,6 +32,7 @@ export type Timeline = {
   sfx: boolean; // sound effects on visual events
   music: Music | null; // background track under the voice (file in public/)
   board: BoardSpec | null;
+  thumbnail?: ThumbnailSpec | null; // the designed still (optional in older timelines)
   scenes: TimedScene[];
 };
 
@@ -101,6 +102,7 @@ export function buildTimeline(spec: VideoSpec, speech: Speech, opts: TimelineOpt
     sfx: opts.sfx ?? true,
     music: opts.music ?? null,
     board: spec.board ?? null,
+    thumbnail: spec.thumbnail ?? null,
     scenes,
   };
   return {timeline, warnings};
