@@ -1,0 +1,427 @@
+{
+  "id": "hot-pan-short-2-two-pains",
+  "title": "Why does a stubbed toe hurt twice?",
+  "lang": "en",
+  "pack": "science",
+  "theme": "dark",
+  "hook": "broken-thing",
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "Everyday science",
+      "heading": "Why does a stubbed toe hurt *twice*?",
+      "narration": "Stub your toe and it hurts twice: a sharp sting, then a deep burn a moment later. Why would one hit hurt twice?",
+      "beats": [
+        {
+          "text": "Hit",
+          "icon": "target",
+          "at": "Stub your toe"
+        },
+        {
+          "text": "Sting",
+          "icon": "flame",
+          "at": "a sharp sting"
+        },
+        {
+          "text": "Burn later",
+          "icon": "clock",
+          "at": "deep burn a"
+        },
+        {
+          "text": "?",
+          "at": "Why would one"
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "2 pains",
+      "caption": "a quick sting, then a slow burn",
+      "tone": "warn",
+      "icon": "flame",
+      "sfx": "impact",
+      "narration": "It's not in your head. Your nerves carry pain on two kinds of fibers, and they don't travel at the same speed."
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "Two fibers",
+      "narration": "From your toe to your spinal cord is about a meter of nerve. Fast fibers, wrapped in myelin, an insulation that speeds signals up, carry the sting. Slow fibers, with no myelin, carry the burn.",
+      "props": [],
+      "steps": [
+        {
+          "at": "From your toe",
+          "glow": [
+            "foot",
+            "leg"
+          ],
+          "dim": true,
+          "label": {
+            "region": "foot",
+            "text": "Stubbed toe"
+          },
+          "note": {
+            "text": "Rough estimate: *~1 m* of nerve",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "Fast fibers wrapped",
+          "glow": [
+            "foot",
+            "leg",
+            "cord"
+          ],
+          "signal": {
+            "from": "foot",
+            "to": "cord",
+            "label": "sting"
+          }
+        },
+        {
+          "at": "speeds signals up",
+          "note": {
+            "text": "Fast: *myelin* = insulation = speed",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "Slow fibers with",
+          "signal": {
+            "from": "foot",
+            "to": "cord",
+            "label": "burn"
+          },
+          "note": {
+            "text": "Slow: *no myelin*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "carry the burn",
+          "glow": [
+            "leg",
+            "cord"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "chart",
+      "title": "The race",
+      "schematic": true,
+      "x": {
+        "label": "time",
+        "max": 3.2,
+        "ticks": [
+          {
+            "at": 0,
+            "label": "hit"
+          },
+          {
+            "at": 1,
+            "label": "~1 s"
+          }
+        ]
+      },
+      "y": {
+        "label": "How much it hurts",
+        "min": 0,
+        "max": 100
+      },
+      "series": [
+        {
+          "id": "sting",
+          "label": "Sting · fast",
+          "tone": "warn",
+          "points": [
+            [
+              0,
+              0
+            ],
+            [
+              0.06,
+              0
+            ],
+            [
+              0.14,
+              88
+            ],
+            [
+              0.32,
+              34
+            ],
+            [
+              0.6,
+              10
+            ],
+            [
+              1.0,
+              3
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        {
+          "id": "burn",
+          "label": "Burn · slow",
+          "tone": "bad",
+          "points": [
+            [
+              0,
+              0
+            ],
+            [
+              0.85,
+              0
+            ],
+            [
+              1.15,
+              26
+            ],
+            [
+              1.45,
+              60
+            ],
+            [
+              1.9,
+              70
+            ],
+            [
+              2.4,
+              60
+            ],
+            [
+              3,
+              48
+            ]
+          ]
+        }
+      ],
+      "narration": "So the sting arrives in a split second, and the burn about a second later. That's the gap you feel between the two.",
+      "steps": [
+        {
+          "at": "the sting arrives",
+          "draw": [
+            "sting"
+          ]
+        },
+        {
+          "at": "a split second",
+          "mark": {
+            "x": 0.14,
+            "label": "a split second",
+            "series": "sting"
+          }
+        },
+        {
+          "at": "the burn about",
+          "draw": [
+            "burn"
+          ],
+          "sfx": "clock"
+        },
+        {
+          "at": "a second later",
+          "mark": {
+            "x": 1.9,
+            "label": "about 1 s later",
+            "series": "burn"
+          }
+        },
+        {
+          "at": "the gap you",
+          "note": {
+            "text": "The gap you *feel*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "chart",
+      "title": "Why keep the slow one",
+      "schematic": true,
+      "x": {
+        "label": "time",
+        "max": 3.2,
+        "ticks": [
+          {
+            "at": 0,
+            "label": "hit"
+          },
+          {
+            "at": 1,
+            "label": "~1 s"
+          }
+        ]
+      },
+      "y": {
+        "label": "How much it hurts",
+        "min": 0,
+        "max": 100
+      },
+      "series": [
+        {
+          "id": "sting",
+          "label": "Sting · fast",
+          "tone": "warn",
+          "points": [
+            [
+              0,
+              0
+            ],
+            [
+              0.06,
+              0
+            ],
+            [
+              0.14,
+              88
+            ],
+            [
+              0.32,
+              34
+            ],
+            [
+              0.6,
+              10
+            ],
+            [
+              1.0,
+              3
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        {
+          "id": "burn",
+          "label": "Burn · slow",
+          "tone": "bad",
+          "points": [
+            [
+              0,
+              0
+            ],
+            [
+              0.85,
+              0
+            ],
+            [
+              1.15,
+              26
+            ],
+            [
+              1.45,
+              60
+            ],
+            [
+              1.9,
+              70
+            ],
+            [
+              2.4,
+              60
+            ],
+            [
+              3,
+              48
+            ]
+          ]
+        }
+      ],
+      "narration": "The slow one isn't a flaw. That lasting burn reminds you to protect your toe, and it lingers long after the hit.",
+      "steps": [
+        {
+          "at": "isn't a flaw",
+          "focus": [
+            "burn"
+          ]
+        },
+        {
+          "at": "reminds you to",
+          "note": {
+            "text": "The burn says: *protect it*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "lingers long after",
+          "mark": {
+            "x": 2.9,
+            "label": "still burning",
+            "series": "burn"
+          },
+          "note": {
+            "text": "The price: it *lingers*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "Remember",
+      "narration": "Two fibers, two speeds, two pains. Next time you stub your toe, notice the gap. Did you feel it? The full video is on the channel.",
+      "points": [
+        {
+          "text": "*Fast* and *slow* fibers",
+          "at": "Two fibers"
+        },
+        {
+          "text": "Two speeds, *two pains*",
+          "at": "two pains"
+        },
+        {
+          "text": "Notice the *gap*",
+          "at": "notice the gap"
+        }
+      ],
+      "cta": "Did you feel the gap? ▶"
+    }
+  ],
+  "notes": [
+    "First pain and second pain: a sharp, well-located sting carried by thinly myelinated Aδ fibers (about 5–30 m/s), then a duller, burning, longer pain carried by unmyelinated C fibers (about 0.4–2 m/s) (MSU open textbook Introduction to Neuroscience, \"Pain\"; Wikipedia, \"Nociceptor\" and \"Group C nerve fiber\").",
+    "About a meter of nerve from the toe to the spinal cord in an adult is a rough estimate (the leg is about 90 cm and the cord ends in the lower back); it depends on height. At 25 m/s that is about 0.04 s; at 1 m/s about 1 s.",
+    "The textbook example is hitting your thumb with a hammer: \"an intense, sharp pain – first pain, but then a milder, burning or aching pain that continue longer – second pain\" (University of Iowa pressbook, \"Pain\").",
+    "The chart is a sketch: the shape and the gap are illustrative, not measured.",
+    "Simplified drawing: one fiber of each kind, one relay neuron. Real nerves carry thousands of fibers.",
+    "Educational only, no first aid or treatment advice. If a pain or an injury worries you, see a professional."
+  ],
+  "publish": {
+    "titles": [
+      "Why Does a Stubbed Toe Hurt Twice? (Fast and Slow Pain)",
+      "The Sting, Then the Burn: Your Two Pain Fibers"
+    ],
+    "description": "Stub your toe and it hurts twice: a sharp sting, then a deep burn. Two kinds of nerve fibers carry pain at two speeds.",
+    "extra": [
+      "🎬 The full video (the reflex, the two pains and why rubbing helps) is on the channel: \"Who pulled your hand off the hot pan?\""
+    ],
+    "comment": "Next time you stub your toe, notice the gap. Did you feel it?",
+    "hashtags": [
+      "neuroscience",
+      "pain",
+      "brain"
+    ]
+  },
+  "thumbnail": {
+    "text": "Why it hurts *twice*",
+    "kicker": "Everyday science",
+    "number": "2 pains",
+    "tone": "bad",
+    "figure": {
+      "name": "body",
+      "glow": [
+        "foot",
+        "leg",
+        "cord"
+      ]
+    }
+  }
+}
