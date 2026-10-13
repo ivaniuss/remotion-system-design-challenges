@@ -576,5 +576,23 @@
         }
       ]
     }
-  ]
+  ],
+  "thumbnail": {
+    "text": "Why ticket sales *crash*",
+    "kicker": "System design",
+    "number": "3.5 billion",
+    "tone": "bad",
+    "icons": [
+      {
+        "icon": "users"
+      },
+      {
+        "icon": "instances",
+        "status": "error"
+      },
+      {
+        "icon": "db"
+      }
+    ]
+  }
 }

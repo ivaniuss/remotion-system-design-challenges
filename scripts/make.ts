@@ -113,3 +113,8 @@ for (const format of formats) {
   }
   console.log(`✔ ${out}`);
 }
+
+// 4. Thumbnail (1280×720) and Short cover (1080×1920), from the spec's `thumbnail` block.
+const tsxBin = path.join('node_modules', '.bin', process.platform === 'win32' ? 'tsx.cmd' : 'tsx');
+const th = spawnSync(tsxBin, ['scripts/thumbnail.ts', specFile], {stdio: 'inherit', shell: process.platform === 'win32'});
+if (th.status !== 0) console.error('  ⚠ The thumbnail could not be rendered (the videos are fine). Try: npm run thumbnail -- ' + specFile);

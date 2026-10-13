@@ -50,8 +50,9 @@ rule here exists to stop the swipe.
 - **Hook in the first 2 seconds, on frame 0.** Scene 1 is a `title` with a short tag
   and a heading that states the problem. Each pack says what a good hook is (tech: an
   open interview question about the system; science: the viewer's real problem or
-  curiosity). The first frame is also the thumbnail, so the heading is fully visible at
-  once. No greetings, no "en este video…".
+  curiosity). The heading is fully visible at once on frame 0, because that is what a viewer
+  sees when the video starts in the feed. (The thumbnail is a separate designed still: see
+  `thumbnail` below.) No greetings, no "en este video…".
 - **Open a loop with a real question, not with hype.** The voice asks the concrete
   question the video answers: "¿Lo generas en la misma petición?", "¿Por qué olvidas lo
   que estudiaste ayer?". The viewer stays to find out. **Never** use generic hype or claims the
@@ -302,6 +303,11 @@ right. The 16:9 version reuses the grid (transposed automatically when that fits
 better). Give every node a row and col (all or none); without them the layout is
 computed from the edges. Two nodes cannot share or overlap a cell.
 
+**Bottom-up stories (`"flowUp": true` on the board).** 16:9 turns rows into columns, so row 0
+ends up on the left. When the story flows from the bottom row up (skin → spinal cord → brain,
+with the brain drawn on top), set `"flowUp": true`: the bottom row goes on the left in 16:9
+and the path still reads left to right. 9:16 is unchanged.
+
 **Board rules**
 - 5–10 nodes in total. If a story needs more, it is two videos.
 - Mention components in the order the narration introduces them; each new name in
@@ -381,7 +387,7 @@ success/error sound.
  "narration": "Interview question: your system has to generate the annual sales report and deliver it to the user. How do you design it? …"}
 ```
 `heading` ≤ 90 chars (aim for ≤ 45); on the first scene the tag, heading and subheading
-are visible on frame 0 (it is the thumbnail), and the `beats` pop in afterwards with the
+are visible on frame 0 (what the feed shows first), and the `beats` pop in afterwards with the
 voice. `tag` ≤ 32 chars. `sfx` optional (plays at the start of the scene).
 
 `beats` (2–5, recommended 3–4): the problem drawn while it is told. Each beat is a card
@@ -542,7 +548,14 @@ succeeds but is never recorded, anything where **the order and the waiting are t
 - x and y are positions: put any labels on the axes with `ticks` (≤ 8, `label` ≤ 14).
 - `schematic: true` = the shape is illustrative, not measured: numeric ticks are hidden
   and a small "Esquema ilustrativo" tag appears. **Use it unless every number comes
-  from a source** (then cite it in `notes`).
+  from a source** (then cite it in `notes`). Ticks you list yourself still show (one tick
+  on a level the voice says, such as "−70"); keep tick labels short because the left margin
+  is narrow.
+- A series can be a reference line: two points at the same y, `dashed`, drawn on a cue
+  ("Threshold ≈ −55 mV"). Series can also continue each other (the next one starts where
+  the previous ended), so each part of a curve draws on its own cue: a rise, a spike, a
+  decay. A series label sits above the *end* of its curve; leave a flat stretch after a
+  line that ends low so the label does not cover it.
 - Steps: `draw` (series that draw themselves from that cue; series never in a `draw`
   are visible from the start), `focus` (highlight series, dim the rest; `[]` clears),
   `mark` (a pin on a series at x with a label, or a vertical guide without `series`),
@@ -560,17 +573,64 @@ succeeds but is never recorded, anything where **the order and the waiting are t
  ],
  "narration": "…"}
 ```
-- `figure`: a drawing from the pack (`brain` in science: regions `frontal`, `parietal`,
-  `temporal`, `occipital`, `cerebellum`, `stem`, `hippocampus`). A figure from another
-  pack is an error.
+- `figure`: a drawing from the pack. In science: `brain` (regions `frontal`, `parietal`,
+  `temporal`, `occipital`, `cerebellum`, `stem`, `hippocampus`), `neuron`, drawn top
+  to bottom (regions `dendrites`, `soma` = cell body, `axon`, `myelin` = the sheaths,
+  `node` = the gaps between sheaths, `terminals`, `gap` = the synaptic cleft, `next` =
+  the next cell's membrane), and `body`, a person seen from the side with the nervous
+  system inside (regions `brain`, `cord`, `gate`, `hand`, `elbow`, `arm`, `fast`, `slow`,
+  `leg`, `foot`, `pan`; details in `docs/packs/science.md` §4). A figure from another pack
+  is an error.
+- `props` (scene field): optional objects of the figure switched on for that scene, e.g.
+  `"props": ["pan"]` puts a hot pan on a stove under the hand of `body`. A prop the figure
+  does not have is an error.
+- In science a figure is not only a close-up: it can carry the whole story (the same
+  drawing in most scenes, like the board in tech). See `docs/packs/science.md` §2A.
+- `neuron` is tall, so its labels sit beside it (left or right of the region, never in
+  rows) and a `zoom` is clipped to the content area with soft top and bottom edges. A
+  `signal` between two of its regions follows the cell (dendrites → cell body along the
+  branches, cell body → terminals down the axon, terminals → next across the cleft); the
+  second signal between the same two regions takes another branch ("go" and "brake"). While
+  `node` is lit the gaps flash in turn; while `terminals` is lit calcium and
+  neurotransmitter dots move; `next` turns its receptors pink.
 - Steps: `glow` (the set of lit regions from this cue; `[]` = none), `dim` (true fades
   the unlit regions for focus), `label` (a pill with a leader line pinned to a region,
   ≤ 28 chars; labels stay for the scene, use 1–3), `signal` (a glowing pulse that
   travels from one region to another; the target flashes when it arrives), `zoom` (a
   region, or `null` to zoom out), `note`, `sfx`.
 - Use it when *where* or *how parts talk* matters (memory moving from the hippocampus to
-  the cortex). For the story of the whole video keep the `board` as the model; a figure
-  is a close-up, 1–3 per video.
+  the cortex, a reflex going through the spinal cord). In tech the `board` carries the
+  story and a figure is rare; in science the figure carries the story and the board is
+  the exception.
+
+### `thumbnail` — the picture people click
+
+The first frame is no longer the thumbnail. Every video gets a designed still in its own look:
+`out/<id>/<theme>.thumbnail.png` (1280×720, the YouTube thumbnail) and
+`out/<id>/<theme>.cover.png` (1080×1920, the cover of a Short or a TikTok). `make`, `stills`
+and `npm run thumbnail -- <spec>` (a few seconds, only the two pictures) write them.
+```json
+"thumbnail": {
+  "text": "Why ticket sales *crash*",
+  "kicker": "System design",
+  "number": "3.5 billion", "tone": "bad",
+  "icons": [{"icon": "users"}, {"icon": "instances", "status": "error"}, {"icon": "db"}]
+}
+```
+- `text`: 2–6 big words, ≤ 48 chars, in the video's language. It is the hook, not the
+  title: the curiosity or the problem ("Paid, but *no seat*?", "Your report takes
+  *minutes*"). `*emphasis*` gets the accent; a short emphasized phrase never breaks.
+- `kicker`: the small tag above (default: the first title's tag).
+- `number` (≤ 14 chars) + `tone`: a sticker with the number that makes it real ("504",
+  "3.5 billion", "10k/s"). Only numbers the video says.
+- The picture: `icons` (1 = one big card, 2 = A → B, 3 = A → B → C; `status` freezes an
+  icon's state, `error` = broken) or `figure` (`{"name": "neuron", "glow": ["soma", "axon"]}`).
+  Icons and figures must belong to the video's pack.
+- `theme` overrides the video's look for the thumbnail only.
+- Without the block the engine builds one from the first title (heading, tag, the first and
+  last beat icons); write the block for anything you publish.
+- Look at both files before delivering: the text must be readable at a small size and must not
+  touch the picture.
 
 ### `shot` — a documentary shot (theme `film`)
 ```json
@@ -629,6 +689,7 @@ An icon from another pack is an error that lists the valid ones.
 These apply to every video; then go through the checklist in your pack's guide.
 
 - [ ] `pack` is set and the file is in `videos/<pack>/`.
+- [ ] A `thumbnail` block: 2–6 big words (the hook), one clear picture, the number if there is one.
 - [ ] Frame 0 hooks: tag + the heading the pack asks for; understandable on its own.
 - [ ] The hook tells the situation in one sentence and has 3–5 `beats` synced to the voice (never a still opening).
 - [ ] The numbers that matter are on screen (a scenario callout or a note), not only in the voice.

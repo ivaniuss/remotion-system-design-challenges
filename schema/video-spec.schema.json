@@ -132,7 +132,11 @@
                   "cell",
                   "heart",
                   "flask",
-                  "globe"
+                  "globe",
+                  "hand",
+                  "flame",
+                  "spine",
+                  "muscle"
                 ]
               },
               "color": {
@@ -196,6 +200,10 @@
               "to"
             ]
           }
+        },
+        "flowUp": {
+          "default": false,
+          "type": "boolean"
         }
       },
       "required": [
@@ -295,7 +303,11 @@
                   "cell",
                   "heart",
                   "flask",
-                  "globe"
+                  "globe",
+                  "hand",
+                  "flame",
+                  "spine",
+                  "muscle"
                 ]
               },
               "beats": {
@@ -357,7 +369,11 @@
                         "cell",
                         "heart",
                         "flask",
-                        "globe"
+                        "globe",
+                        "hand",
+                        "flame",
+                        "spine",
+                        "muscle"
                       ]
                     },
                     "at": {
@@ -504,7 +520,11 @@
                   "cell",
                   "heart",
                   "flask",
-                  "globe"
+                  "globe",
+                  "hand",
+                  "flame",
+                  "spine",
+                  "muscle"
                 ]
               },
               "countUp": {
@@ -622,7 +642,11 @@
                         "cell",
                         "heart",
                         "flask",
-                        "globe"
+                        "globe",
+                        "hand",
+                        "flame",
+                        "spine",
+                        "muscle"
                       ]
                     },
                     "at": {
@@ -762,7 +786,11 @@
                             "cell",
                             "heart",
                             "flask",
-                            "globe"
+                            "globe",
+                            "hand",
+                            "flame",
+                            "spine",
+                            "muscle"
                           ]
                         },
                         "at": {
@@ -879,7 +907,11 @@
                             "cell",
                             "heart",
                             "flask",
-                            "globe"
+                            "globe",
+                            "hand",
+                            "flame",
+                            "spine",
+                            "muscle"
                           ]
                         },
                         "at": {
@@ -1119,7 +1151,11 @@
                         "cell",
                         "heart",
                         "flask",
-                        "globe"
+                        "globe",
+                        "hand",
+                        "flame",
+                        "spine",
+                        "muscle"
                       ]
                     },
                     "color": {
@@ -1850,7 +1886,11 @@
                         "cell",
                         "heart",
                         "flask",
-                        "globe"
+                        "globe",
+                        "hand",
+                        "flame",
+                        "spine",
+                        "muscle"
                       ]
                     },
                     "at": {
@@ -2186,8 +2226,17 @@
                 "type": "string",
                 "enum": [
                   "brain",
-                  "neuron"
+                  "neuron",
+                  "body"
                 ]
+              },
+              "props": {
+                "default": [],
+                "maxItems": 4,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               },
               "steps": {
                 "default": [],
@@ -2404,7 +2453,11 @@
                         "cell",
                         "heart",
                         "flask",
-                        "globe"
+                        "globe",
+                        "hand",
+                        "flame",
+                        "spine",
+                        "muscle"
                       ]
                     },
                     "color": {
@@ -2769,6 +2822,156 @@
       "required": [
         "titles",
         "description"
+      ]
+    },
+    "thumbnail": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 48
+        },
+        "kicker": {
+          "type": "string",
+          "maxLength": 28
+        },
+        "number": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 14
+        },
+        "tone": {
+          "default": "warn",
+          "type": "string",
+          "enum": [
+            "good",
+            "bad",
+            "info",
+            "warn",
+            "neutral"
+          ]
+        },
+        "icons": {
+          "minItems": 1,
+          "maxItems": 3,
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "icon": {
+                "type": "string",
+                "enum": [
+                  "user",
+                  "users",
+                  "mobile",
+                  "file",
+                  "mail",
+                  "search",
+                  "bell",
+                  "chart",
+                  "ai",
+                  "client",
+                  "api",
+                  "gateway",
+                  "instances",
+                  "lambda",
+                  "container",
+                  "db",
+                  "replica",
+                  "cache",
+                  "storage",
+                  "queue",
+                  "broker",
+                  "worker",
+                  "scheduler",
+                  "cdn",
+                  "external",
+                  "ratelimit",
+                  "lock",
+                  "code",
+                  "brain",
+                  "neuron",
+                  "ear",
+                  "eye",
+                  "speech",
+                  "chat",
+                  "book",
+                  "calendar",
+                  "clock",
+                  "repeat",
+                  "moon",
+                  "idea",
+                  "target",
+                  "dna",
+                  "cell",
+                  "heart",
+                  "flask",
+                  "globe",
+                  "hand",
+                  "flame",
+                  "spine",
+                  "muscle"
+                ]
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "idle",
+                  "busy",
+                  "ok",
+                  "error",
+                  "warn"
+                ]
+              }
+            },
+            "required": [
+              "icon"
+            ]
+          }
+        },
+        "figure": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "enum": [
+                "brain",
+                "neuron",
+                "body"
+              ]
+            },
+            "glow": {
+              "default": [],
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "props": {
+              "default": [],
+              "maxItems": 4,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "theme": {
+          "type": "string",
+          "enum": [
+            "light",
+            "dark",
+            "neon"
+          ]
+        }
+      },
+      "required": [
+        "text"
       ]
     }
   },

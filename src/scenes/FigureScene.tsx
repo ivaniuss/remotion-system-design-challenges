@@ -258,7 +258,7 @@ export const FigureScene: React.FC<SceneProps<'figure'>> = ({scene, t, frame, th
         )}
         <g mask={fig.layout?.clip ? 'url(#figure-clip)' : undefined}>
           <g opacity={enterK} transform={`translate(${tr.x} ${tr.y}) scale(${Z})`}>
-            <Comp glow={st.glow} dim={st.dim} frame={t * 30} />
+            <Comp glow={st.glow} dim={st.dim} frame={t * 30} props={scene.props} />
           </g>
           {signals}
         </g>

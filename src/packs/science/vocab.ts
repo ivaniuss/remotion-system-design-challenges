@@ -5,6 +5,7 @@ export const ICONS = [
   'brain', 'neuron', 'ear', 'eye', 'speech', 'chat', 'book',
   'calendar', 'clock', 'repeat', 'moon', 'idea', 'target',
   'dna', 'cell', 'heart', 'flask', 'globe',
+  'hand', 'flame', 'spine', 'muscle',
 ] as const;
 export type Name = (typeof ICONS)[number];
 
@@ -27,6 +28,10 @@ export const ALIASES: Record<string, string> = {
   bacteria: 'cell', organism: 'cell', tissue: 'cell',
   cardio: 'heart', blood: 'heart', pulse: 'heart', emotion: 'heart',
   experiment: 'flask', lab: 'flask', research: 'flask', evidence: 'flask', science: 'flask', chemistry: 'flask',
+  skin: 'hand', touch: 'hand', finger: 'hand', fingers: 'hand', palm: 'hand',
+  fire: 'flame', heat: 'flame', hot: 'flame', burn: 'flame', stove: 'flame', pan: 'flame',
+  'spinal-cord': 'spine', spinalcord: 'spine', spinal_cord: 'spine', spinal: 'spine', backbone: 'spine', cord: 'spine',
+  muscles: 'muscle', arm: 'muscle', biceps: 'muscle',
   world: 'globe', language: 'globe', languages: 'globe', country: 'globe', countries: 'globe', earth: 'globe',
 };
 
@@ -34,6 +39,7 @@ export const COLOR: Record<Name, ColorName> = {
   brain: 'red', neuron: 'purple', ear: 'orange', eye: 'teal', speech: 'blue', chat: 'teal', book: 'blue',
   calendar: 'gray', clock: 'gray', repeat: 'green', moon: 'purple', idea: 'yellow', target: 'red',
   dna: 'teal', cell: 'green', heart: 'red', flask: 'green', globe: 'blue',
+  hand: 'orange', flame: 'red', spine: 'teal', muscle: 'green',
 };
 
 // Maps a generic node status to the illustration's own animated state.
@@ -44,10 +50,11 @@ export const STATES: Record<string, Partial<Record<Name, string>>> = {
     book: 'reading', calendar: 'passing', clock: 'running', repeat: 'spinning', moon: 'sleeping',
     idea: 'flicker', target: 'aiming', dna: 'spinning', cell: 'dividing', heart: 'beating',
     flask: 'bubbling', globe: 'spinning',
+    hand: 'sensing', flame: 'flicker', spine: 'signal', muscle: 'contract',
   },
-  ok: {brain: 'lit', idea: 'on', target: 'hit', repeat: 'ok', calendar: 'done'},
-  error: {brain: 'foggy', neuron: 'blocked', ear: 'noise', speech: 'stuck', eye: 'closed', idea: 'off', target: 'miss', heart: 'error'},
+  ok: {brain: 'lit', idea: 'on', target: 'hit', repeat: 'ok', calendar: 'done', muscle: 'pulled'},
+  error: {hand: 'burned', brain: 'foggy', neuron: 'blocked', ear: 'noise', speech: 'stuck', eye: 'closed', idea: 'off', target: 'miss', heart: 'error'},
   warn: {brain: 'tired', ear: 'noise', speech: 'stuck'},
 };
 
-export const DEFAULT_STATE: Partial<Record<Name, string>> = {};
+export const DEFAULT_STATE: Partial<Record<Name, string>> = {flame: 'flicker'};

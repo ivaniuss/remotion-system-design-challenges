@@ -35,11 +35,13 @@ export const PACK_ALIASES: Record<Pack, Record<string, IconName>> = Object.fromE
 
 // Large illustrations for `figure` scenes, with the pack each belongs to and its
 // named regions (the drawings live in src/figures/).
-export const FIGURES = ['brain', 'neuron'] as const;
+export const FIGURES = ['brain', 'neuron', 'body'] as const;
 export type FigureName = (typeof FIGURES)[number];
-export const FIGURE_INFO: Record<FigureName, {pack: Pack; regions: readonly string[]}> = {
+// `props`: optional objects a scene can switch on (a hot pan under the hand).
+export const FIGURE_INFO: Record<FigureName, {pack: Pack; regions: readonly string[]; props?: readonly string[]}> = {
   brain: {pack: 'science', regions: ['frontal', 'parietal', 'temporal', 'occipital', 'cerebellum', 'stem', 'hippocampus']},
   neuron: {pack: 'science', regions: ['dendrites', 'soma', 'axon', 'myelin', 'node', 'terminals', 'gap', 'next']},
+  body: {pack: 'science', regions: ['brain', 'cord', 'gate', 'hand', 'elbow', 'arm', 'fast', 'slow', 'leg', 'foot', 'pan'], props: ['pan']},
 };
 
 // Worlds for `shot` scenes (the documentary look, theme "film"): full-frame places the

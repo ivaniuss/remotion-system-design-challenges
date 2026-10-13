@@ -1,0 +1,218 @@
+{
+  "id": "hot-pan-short-3-rub-it",
+  "title": "Why does rubbing a bump help?",
+  "lang": "en",
+  "pack": "science",
+  "theme": "dark",
+  "hook": "broken-thing",
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "Everyday science",
+      "heading": "Why does *rubbing it* help?",
+      "narration": "You bump your elbow and, without thinking, you rub it. And it actually helps a little. Why?",
+      "beats": [
+        {
+          "text": "Bump",
+          "icon": "target",
+          "at": "You bump your"
+        },
+        {
+          "text": "Rub it",
+          "icon": "hand",
+          "at": "you rub it"
+        },
+        {
+          "text": "Helps",
+          "icon": "idea",
+          "at": "actually helps a"
+        },
+        {
+          "text": "?",
+          "at": "a little Why"
+        }
+      ]
+    },
+    {
+      "type": "compare",
+      "title": "Wait, or rub?",
+      "narration": "If you just wait, the pain signal travels up your spinal cord at full volume. If you rub it, a second signal joins in: touch, on thick, fast fibers.",
+      "left": {
+        "label": "Just wait",
+        "tone": "bad",
+        "items": [
+          {
+            "text": "Pain *travels up*",
+            "at": "pain signal travels"
+          },
+          {
+            "text": "At *full volume*",
+            "at": "at full volume"
+          }
+        ]
+      },
+      "right": {
+        "label": "Rub it",
+        "tone": "good",
+        "items": [
+          {
+            "text": "A second signal: *touch*",
+            "at": "second signal joins"
+          },
+          {
+            "text": "On *thick, fast* fibers",
+            "at": "thick fast fibers"
+          }
+        ]
+      }
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "The gate",
+      "narration": "In your spinal cord, touch switches on small neurons that act like a gate, turning down the pain signal on its way up. That's an analogy: no real door, just neurons quieting neurons.",
+      "props": [],
+      "steps": [
+        {
+          "at": "touch switches on",
+          "glow": [
+            "elbow"
+          ],
+          "label": {
+            "region": "elbow",
+            "text": "Rubbing: touch"
+          },
+          "signal": {
+            "from": "elbow",
+            "to": "gate",
+            "label": "touch"
+          }
+        },
+        {
+          "at": "act like a",
+          "glow": [
+            "gate",
+            "elbow"
+          ],
+          "zoom": "gate",
+          "label": {
+            "region": "gate",
+            "text": "Gate"
+          }
+        },
+        {
+          "at": "turning down the",
+          "signal": {
+            "from": "gate",
+            "to": "brain",
+            "label": "pain ↓"
+          }
+        },
+        {
+          "at": "That's an analogy",
+          "note": {
+            "text": "Analogy: no door, just *neurons*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "Only a dimmer",
+      "narration": "Scientists call this the gate control theory. It's simplified, but touch really can dim pain. And your brain can turn the gate down too.",
+      "props": [],
+      "steps": [
+        {
+          "at": "gate control theory",
+          "glow": [
+            "gate"
+          ],
+          "note": {
+            "text": "Gate control theory (1965): *simplified*",
+            "tone": "neutral"
+          }
+        },
+        {
+          "at": "really can dim",
+          "glow": [
+            "gate",
+            "elbow"
+          ],
+          "signal": {
+            "from": "elbow",
+            "to": "gate",
+            "label": "touch"
+          }
+        },
+        {
+          "at": "your brain can",
+          "zoom": null,
+          "glow": [
+            "brain",
+            "gate"
+          ],
+          "signal": {
+            "from": "brain",
+            "to": "gate",
+            "label": "turn it down"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "Remember",
+      "narration": "So rubbing doesn't fix the bump, it turns the volume down. What do you do when you bump your elbow? The full video is on the channel.",
+      "points": [
+        {
+          "text": "Rubbing *doesn't fix* it",
+          "at": "doesn't fix the"
+        },
+        {
+          "text": "It turns the *volume down*",
+          "at": "turns the volume"
+        }
+      ],
+      "cta": "What do you do? Tell me ▶"
+    }
+  ],
+  "notes": [
+    "Gate control theory (Melzack and Wall, 1965): large touch fibers (Aβ) excite inhibitory neurons in the dorsal horn of the spinal cord, which reduce the pain signal going up. Influential, now considered oversimplified (Wikipedia, \"Gate control theory\"; University of Iowa pressbook, \"Pain\": pressure near an injury decreases pain through inhibitory interneurons).",
+    "Descending control: pathways from the brainstem can inhibit pain signals in the spinal cord (MSU open textbook, \"Pain\").",
+    "Rubbing only dims the pain; it does not treat the injury. The example is a bumped elbow, never a burn.",
+    "Simplified drawing: one fiber of each kind, one relay neuron. Real nerves carry thousands of fibers.",
+    "Educational only, no first aid or treatment advice. If a pain or an injury worries you, see a professional."
+  ],
+  "publish": {
+    "titles": [
+      "Why Does Rubbing a Bump Help? (The Pain Gate)",
+      "Why You Rub Your Elbow After a Bump"
+    ],
+    "description": "You bump your elbow and rub it, and it actually helps a little. Touch closes a \"gate\" in your spinal cord that turns the pain down.",
+    "extra": [
+      "🎬 The full video (the reflex, the two pains and why rubbing helps) is on the channel: \"Who pulled your hand off the hot pan?\""
+    ],
+    "comment": "What do you do when you bump your elbow?",
+    "hashtags": [
+      "neuroscience",
+      "pain",
+      "brain"
+    ]
+  },
+  "thumbnail": {
+    "text": "Why *rubbing* helps",
+    "kicker": "Everyday science",
+    "number": "Pain ↓",
+    "tone": "good",
+    "figure": {
+      "name": "body",
+      "glow": [
+        "elbow",
+        "gate",
+        "cord"
+      ]
+    }
+  }
+}

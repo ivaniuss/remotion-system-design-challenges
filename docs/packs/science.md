@@ -5,10 +5,18 @@
 explaining how something works in the body or the mind: neuroscience, biology,
 physiology, psychology of learning, habits, languages, sleep, nutrition science.
 
-The engine is the same: a board that is built as the voice speaks, packets that travel,
-statuses that animate, callouts with numbers. What changes is what the boxes mean (an
-organ, a process, a habit, a kind of memory, not a server) and how careful the claims
-must be.
+The engine is the same as tech, but **science is told with illustrations, not with boxes**.
+The look is the one of the short film "chispa" and `neuron-spark`: a drawing of the real
+thing (a body, a neuron, a brain) whose parts light up, get labels and pass glowing signals
+as the voice speaks, plus curves (`chart`) that draw themselves and big numbers
+(`callout`). The `board` (cards, arrows, packets) is the tech workhorse; in science it is
+only for a model that has no drawing (kinds of memory, a habit loop), and never the main
+picture of a video about the body. `npm run validate` warns when a science video is mostly
+`board` scenes.
+
+**Anchor it in everyday life**, like the ticket sale in tech: start from something every
+viewer has lived (touching a hot pan, stubbing a toe, coffee at night, forgetting what you
+studied) and explain the mechanism through it.
 
 ## 1. Hook and voice
 
@@ -38,27 +46,32 @@ problem or curiosity, never brain clickbait. The visible-metrics toolkit (`meter
 `countUp`) suits "how long a memory lasts" or "how much sleep"; label invented values as
 examples and keep real numbers only where a source supports them.
 
-### 2A. From the problem to the mechanism (recommended default)
+### 2A. From the everyday moment to the mechanism (recommended default)
 
-The progressive idea of every pack, applied to a model instead of a system: first the
-simplest model that explains what the viewer lives, then an honest question that adds
-the next piece. One board grows with the explanation.
+The progressive idea of every pack, applied to the body or the mind: first the obvious
+explanation of what the viewer lives, then an honest question that adds the next piece.
+The same **figure** carries the whole story (like the board does in tech): each turn lights
+other parts of the drawing, sends a signal along another path, or zooms in.
 
 ```
-title     the viewer's problem in their words + the approach; 3–5 beats draw it
-            ("Clases" → "Años" → "Hablar" → "?")
-callout   the relatable scenario as a number ("5 años" · "2 clases por semana")
-board ×2–3  the simple model: the 2–4 pieces involved, what each does and how they
-            connect (said once as a model: "simplificando mucho…")
-board     what usually happens (the common habit) played on that model, and why it
-            does not produce the result: the mechanism, one `error` at the peak
-callout   the turn: "¿entonces qué sí funciona?" / "¿y por qué a algunos sí?"
-board ×N  what changes it, one principle per scene: what it is, why it works on the
-            model, and the evidence in one clause ("está muy estudiado: se llama…")
-compare   (optional) what you do now vs what the evidence supports
-summary   the principles as actions + a question ("¿cuál de estas ya haces?")
+title     the everyday moment in the viewer's words + the approach; 3–5 beats draw it
+            ("Hot pan" → "Hand jumps" → "Burn later" → "?")
+callout   the number that makes it real ("43 °C", "86 billion"), no boxes
+figure ×2–3  the obvious explanation on the drawing: what lights up, where the signal
+            goes, said once as a simplified model
+figure    why the obvious explanation is not enough (a note says the limit)
+callout   the turn: "but there's a second mystery…", "why does rubbing help?"
+figure ×N / chart  each new piece: a part of the drawing lights up, a signal takes a new
+            path, a zoom shows the detail; a chart when the point is *time* or *how much*
+            (two pains over a second, a forgetting curve, a voltage)
+summary   the pieces as plain takeaways + a question
 list      outro (long YouTube videos only)
 ```
+The figure to use: `body` (reflexes, pain, touch, movement, anything from the skin or a
+muscle to the brain), `neuron` (one cell: inputs, spike, myelin, synapse), `brain` (which
+part does what, memory, sleep). Need a drawing that does not exist (an eye, the heart, a
+gut)? Draw it once as a new figure (`src/figures/`): it stays for every later video.
+Example: `videos/science/hot-pan.json`.
 
 Rules that make it teach:
 - **Never announce the format** (same as every pack). Scene titles name the idea ("Dos
@@ -66,13 +79,11 @@ Rules that make it teach:
 - **Every piece earns its place.** The first time a concept, organ or term appears,
   say what it is and why it matters here in one clause ("el hipocampo, la zona que
   ayuda a guardar recuerdos nuevos").
-- **Show how they talk.** Packets are information moving through the model: "palabra
-  nueva", "repaso", "señal", "recuerdo". Statuses show what happens: `busy` = working,
-  `ok` = it worked, `error` = it failed (a foggy brain, a stuck speech bubble), `warn`
-  = struggling.
-- **Same board all the way.** The fix happens on the model the viewer already
-  understands: add the habit or the process that changes the result, hide what no
-  longer applies, recap with `camera: []`.
+- **Show how they talk.** Signals travel along the drawing (`signal`, with a 1–2 word
+  label: "heat!", "pull!", "sting"); parts light up (`glow`) when they act; `dim` keeps the
+  eye on what matters; `zoom` for the detail (the gate in the spinal cord, the myelin).
+- **Same drawing all the way.** The fix happens on the picture the viewer already
+  understands; the recap plays the whole path on it once more.
 - **Never imply the common approach is useless.** Say what it is good for and what it
   is not enough for ("estudiar gramática te ayuda a entender; no te entrena para
   hablar rápido"). Name the alternatives: there is rarely one method for everyone.
@@ -83,10 +94,10 @@ Rules that make it teach:
 ```
 title     the question or the myth                                        (≈ 7 s)
 callout   the number that makes it real                                   (≈ 3 s)
-board     the model in 2–3 pieces                                         (≈ 12 s)
-board     the mechanism: what actually happens, one error or ok peak      (≈ 14 s)
-compare   myth vs what the evidence says (or before vs after)             (≈ 12 s)
-summary   1–2 actions + a question                                        (≈ 8 s)
+figure    the drawing: what is involved, lit as the voice names it        (≈ 12 s)
+figure    the mechanism: the signal's path, the zoom on the detail        (≈ 14 s)
+chart / compare  the curve over time, or myth vs what the evidence says   (≈ 12 s)
+summary   1–2 takeaways + a question                                      (≈ 8 s)
 ```
 
 ## 3. Accuracy (stricter than tech)
@@ -101,9 +112,10 @@ come before every retention rule.
 - **Say how sure science is.** Strong, replicated findings: "está muy estudiado",
   "decenas de estudios lo muestran". Preliminary or debated: "algunos estudios
   sugieren", "todavía se discute". Never a vague "la ciencia dice".
-- **A model, not anatomy.** The board is a simplified model; say it once. Do not tie a
-  function to a brain region unless that link is well established, and never say "esta
-  zona se ilumina cuando…" as if it were the whole story.
+- **A simplified drawing, said once.** The figures are simplified (one fiber of each kind,
+  one relay neuron); say it once. Do not tie a function to a brain region unless that link
+  is well established, and never say "esta zona se ilumina cuando…" as if it were the whole
+  story.
 - **Numbers only from sources.** Prefer rounded, honest ranges ("en pocos días olvidas
   buena parte") over invented precision ("olvidas el 70 % en 24 horas") unless the
   source says exactly that, for that kind of material.
@@ -123,8 +135,15 @@ come before every retention rule.
 
 ## 4. What the visuals can show
 
-- The `board` as the model of the whole video (organs, processes, habits, kinds of
-  memory) with packets for information or signals.
+- `figure: body` — a person seen from the side with the nervous system inside: `brain`,
+  spinal `cord`, the `gate` (the relay neurons where the arm nerves enter the cord), the
+  `hand` (skin sensors; it turns red-hot when lit), the `elbow` (skin: touch, a bump), the
+  biceps (`arm`, it flexes when lit), the `fast` fiber (with myelin beads) and the `slow`
+  one, the `leg` nerve and the `foot` (a stubbed toe glows), and the prop `pan` (a hot pan on
+  a stove under the hand, switched on per scene with `"props": ["pan"]`). Signals follow the
+  real nerves: hand → cord / brain (the second signal between the same two regions takes the
+  slow fiber), cord or gate → arm (the motor nerve), brain ↔ gate, elbow → gate, foot → cord
+  / brain. Use it for reflexes, pain, touch, movement and reaction times.
 - `figure` for a close-up on a real illustration: the `brain` (lobes, cerebellum, stem,
   hippocampus) whose regions light up, get labels and pass signals, with zoom. Use it
   only for claims that are well established (e.g. the hippocampus helps form new
@@ -143,8 +162,10 @@ come before every retention rule.
   `schematic: true` unless the numbers come from a source.
 - `callout` for the number that makes it real; `compare` for myth vs evidence or before
   vs after; `list` and `summary`.
+- `board` only for a model that has no drawing (kinds of memory, a habit loop, the steps of
+  a method), and not as the main picture of a video about the body.
 
-Not yet: timelines. Show them with a board or a list until the scene type exists.
+Not yet: timelines. Show them with a chart, a list or a `sequence` until the scene type exists.
 
 ## 5. Icons (science + common)
 
@@ -170,6 +191,10 @@ Science, with the animated state each `status` gives:
 | `heart` | heart, blood, emotion | beats | | grey | |
 | `flask` | experiment, research, evidence | bubbles | | | |
 | `globe` | world, languages, countries | spins | | | |
+| `hand` | skin, touch, the senses in the skin | sensors pulse | | burned (jerks back, red) | |
+| `flame` | heat, fire, a hot pan or stove | flickers (always) | | | |
+| `spine` | spinal cord, reflexes, nerves to the body | a signal runs down the cord | | | |
+| `muscle` | muscles, an arm, movement | flexes | flexed | | |
 
 Common (every pack): `user` (person, student, patient) · `users` · `mobile` · `file`
 (notes, paper) · `mail` · `search` · `bell` · `chart` (stats, a graph as an object) ·
@@ -183,6 +208,8 @@ with a clear error. Need an icon that does not exist? Add it to the pack (README
 ## 6. Checklist (science, on top of the common one)
 
 - [ ] The heading is the viewer's real problem or curiosity; no brain clickbait.
+- [ ] It looks like science: figures and charts carry the story (the `board` only for a model with no drawing); `validate` shows no "mostly board" warning.
+- [ ] It starts from an everyday moment the viewer has lived.
 - [ ] Every factual claim has its source in `notes`; strength words match the evidence.
 - [ ] The model is called a simplification once; no shaky brain-region claims.
 - [ ] No myth stated as fact; numbers only from sources, rounded honestly.
@@ -192,6 +219,13 @@ with a clear error. Need an icon that does not exist? Add it to the pack (README
 
 ## 7. Examples
 
+- `videos/science/hot-pan.json` — **the reference for a long science video** (English, `dark`,
+  `progressive` + `incident`): "Who pulled your hand off the hot pan?" An everyday moment,
+  told on the `body` figure (the obvious model → the reflex in the spinal cord → the two
+  fibers → the gate that rubbing closes → the brain's control), with two `chart` scenes for
+  the two pains over time. Its Shorts, one per turn and each with a different pattern:
+  `hot-pan-short-1-reflex` (classic, `body`), `hot-pan-short-2-two-pains` (the leg and foot of
+  `body` + the chart) and `hot-pan-short-3-rub-it` (contrast: `compare` + `body`).
 - `videos/science/neuron-spark.json` — a vertical Short-style explainer (English, `neon`,
   `surprising-number` hook): `title` with beats → `figure: neuron` (inputs) → `chart`
   (threshold) → `chart` (the spike, all or nothing) → `figure: neuron` (axon and myelin) →

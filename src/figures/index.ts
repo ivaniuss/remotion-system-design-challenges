@@ -2,6 +2,7 @@ import type React from 'react';
 import {FIGURE_INFO, type FigureName} from '../spec/vocab';
 import {BRAIN_ANCHORS, BRAIN_REGIONS, BRAIN_VIEWBOX, BrainFigure} from './brain';
 import {NEURON_ANCHORS, NEURON_REGIONS, NEURON_VIEWBOX, NeuronFigure, neuronRoute} from './neuron';
+import {BODY_ANCHORS, BODY_PROPS, BODY_REGIONS, BODY_VIEWBOX, BodyFigure, bodyRoute} from './body';
 
 // Large illustrations for `figure` scenes. Each one is a <g> drawn in its own viewBox,
 // with named regions that can glow, and an anchor point per region for labels and
@@ -10,7 +11,7 @@ import {NEURON_ANCHORS, NEURON_REGIONS, NEURON_VIEWBOX, NeuronFigure, neuronRout
 export type FigureDraw = {
   viewBox: {w: number; h: number};
   anchors: Record<string, {x: number; y: number}>;
-  Component: React.FC<{glow?: Record<string, number>; dim?: number; frame: number}>;
+  Component: React.FC<{glow?: Record<string, number>; dim?: number; frame: number; props?: readonly string[]}>;
   // Optional hints for figures that are not wide like the brain.
   layout?: {
     padX?: number; // room beside the figure (viewBox units) in 9:16
@@ -33,8 +34,17 @@ export const FIGURE_DRAW: Record<FigureName, FigureDraw> = {
     layout: {padX: 200, padY: 30, labels: 'sides', clip: true, zoom: 1.5},
     route: neuronRoute,
   },
+  body: {
+    viewBox: BODY_VIEWBOX,
+    anchors: BODY_ANCHORS,
+    Component: BodyFigure as FigureDraw['Component'],
+    layout: {padX: 170, padY: 20, labels: 'sides', clip: true, zoom: 1.7},
+    route: bodyRoute,
+  },
 };
 
 // The region lists in vocab.ts (used by the validator) must match the drawings.
 for (const r of BRAIN_REGIONS) if (!FIGURE_INFO.brain.regions.includes(r)) throw new Error(`brain region ${r} missing in FIGURE_INFO`);
 for (const r of NEURON_REGIONS) if (!FIGURE_INFO.neuron.regions.includes(r)) throw new Error(`neuron region ${r} missing in FIGURE_INFO`);
+for (const r of BODY_REGIONS) if (!FIGURE_INFO.body.regions.includes(r)) throw new Error(`body region ${r} missing in FIGURE_INFO`);
+for (const r of BODY_PROPS) if (!FIGURE_INFO.body.props?.includes(r)) throw new Error(`body prop ${r} missing in FIGURE_INFO`);

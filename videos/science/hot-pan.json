@@ -1,0 +1,1027 @@
+{
+  "id": "hot-pan",
+  "title": "Who pulled your hand off the hot pan?",
+  "lang": "en",
+  "pack": "science",
+  "theme": "dark",
+  "shape": "progressive",
+  "hook": "incident",
+  "scenes": [
+    {
+      "type": "title",
+      "chapter": "The hot pan",
+      "tag": "Everyday science",
+      "heading": "Who pulled your hand off the *hot pan*?",
+      "narration": "You touch a hot pan. Your hand jumps back before you decide anything, and the real burn hits a moment later. Who moved your hand? Let's start simple and improve the model as we go.",
+      "beats": [
+        {
+          "text": "Hot pan",
+          "icon": "flame",
+          "at": "touch a hot pan"
+        },
+        {
+          "text": "Hand jumps",
+          "icon": "hand",
+          "at": "hand jumps back"
+        },
+        {
+          "text": "Burn later",
+          "icon": "clock",
+          "at": "real burn hits"
+        },
+        {
+          "text": "?",
+          "at": "Who moved your"
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "43 °C",
+      "caption": "where many heat sensors in your skin start firing",
+      "tone": "warn",
+      "icon": "flame",
+      "sfx": "impact",
+      "narration": "Your skin has heat sensors. Many of them start firing above about forty-three degrees Celsius, the heat of a really hot bath. A pan on the stove is far hotter, so they fire hard."
+    },
+    {
+      "type": "figure",
+      "chapter": "The obvious model",
+      "figure": "body",
+      "title": "The obvious model",
+      "narration": "Here's the obvious model. The sensors in your skin send a signal along a nerve to your brain. Your brain feels the heat, decides it's dangerous, and tells your arm muscles to pull back.",
+      "props": [
+        "pan"
+      ],
+      "steps": [
+        {
+          "at": "the obvious model",
+          "note": {
+            "text": "A *simplified* model",
+            "tone": "neutral"
+          }
+        },
+        {
+          "at": "sensors in your",
+          "glow": [
+            "hand",
+            "pan"
+          ],
+          "label": {
+            "region": "hand",
+            "text": "Skin sensors"
+          }
+        },
+        {
+          "at": "to your brain",
+          "signal": {
+            "from": "hand",
+            "to": "brain",
+            "label": "heat!"
+          }
+        },
+        {
+          "at": "decides it's dangerous",
+          "glow": [
+            "brain"
+          ],
+          "label": {
+            "region": "brain",
+            "text": "Brain: decides"
+          }
+        },
+        {
+          "at": "to pull back",
+          "glow": [
+            "brain",
+            "arm"
+          ],
+          "signal": {
+            "from": "brain",
+            "to": "arm",
+            "label": "pull!"
+          }
+        }
+      ]
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "Thinking first",
+      "narration": "And for most things, that's how it works. Reaching for a cup, catching a ball: your brain sees, decides, then moves. Is anything missing? For those, no. But think about the pan.",
+      "props": [
+        "pan"
+      ],
+      "steps": [
+        {
+          "at": "that's how it",
+          "glow": [
+            "brain"
+          ],
+          "note": {
+            "text": "Deliberate moves: *this works*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "your brain sees",
+          "glow": [
+            "brain",
+            "arm"
+          ],
+          "signal": {
+            "from": "brain",
+            "to": "arm",
+            "label": "reach"
+          }
+        },
+        {
+          "at": "Is anything missing",
+          "note": {
+            "text": "Anything missing? For those, *no*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "think about the",
+          "glow": [
+            "hand",
+            "pan"
+          ],
+          "zoom": "hand"
+        }
+      ]
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "Deciding takes time",
+      "narration": "Deciding takes time. Your brain has to notice, recognize the danger and plan a move, and every moment on that pan means more damage. Yet your hand moved before you decided anything. So who decided?",
+      "props": [
+        "pan"
+      ],
+      "steps": [
+        {
+          "at": "Deciding takes time",
+          "zoom": null,
+          "glow": [
+            "brain"
+          ],
+          "note": {
+            "text": "Deciding takes *time*",
+            "tone": "warn"
+          },
+          "sfx": "clock"
+        },
+        {
+          "at": "recognize the danger",
+          "signal": {
+            "from": "hand",
+            "to": "brain",
+            "label": "heat!"
+          }
+        },
+        {
+          "at": "more damage",
+          "glow": [
+            "hand",
+            "pan"
+          ],
+          "note": {
+            "text": "Every moment on the pan: *damage*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "Yet your hand",
+          "glow": [
+            "arm",
+            "hand"
+          ],
+          "note": {
+            "text": "The hand moved *first*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "So who decided",
+          "glow": [
+            "brain"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "figure",
+      "chapter": "The reflex",
+      "figure": "body",
+      "title": "The shortcut",
+      "narration": "Your spinal cord, the thick bundle of nerves that runs down your back. The heat signal gets there first. A small relay neuron passes it straight to the nerve that moves your arm, without waiting for the brain.",
+      "props": [
+        "pan"
+      ],
+      "steps": [
+        {
+          "at": "Your spinal cord",
+          "glow": [
+            "cord"
+          ],
+          "dim": true,
+          "label": {
+            "region": "cord",
+            "text": "Spinal cord"
+          },
+          "sfx": "impact"
+        },
+        {
+          "at": "gets there first",
+          "glow": [
+            "cord",
+            "hand"
+          ],
+          "signal": {
+            "from": "hand",
+            "to": "cord",
+            "label": "heat!"
+          }
+        },
+        {
+          "at": "relay neuron passes",
+          "glow": [
+            "cord",
+            "gate"
+          ],
+          "zoom": "gate",
+          "label": {
+            "region": "gate",
+            "text": "Relay neuron"
+          }
+        },
+        {
+          "at": "moves your arm",
+          "glow": [
+            "cord",
+            "gate",
+            "arm"
+          ],
+          "signal": {
+            "from": "gate",
+            "to": "arm",
+            "label": "pull!"
+          }
+        },
+        {
+          "at": "waiting for the",
+          "zoom": null,
+          "note": {
+            "text": "Spinal cord: the *shortcut*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "A reflex",
+      "narration": "The signal also keeps going up to your brain, so you find out what happened. But by then your hand is often already moving. This loop is called a reflex: a shortcut that skips the decision.",
+      "props": [
+        "pan"
+      ],
+      "steps": [
+        {
+          "at": "keeps going up",
+          "glow": [
+            "cord",
+            "brain"
+          ],
+          "dim": true,
+          "signal": {
+            "from": "cord",
+            "to": "brain",
+            "label": "FYI: hot"
+          }
+        },
+        {
+          "at": "already moving",
+          "glow": [
+            "arm",
+            "hand"
+          ]
+        },
+        {
+          "at": "called a reflex",
+          "glow": [
+            "hand",
+            "cord",
+            "arm"
+          ],
+          "note": {
+            "text": "Reflex = *no decision*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "The catch",
+      "narration": "The catch? A reflex doesn't think. It can jerk your hand away even while you're holding something you'd rather not drop. Speed beats judgment here, and for heat, that's usually the right trade.",
+      "props": [
+        "pan"
+      ],
+      "steps": [
+        {
+          "at": "doesn't think",
+          "glow": [
+            "cord"
+          ],
+          "dim": true,
+          "note": {
+            "text": "Fast, but it doesn't *think*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "rather not drop",
+          "glow": [
+            "cord",
+            "arm"
+          ],
+          "signal": {
+            "from": "cord",
+            "to": "arm",
+            "label": "pull!"
+          }
+        },
+        {
+          "at": "Speed beats judgment",
+          "glow": [],
+          "dim": false,
+          "note": {
+            "text": "Speed beats judgment, *for heat*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "chapter": "Two pains",
+      "text": "2 pains",
+      "caption": "a quick sting, then a slow burn",
+      "tone": "warn",
+      "icon": "hand",
+      "sfx": "impact",
+      "narration": "But there's a second mystery. You feel a quick, sharp sting, then, a moment later, a deeper burn. Why would one touch hurt twice?"
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "Two cables",
+      "narration": "Because the signal travels on two kinds of nerve fibers. Fast ones, wrapped in a thin layer of myelin, an insulation that speeds signals up. And slow ones, with no myelin at all. Same burn, two cables.",
+      "props": [
+        "pan"
+      ],
+      "steps": [
+        {
+          "at": "two kinds of",
+          "glow": [
+            "fast",
+            "slow"
+          ],
+          "dim": true,
+          "zoom": "elbow"
+        },
+        {
+          "at": "Fast ones wrapped",
+          "glow": [
+            "fast"
+          ],
+          "label": {
+            "region": "fast",
+            "text": "Fast: thin myelin"
+          },
+          "signal": {
+            "from": "hand",
+            "to": "cord",
+            "label": "sting"
+          }
+        },
+        {
+          "at": "speeds signals up",
+          "note": {
+            "text": "Myelin = insulation = *speed*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "And slow ones",
+          "glow": [
+            "slow"
+          ],
+          "label": {
+            "region": "slow",
+            "text": "Slow: no myelin"
+          },
+          "signal": {
+            "from": "hand",
+            "to": "cord",
+            "label": "burn"
+          }
+        },
+        {
+          "at": "two cables",
+          "glow": [
+            "fast",
+            "slow"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "chart",
+      "title": "The race",
+      "schematic": true,
+      "x": {
+        "label": "time",
+        "max": 3.2,
+        "ticks": [
+          {
+            "at": 0,
+            "label": "touch"
+          },
+          {
+            "at": 1,
+            "label": "~1 s"
+          }
+        ]
+      },
+      "y": {
+        "label": "How much it hurts",
+        "min": 0,
+        "max": 100
+      },
+      "series": [
+        {
+          "id": "sting",
+          "label": "Sting · fast",
+          "tone": "warn",
+          "points": [
+            [
+              0,
+              0
+            ],
+            [
+              0.06,
+              0
+            ],
+            [
+              0.14,
+              88
+            ],
+            [
+              0.32,
+              34
+            ],
+            [
+              0.6,
+              10
+            ],
+            [
+              1.0,
+              3
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        {
+          "id": "burn",
+          "label": "Burn · slow",
+          "tone": "bad",
+          "points": [
+            [
+              0,
+              0
+            ],
+            [
+              0.85,
+              0
+            ],
+            [
+              1.15,
+              26
+            ],
+            [
+              1.45,
+              60
+            ],
+            [
+              1.9,
+              70
+            ],
+            [
+              2.4,
+              60
+            ],
+            [
+              3,
+              48
+            ]
+          ]
+        }
+      ],
+      "narration": "Let's race them. From your fingertip to your spinal cord is almost a meter of nerve. The fast fibers cover it in a small fraction of a second: that's the sting. The slow ones need about a second, sometimes more: that's the burn.",
+      "steps": [
+        {
+          "at": "almost a meter",
+          "note": {
+            "text": "Rough estimate: *~1 m* of nerve",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "fast fibers cover",
+          "draw": [
+            "sting"
+          ]
+        },
+        {
+          "at": "that's the sting",
+          "mark": {
+            "x": 0.14,
+            "label": "a split second",
+            "series": "sting"
+          }
+        },
+        {
+          "at": "slow ones need",
+          "draw": [
+            "burn"
+          ],
+          "sfx": "clock"
+        },
+        {
+          "at": "that's the burn",
+          "mark": {
+            "x": 1.9,
+            "label": "about 1 s later",
+            "series": "burn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "chart",
+      "title": "Why keep the slow one",
+      "schematic": true,
+      "x": {
+        "label": "time",
+        "max": 3.2,
+        "ticks": [
+          {
+            "at": 0,
+            "label": "touch"
+          },
+          {
+            "at": 1,
+            "label": "~1 s"
+          }
+        ]
+      },
+      "y": {
+        "label": "How much it hurts",
+        "min": 0,
+        "max": 100
+      },
+      "series": [
+        {
+          "id": "sting",
+          "label": "Sting · fast",
+          "tone": "warn",
+          "points": [
+            [
+              0,
+              0
+            ],
+            [
+              0.06,
+              0
+            ],
+            [
+              0.14,
+              88
+            ],
+            [
+              0.32,
+              34
+            ],
+            [
+              0.6,
+              10
+            ],
+            [
+              1.0,
+              3
+            ],
+            [
+              3,
+              0
+            ]
+          ]
+        },
+        {
+          "id": "burn",
+          "label": "Burn · slow",
+          "tone": "bad",
+          "points": [
+            [
+              0,
+              0
+            ],
+            [
+              0.85,
+              0
+            ],
+            [
+              1.15,
+              26
+            ],
+            [
+              1.45,
+              60
+            ],
+            [
+              1.9,
+              70
+            ],
+            [
+              2.4,
+              60
+            ],
+            [
+              3,
+              48
+            ]
+          ]
+        }
+      ],
+      "narration": "So is the slow cable a flaw? Not really. That lasting burn is a good reminder to protect the spot. The price is a pain that lingers long after you've let go of the pan.",
+      "steps": [
+        {
+          "at": "slow cable a",
+          "focus": [
+            "burn"
+          ]
+        },
+        {
+          "at": "good reminder to",
+          "note": {
+            "text": "The burn says: *protect the spot*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "pain that lingers",
+          "mark": {
+            "x": 2.9,
+            "label": "still burning",
+            "series": "burn"
+          },
+          "note": {
+            "text": "The price: it *lingers*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "chapter": "Why rubbing helps",
+      "text": "Rub it",
+      "caption": "a bumped elbow · a stubbed toe",
+      "tone": "info",
+      "icon": "hand",
+      "sfx": "impact",
+      "narration": "Now something you do without thinking. Bump your elbow or stub your toe, and what do you do? You rub it. And it actually helps a little. Why would touching it make it hurt less?"
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "The gate",
+      "narration": "Touch travels on thick, fast fibers. When you rub, they switch on small neurons in your spinal cord that act like a gate, turning down the pain signal on its way up. That's an analogy: no real door, just neurons quieting neurons.",
+      "props": [],
+      "steps": [
+        {
+          "at": "Touch travels on",
+          "glow": [
+            "elbow"
+          ],
+          "label": {
+            "region": "elbow",
+            "text": "Rubbing: touch"
+          },
+          "signal": {
+            "from": "elbow",
+            "to": "gate",
+            "label": "touch"
+          }
+        },
+        {
+          "at": "act like a",
+          "glow": [
+            "gate",
+            "elbow"
+          ],
+          "zoom": "gate",
+          "label": {
+            "region": "gate",
+            "text": "Gate"
+          }
+        },
+        {
+          "at": "turning down the",
+          "signal": {
+            "from": "gate",
+            "to": "brain",
+            "label": "pain ↓"
+          }
+        },
+        {
+          "at": "That's an analogy",
+          "note": {
+            "text": "Analogy: no door, just *neurons*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "Only a dimmer",
+      "narration": "Scientists call this the gate control theory. Today we know it's simplified, but touch really can dim pain. The catch: rubbing only turns the volume down. It doesn't fix the injury underneath.",
+      "props": [],
+      "steps": [
+        {
+          "at": "gate control theory",
+          "glow": [
+            "gate"
+          ],
+          "note": {
+            "text": "Gate control theory (1965): *simplified*",
+            "tone": "neutral"
+          }
+        },
+        {
+          "at": "really can dim",
+          "glow": [
+            "gate",
+            "elbow"
+          ],
+          "signal": {
+            "from": "elbow",
+            "to": "gate",
+            "label": "touch"
+          }
+        },
+        {
+          "at": "rubbing only turns",
+          "zoom": null,
+          "glow": [
+            "elbow"
+          ],
+          "note": {
+            "text": "Dims it. Doesn't *fix* it",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "figure",
+      "chapter": "The brain sets the volume",
+      "figure": "body",
+      "title": "The brain's hand",
+      "narration": "The gate has a second hand on it: your brain. Signals coming down from the brain can turn pain down too. That's part of why people with a serious injury sometimes feel no pain in the moment. Pain isn't just a signal arriving: it's your brain setting the volume.",
+      "props": [],
+      "steps": [
+        {
+          "at": "second hand on",
+          "glow": [
+            "brain",
+            "gate"
+          ],
+          "label": {
+            "region": "brain",
+            "text": "Brain"
+          }
+        },
+        {
+          "at": "Signals coming down",
+          "signal": {
+            "from": "brain",
+            "to": "gate",
+            "label": "turn it down"
+          }
+        },
+        {
+          "at": "serious injury sometimes",
+          "note": {
+            "text": "Injured, yet *no pain* in the moment",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "setting the volume",
+          "glow": [
+            "brain"
+          ],
+          "note": {
+            "text": "Pain: your brain *sets the volume*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "figure",
+      "chapter": "The whole path",
+      "figure": "body",
+      "title": "The whole path",
+      "narration": "So, back to the pan. Your skin senses the heat. Your spinal cord pulls your hand back without waiting. Fast fibers bring the sting, slow fibers bring the burn, and touch and your brain can turn the volume down.",
+      "props": [
+        "pan"
+      ],
+      "steps": [
+        {
+          "at": "back to the",
+          "glow": [
+            "pan"
+          ]
+        },
+        {
+          "at": "skin senses the",
+          "glow": [
+            "hand",
+            "pan"
+          ],
+          "signal": {
+            "from": "pan",
+            "to": "hand",
+            "label": "heat"
+          }
+        },
+        {
+          "at": "pulls your hand",
+          "glow": [
+            "cord",
+            "arm"
+          ],
+          "signal": {
+            "from": "cord",
+            "to": "arm",
+            "label": "pull!"
+          }
+        },
+        {
+          "at": "bring the sting",
+          "glow": [
+            "fast"
+          ],
+          "signal": {
+            "from": "hand",
+            "to": "brain",
+            "label": "sting"
+          }
+        },
+        {
+          "at": "bring the burn",
+          "glow": [
+            "fast",
+            "slow"
+          ],
+          "signal": {
+            "from": "hand",
+            "to": "brain",
+            "label": "burn"
+          }
+        },
+        {
+          "at": "touch and your",
+          "glow": [
+            "gate",
+            "brain"
+          ],
+          "note": {
+            "text": "Touch and your brain: *the volume*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "Remember",
+      "narration": "Reflexes skip the decision, pain comes on two cables, and a gate can dim it. Think about the last time you stubbed your toe: did you notice the sting, then the burn? Tell me in the comments.",
+      "points": [
+        {
+          "text": "Reflexes *skip the decision*",
+          "at": "skip the decision"
+        },
+        {
+          "text": "Pain comes on *two cables*",
+          "at": "on two cables"
+        },
+        {
+          "text": "A *gate* can dim it",
+          "at": "gate can dim"
+        }
+      ],
+      "cta": "Sting, then burn? Tell me ▶"
+    },
+    {
+      "type": "list",
+      "title": "Before you go",
+      "numbered": false,
+      "narration": "Before you go: answer in the comments, and tell me what's next: why you can't tickle yourself, or why coffee keeps you awake? And if this helped, a like and a subscribe help a lot.",
+      "items": [
+        {
+          "text": "Answer in the *comments*",
+          "icon": "chat",
+          "at": "answer in the comments"
+        },
+        {
+          "text": "Next: *tickling* or *coffee*?",
+          "icon": "idea",
+          "at": "tell me what's next"
+        },
+        {
+          "text": "Like & subscribe if it *helped*",
+          "icon": "bell",
+          "at": "if this helped"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "Heat sensors: TRPV1 channels open above about 43 °C (Wikipedia, \"TRPV1\"); other nociceptors respond to higher heat, pressure or chemicals. A pan on the stove is far hotter.",
+    "The hot-stove reflex: receptors in the skin → sensory fiber → spinal cord → motor neuron → muscle, \"without actively thinking about it\" (OpenStax Anatomy & Physiology 2e, ch. 14 intro; Wikipedia, \"Withdrawal reflex\"). It is polysynaptic: one or more relay neurons (interneurons) sit between the sensory and the motor neuron, and the opposing muscle relaxes.",
+    "Why it is not \"thinking\": the loop hand → spinal cord → arm is far shorter than the path up to the brain and back, and it needs no decision. The brain is informed in parallel, which is why you still feel it.",
+    "\"Can jerk your hand away while you hold something\": an inference from the reflex being automatic; we found no study for it, so the voice says \"can\". The brain can also hold some reflexes back when it expects them.",
+    "First pain and second pain: a sharp, well-located sting carried by thinly myelinated Aδ fibers (about 5–30 m/s), then a duller, burning, longer pain carried by unmyelinated C fibers (about 0.4–2 m/s) (MSU open textbook Introduction to Neuroscience, \"Pain\"; Wikipedia, \"Nociceptor\" and \"Group C nerve fiber\").",
+    "The race, back of the envelope: about 0.8–1 m of nerve from fingertip to spinal cord in an adult (a rough estimate, it depends on height). At 25 m/s that is about 0.04 s; at 1 m/s about 1 s. The video says \"a small fraction of a second\" and \"about a second, sometimes more\".",
+    "Gate control theory (Melzack and Wall, 1965): large touch fibers (Aβ) excite inhibitory neurons in the dorsal horn of the spinal cord, which reduce the pain signal going up. Influential, now considered oversimplified (Wikipedia, \"Gate control theory\"; University of Iowa pressbook, \"Pain\": pressure near an injury decreases pain through inhibitory interneurons).",
+    "Descending control: pathways from the brainstem can inhibit pain signals in the spinal cord; people with serious injuries can feel no pain in the moment (MSU open textbook, \"Pain\").",
+    "Pain is an experience with sensory, emotional and cognitive parts; the same signal can hurt more or less depending on context. Kept short in the voice.",
+    "No first aid or treatment advice in this video. The rubbing example is a bumped elbow or a stubbed toe, never a burn. If a burn or a pain worries you, see a professional.",
+    "Follow-ups for the next videos: \"Why can't you tickle yourself?\" (the brain predicts your own touch) and \"Why does coffee keep you awake?\" (adenosine). The Shorts of this video: the reflex, the two pains, why rubbing helps."
+  ],
+  "publish": {
+    "titles": [
+      "Why Your Hand Jumps Off a Hot Pan Before You Decide",
+      "The Reflex, the Two Pains and Why Rubbing Helps (Neuroscience)",
+      "Who Moves Your Hand When You Touch Something Hot?"
+    ],
+    "description": "You touch a hot pan and your hand jumps back before you decide anything, and the real burn arrives a moment later. We start with the obvious model (skin, brain, muscle) and fix it step by step: the spinal reflex, the two kinds of pain fibers, and the gate that rubbing closes.",
+    "learn": [
+      "Why your hand moves before you decide: the spinal reflex",
+      "Why one touch hurts twice: fast and slow pain fibers",
+      "What myelin does for speed",
+      "Why rubbing a bump helps (and why it only dims the pain)",
+      "How your brain turns the volume of pain up or down"
+    ],
+    "extra": [
+      "Simplified model: real nerves and numbers vary. Heat sensors start firing above about 43 °C; fast pain fibers run at about 5–30 m/s and slow ones at about 0.4–2 m/s; about a meter of nerve from fingertip to spinal cord is a rough estimate.",
+      "Educational only, not medical advice. If a burn or a pain worries you, see a professional."
+    ],
+    "comment": "Think about the last time you stubbed your toe: did you notice the sting, then the burn?",
+    "hashtags": [
+      "neuroscience",
+      "reflex",
+      "pain",
+      "brain"
+    ]
+  },
+  "thumbnail": {
+    "text": "Who moved your *hand*?",
+    "kicker": "Everyday science",
+    "number": "2 pains",
+    "tone": "bad",
+    "figure": {
+      "name": "body",
+      "glow": [
+        "hand",
+        "cord",
+        "arm"
+      ],
+      "props": [
+        "pan"
+      ]
+    }
+  }
+}

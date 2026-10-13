@@ -1,0 +1,267 @@
+{
+  "id": "hot-pan-short-1-reflex",
+  "title": "Who moved your hand off the hot pan?",
+  "lang": "en",
+  "pack": "science",
+  "theme": "dark",
+  "hook": "incident",
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "Everyday science",
+      "heading": "Who moved your *hand*?",
+      "narration": "Your hand jumps off a hot pan before you decide anything. So who moved it? It wasn't your brain, at least not at first.",
+      "beats": [
+        {
+          "text": "Hand jumps",
+          "icon": "hand",
+          "at": "hand jumps off"
+        },
+        {
+          "text": "Hot pan",
+          "icon": "flame",
+          "at": "a hot pan"
+        },
+        {
+          "text": "?",
+          "at": "who moved it"
+        }
+      ]
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "The obvious answer",
+      "narration": "The obvious answer: your skin sends the heat to your brain, the brain decides, and tells your arm to pull back. That works for reaching a cup. But deciding takes time, and every moment on the pan means more damage.",
+      "props": [
+        "pan"
+      ],
+      "steps": [
+        {
+          "at": "The obvious answer",
+          "note": {
+            "text": "A *simplified* model",
+            "tone": "neutral"
+          }
+        },
+        {
+          "at": "sends the heat",
+          "glow": [
+            "hand",
+            "pan"
+          ],
+          "signal": {
+            "from": "hand",
+            "to": "brain",
+            "label": "heat!"
+          }
+        },
+        {
+          "at": "the brain decides",
+          "glow": [
+            "brain"
+          ],
+          "label": {
+            "region": "brain",
+            "text": "Brain: decides"
+          }
+        },
+        {
+          "at": "arm to pull",
+          "glow": [
+            "brain",
+            "arm"
+          ],
+          "signal": {
+            "from": "brain",
+            "to": "arm",
+            "label": "pull!"
+          }
+        },
+        {
+          "at": "deciding takes time",
+          "glow": [
+            "hand",
+            "pan"
+          ],
+          "note": {
+            "text": "Every moment on the pan: *damage*",
+            "tone": "bad"
+          },
+          "sfx": "clock"
+        }
+      ]
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "The shortcut",
+      "narration": "Here's the shortcut: your spinal cord, the thick bundle of nerves down your back. The heat signal reaches it first, and a small relay neuron sends it straight to your arm muscle. Your hand pulls back without waiting for the brain.",
+      "props": [
+        "pan"
+      ],
+      "steps": [
+        {
+          "at": "Here's the shortcut",
+          "glow": [
+            "cord"
+          ],
+          "dim": true,
+          "label": {
+            "region": "cord",
+            "text": "Spinal cord"
+          },
+          "sfx": "impact"
+        },
+        {
+          "at": "reaches it first",
+          "glow": [
+            "cord",
+            "hand"
+          ],
+          "signal": {
+            "from": "hand",
+            "to": "cord",
+            "label": "heat!"
+          }
+        },
+        {
+          "at": "small relay neuron",
+          "glow": [
+            "cord",
+            "gate"
+          ],
+          "zoom": "gate",
+          "label": {
+            "region": "gate",
+            "text": "Relay neuron"
+          }
+        },
+        {
+          "at": "to your arm",
+          "glow": [
+            "cord",
+            "gate",
+            "arm"
+          ],
+          "signal": {
+            "from": "gate",
+            "to": "arm",
+            "label": "pull!"
+          }
+        },
+        {
+          "at": "without waiting for",
+          "zoom": null,
+          "note": {
+            "text": "Spinal cord: the *shortcut*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "figure",
+      "figure": "body",
+      "title": "A reflex",
+      "narration": "The brain still hears about it, just a moment later. That loop is a reflex. The catch? It doesn't think: it can make you drop whatever you're holding.",
+      "props": [
+        "pan"
+      ],
+      "steps": [
+        {
+          "at": "still hears about",
+          "glow": [
+            "cord",
+            "brain"
+          ],
+          "dim": true,
+          "signal": {
+            "from": "cord",
+            "to": "brain",
+            "label": "FYI: hot"
+          }
+        },
+        {
+          "at": "That loop is",
+          "glow": [
+            "hand",
+            "cord",
+            "arm"
+          ],
+          "note": {
+            "text": "Reflex = *no decision*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "It doesn't think",
+          "glow": [
+            "cord"
+          ],
+          "note": {
+            "text": "Fast, but it doesn't *think*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "Remember",
+      "narration": "So your spinal cord moved your hand, and your brain found out later. Have you ever dropped something because of a reflex? The full video is on the channel.",
+      "points": [
+        {
+          "text": "The *spinal cord* moves first",
+          "at": "spinal cord moved"
+        },
+        {
+          "text": "The brain *finds out* later",
+          "at": "brain found out"
+        }
+      ],
+      "cta": "Dropped something? Tell me ▶"
+    }
+  ],
+  "notes": [
+    "The hot-stove reflex: receptors in the skin → sensory fiber → spinal cord → motor neuron → muscle, \"without actively thinking about it\" (OpenStax Anatomy & Physiology 2e, ch. 14 intro; Wikipedia, \"Withdrawal reflex\"). It is polysynaptic: one or more relay neurons sit between the sensory and the motor neuron.",
+    "Why it is not \"thinking\": the loop hand → spinal cord → arm is far shorter than the path up to the brain and back, and it needs no decision. The brain is informed in parallel, which is why you still feel it.",
+    "\"It can make you drop whatever you're holding\": an inference from the reflex being automatic; no study cited, so the voice says \"can\".",
+    "Heat sensors (TRPV1) open above about 43 °C (Wikipedia, \"TRPV1\").",
+    "Simplified drawing: one fiber of each kind, one relay neuron. Real nerves carry thousands of fibers.",
+    "Educational only, no first aid or treatment advice. If a pain or an injury worries you, see a professional."
+  ],
+  "publish": {
+    "titles": [
+      "Who Moves Your Hand Off a Hot Pan? (Your Spinal Cord)",
+      "Your Hand Moves Before You Decide: the Reflex Explained"
+    ],
+    "description": "Your hand jumps off a hot pan before you decide anything. The shortcut is your spinal cord: a reflex that moves first and tells the brain later.",
+    "extra": [
+      "🎬 The full video (the reflex, the two pains and why rubbing helps) is on the channel: \"Who pulled your hand off the hot pan?\""
+    ],
+    "comment": "Have you ever dropped something because of a reflex?",
+    "hashtags": [
+      "neuroscience",
+      "reflex",
+      "brain"
+    ]
+  },
+  "thumbnail": {
+    "text": "Your hand moved *first*",
+    "kicker": "Everyday science",
+    "number": "Spinal cord",
+    "tone": "warn",
+    "figure": {
+      "name": "body",
+      "glow": [
+        "hand",
+        "cord",
+        "arm"
+      ],
+      "props": [
+        "pan"
+      ]
+    }
+  }
+}

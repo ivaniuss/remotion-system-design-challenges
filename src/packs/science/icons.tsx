@@ -415,6 +415,115 @@ const GlobeIcon: React.FC<IconProps> = ({state, frame}) => {
   );
 };
 
+// ---------- hand: skin and its sensors (heat, touch) ----------
+const HAND =
+  'M72 150 L72 126 C60 118 46 102 42 90 C39 81 48 75 55 81 L72 98 ' +
+  'L72 54 C72 43 86 43 86 54 L86 84 L88 84 L88 44 C88 33 104 33 104 44 L104 84 ' +
+  'L106 84 L106 52 C106 41 122 41 122 52 L122 86 L124 86 L124 66 C124 56 138 56 138 66 ' +
+  'L138 118 C138 136 128 150 118 150 Z';
+const SENSORS: [number, number][] = [[79, 56], [96, 46], [114, 54], [131, 68], [92, 116], [118, 110]];
+const HandIcon: React.FC<IconProps> = ({state, frame, p}) => {
+  const burned = state === 'burned';
+  const sensing = state === 'sensing';
+  // A short jerk back when it gets burned (the reflex), then it settles.
+  const dy = burned ? 10 * Math.sin(Math.PI * clampP(p * 2.2)) : 0;
+  return (
+    <g transform={`translate(0 ${dy})`}>
+      <path d={HAND} fill={F.orange} {...ln} />
+      {[86, 104, 122].map((x) => (
+        <line key={x} x1={x + 1} y1={84} x2={x + 1} y2={96} stroke={L} strokeWidth={3} strokeLinecap="round" />
+      ))}
+      {SENSORS.map(([x, y], i) => {
+        const on = sensing ? 0.4 + 0.6 * pulse(frame + i * 7, 26) : 0;
+        return (
+          <g key={i}>
+            {on > 0 && <circle cx={x} cy={y} r={9} fill="#FFD84D" opacity={on * 0.6} />}
+            <circle cx={x} cy={y} r={3.6} fill={sensing ? S.warn : L} opacity={sensing ? 1 : 0.55} />
+          </g>
+        );
+      })}
+      {burned && (
+        <>
+          <ellipse cx={96} cy={46} rx={22} ry={12} fill={S.bad} opacity={0.35} />
+          {['M70 30 L62 18', 'M96 24 L96 8', 'M122 30 L130 18'].map((d, i) => (
+            <path key={i} d={d} stroke={S.bad} strokeWidth={6} strokeLinecap="round" opacity={clampP(p * 3)} />
+          ))}
+        </>
+      )}
+    </g>
+  );
+};
+
+// ---------- flame: heat, a hot pan, fire ----------
+const FlameIcon: React.FC<IconProps> = ({state, frame}) => {
+  const k = state === 'flicker' ? 1 + 0.06 * Math.sin(frame / 3.1) + 0.04 * Math.sin(frame / 1.7) : 1;
+  const sway = state === 'flicker' ? 4 * Math.sin(frame / 5) : 0;
+  return (
+    <>
+      <g transform={`translate(100 146) scale(${2 - k} ${k}) translate(-100 -146)`}>
+        <path d={`M100 146 C58 146 42 116 52 88 C58 70 72 62 74 40 C88 52 92 66 90 78 C98 62 102 40 ${96 + sway} 14 C128 34 156 70 152 104 C150 130 132 146 100 146 Z`} fill="#FF8A3D" {...ln} />
+        <path d={`M100 140 C80 140 72 124 78 108 C82 98 92 92 94 80 C104 90 ${110 + sway / 2} 100 110 112 C118 106 120 100 122 94 C132 108 130 140 100 140 Z`} fill="#FFD84D" stroke={L} strokeWidth={3.5} strokeLinejoin="round" />
+      </g>
+    </>
+  );
+};
+
+// ---------- spine: the spinal cord inside the vertebrae, with nerves branching off ----------
+const VERTEBRAE = [18, 46, 74, 102, 130];
+const SpineIcon: React.FC<IconProps> = ({state, frame}) => {
+  const signal = state === 'signal';
+  const y = 12 + ((frame * 3.2) % 136);
+  return (
+    <>
+      {VERTEBRAE.slice(1).map((vy, i) => (
+        <g key={i} fill="none" stroke={L} strokeWidth={4} strokeLinecap="round">
+          <path d={`M78 ${vy - 4} Q56 ${vy - 2} 42 ${vy + 8}`} />
+          <path d={`M122 ${vy - 4} Q144 ${vy - 2} 158 ${vy + 8}`} />
+        </g>
+      ))}
+      <rect x={95} y={8} width={10} height={146} rx={5} fill="#FFE27A" stroke={L} strokeWidth={3.5} />
+      {VERTEBRAE.map((vy) => (
+        <g key={vy}>
+          <rect x={72} y={vy - 12} width={56} height={22} rx={9} fill={F.paper} {...ln} />
+          <rect x={95} y={vy - 12} width={10} height={22} fill="#FFE27A" stroke="none" />
+          <line x1={95} y1={vy - 12} x2={95} y2={vy + 10} stroke={L} strokeWidth={3} />
+          <line x1={105} y1={vy - 12} x2={105} y2={vy + 10} stroke={L} strokeWidth={3} />
+        </g>
+      ))}
+      {signal && (
+        <>
+          <circle cx={100} cy={y} r={13} fill="#FFD84D" opacity={0.55} />
+          <circle cx={100} cy={y} r={6} fill={S.warn} />
+        </>
+      )}
+    </>
+  );
+};
+
+// ---------- muscle: a flexed arm (the muscle that pulls the hand back) ----------
+const ARM =
+  'M28 138 L118 138 C140 138 150 124 146 106 L136 56 C135 44 128 38 118 40 C106 42 104 52 108 60 ' +
+  'L116 96 C104 76 64 70 48 88 C42 94 36 100 28 102 Z';
+const MuscleIcon: React.FC<IconProps> = ({state, frame, p}) => {
+  const contract = state === 'contract';
+  const k = contract ? 1 + 0.08 * Math.max(0, Math.sin((frame / 18) * Math.PI)) : state === 'pulled' ? 1 + 0.08 * clampP(p * 2) : 1;
+  return (
+    <>
+      <g transform={`translate(80 104) scale(1 ${k}) translate(-80 -104)`}>
+        <path d={ARM} fill={F.red} {...ln} />
+      </g>
+      <path d="M58 98 Q74 86 92 90" fill="none" stroke="#fff" strokeWidth={6} strokeLinecap="round" opacity={0.75} />
+      {(contract || state === 'pulled') && (
+        <g stroke={S.warn} strokeWidth={5} strokeLinecap="round" opacity={contract ? pulse(frame, 18) : 1}>
+          <line x1={66} y1={62} x2={60} y2={50} />
+          <line x1={84} y1={58} x2={84} y2={44} />
+          <line x1={102} y1={62} x2={108} y2={50} />
+        </g>
+      )}
+    </>
+  );
+};
+
 export const ICONS: Record<string, React.FC<IconProps>> = {
   brain: BrainIcon,
   neuron: NeuronIcon,
@@ -434,4 +543,8 @@ export const ICONS: Record<string, React.FC<IconProps>> = {
   heart: HeartIcon,
   flask: FlaskIcon,
   globe: GlobeIcon,
+  hand: HandIcon,
+  flame: FlameIcon,
+  spine: SpineIcon,
+  muscle: MuscleIcon,
 };

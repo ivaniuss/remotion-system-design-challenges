@@ -27,7 +27,7 @@ export const TitleScene: React.FC<SceneProps<'title'>> = ({scene, t, frame, them
   if (!words[words.length - 1].length) words.pop();
   const chars = scene.heading.replace(/\*/g, '').length;
   const h1 = vertical ? (chars > 44 ? 80 : chars > 28 ? 90 : 100) : chars > 50 ? 84 : 100;
-  // The first scene is the thumbnail: everything is readable on frame 0, with a small
+  // The first scene is what the feed shows first: everything is readable on frame 0, with a small
   // punch-in instead of a word-by-word reveal.
   const first = scene.index === 0;
   const punch = first ? 1 + 0.07 * (1 - easeOut(clamp01(t / 0.6))) : 1;

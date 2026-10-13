@@ -341,5 +341,20 @@
       "ai",
       "security"
     ]
+  },
+  "thumbnail": {
+    "text": "Mods can *approve for you*",
+    "kicker": "Claude Code",
+    "number": "Runs as you",
+    "tone": "bad",
+    "icons": [
+      {
+        "icon": "lambda"
+      },
+      {
+        "icon": "lock",
+        "status": "error"
+      }
+    ]
   }
 }

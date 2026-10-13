@@ -207,6 +207,9 @@ export const FlowScene = z.object({
 export const Board = z.object({
   nodes: z.array(FlowNode).min(1).max(14),
   edges: z.array(FlowEdge).max(24).default([]),
+  // The story flows from the bottom row up (skin → spinal cord → brain). 16:9 turns rows into
+  // columns; with this the bottom row goes on the left, so the path still reads left to right.
+  flowUp: z.boolean().default(false),
 });
 
 export const BoardStep = FlowStep.extend({
@@ -303,6 +306,8 @@ export const FigureScene = z.object({
   narration: Narration,
   title: Title.optional(),
   figure: z.enum(FIGURES),
+  // Optional objects of the figure switched on for this scene (body: "pan").
+  props: z.array(z.string()).max(4).default([]),
   steps: z.array(FigureStep).max(10).default([]),
 });
 
@@ -411,6 +416,27 @@ export const Publish = z.object({
   hashtags: z.array(z.string().min(1).max(40)).max(5).optional(),
 });
 
+// The thumbnail: a designed still, not a frame of the video. `make`, `stills` and
+// `npm run thumbnail` export it as out/<id>/<theme>.thumbnail.png (1280×720, YouTube) and
+// out/<id>/<theme>.cover.png (1080×1920, cover of a Short / TikTok). Without this block the
+// engine builds one from the first title scene (heading, tag and beat icons).
+export const ThumbnailIcon = z.object({
+  icon: Icon,
+  status: z.enum(STATUSES).optional(), // the icon's animated state frozen (error = broken)
+});
+export const Thumbnail = z.object({
+  // 2–6 big words; *emphasis* gets the accent highlight. Not the video title: the hook.
+  text: z.string().min(1).max(48),
+  kicker: z.string().max(28).optional(), // small tag above; default: the first title's tag
+  number: z.string().min(1).max(14).optional(), // a sticker with the number that makes it real
+  tone: Tone.default('warn'), // color of the sticker
+  // The picture: 1 icon (one big card), 2 (A → B) or 3 (A → B → C)…
+  icons: z.array(ThumbnailIcon).min(1).max(3).optional(),
+  // …or a figure of the pack with some regions lit.
+  figure: z.object({name: z.enum(FIGURES), glow: z.array(z.string()).default([]), props: z.array(z.string()).max(4).default([])}).optional(),
+  theme: z.enum(THEME_NAMES).optional(), // default: the video's theme
+});
+
 export const VideoSpec = z.object({
   id: Id,
   title: z.string().min(1).max(100),
@@ -429,6 +455,7 @@ export const VideoSpec = z.object({
   notes: z.array(z.string().min(1).max(900)).max(20).optional(),
   scenes: z.array(Scene).min(1).max(30),
   publish: Publish.optional(),
+  thumbnail: Thumbnail.optional(),
 });
 
 export type VideoSpec = z.output<typeof VideoSpec>;
@@ -449,6 +476,7 @@ export type BoardStep = z.output<typeof BoardStep>;
 export type BoardScene = z.output<typeof BoardScene>;
 export type SummaryScene = z.output<typeof SummaryScene>;
 export type ChartScene = z.output<typeof ChartScene>;
+export type ThumbnailSpec = z.output<typeof Thumbnail>;
 export type ChartSeries = z.output<typeof ChartSeries>;
 export type FigureScene = z.output<typeof FigureScene>;
 export type SequenceScene = z.output<typeof SequenceScene>;

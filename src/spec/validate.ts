@@ -43,6 +43,13 @@ export function normalizeSpec(raw: unknown): unknown {
   if (isObj(spec.board) && Array.isArray(spec.board.nodes)) {
     spec.board = {...spec.board, nodes: spec.board.nodes.map((n) => (isObj(n) ? {...n, icon: normIcon(n.icon)} : n))};
   }
+  if (isObj(spec.thumbnail)) {
+    const th: Record<string, unknown> = {...spec.thumbnail};
+    // "icons": ["hand", "flame"] is fine too.
+    if (Array.isArray(th.icons)) th.icons = th.icons.map((it) => (typeof it === 'string' ? {icon: normIcon(it)} : isObj(it) ? {...it, icon: normIcon(it.icon)} : it));
+    if (typeof th.figure === 'string') th.figure = {name: th.figure};
+    spec.thumbnail = th;
+  }
   if (!Array.isArray(spec.scenes)) return spec;
   spec.scenes = spec.scenes.map((s) => {
     if (!isObj(s)) return s;
@@ -114,6 +121,19 @@ export function validateSpec(raw: unknown): Validation {
   if (spec.board) checkGraph(spec.board.nodes, spec.board.edges, 'board', errors, warnings);
   if (spec.board && !boardScenes) warnings.push('board: defined but no scene has type "board", so it is never shown.');
 
+  if (spec.thumbnail) {
+    const th = spec.thumbnail;
+    if (th.icons && th.figure) errors.push('thumbnail: use "icons" or "figure", not both.');
+    if (th.figure) {
+      const info = FIGURE_INFO[th.figure.name];
+      if (info.pack !== spec.pack) errors.push(`thumbnail.figure: "${th.figure.name}" belongs to the ${info.pack} pack; this video's pack is "${spec.pack}".`);
+      for (const r of th.figure.glow) if (!info.regions.includes(r)) errors.push(`thumbnail.figure.glow: "${r}" is not a region of ${th.figure.name}. Regions: ${info.regions.join(', ')}`);
+      for (const pr of th.figure.props) if (!(info.props ?? []).includes(pr)) errors.push(`thumbnail.figure.props: "${pr}" is not a prop of ${th.figure.name}. Props: ${(info.props ?? []).join(', ') || 'none'}`);
+    }
+    const words = th.text.replace(/\*/g, '').trim().split(/\s+/).length;
+    if (words > 7) warnings.push(`thumbnail.text: ${words} words; 2–6 big words read at thumbnail size.`);
+  }
+
   spec.scenes.forEach((scene, si) => {
     const where = `scenes[${si}] (${scene.type})`;
     const words = splitWords(scene.narration);
@@ -147,6 +167,7 @@ export function validateSpec(raw: unknown): Validation {
         const used = [...(st.glow ?? []), ...(st.label ? [st.label.region] : []), ...(st.signal ? [st.signal.from, st.signal.to] : []), ...(st.zoom ? [st.zoom] : [])];
         for (const r of used) if (!ok(r)) errors.push(`${where}.steps[${k}]: "${r}" is not a region of ${scene.figure}. Regions: ${info.regions.join(', ')}`);
       });
+      for (const pr of scene.props) if (!(info.props ?? []).includes(pr)) errors.push(`${where}.props: "${pr}" is not a prop of ${scene.figure}. Props: ${(info.props ?? []).join(', ') || 'none'}`);
     }
     if (scene.type === 'shot') {
       const info = WORLD_INFO[scene.world];
@@ -177,6 +198,15 @@ export function validateSpec(raw: unknown): Validation {
       });
     }
   });
+
+  // Science is told with illustrations and curves; boxes and arrows make it look like a
+  // software diagram (docs/packs/science.md).
+  if (spec.pack === 'science') {
+    const boards = spec.scenes.filter((s) => s.type === 'board' || s.type === 'flow').length;
+    const pictures = spec.scenes.filter((s) => s.type === 'figure' || s.type === 'chart').length;
+    if (boards >= 3 && boards > pictures)
+      warnings.push(`science: ${boards} of ${spec.scenes.length} scenes are board/flow diagrams and only ${pictures} are figures or charts. Science is told on a drawing (figure: body, neuron, brain) with charts for time; keep the board for a model that has no drawing (docs/packs/science.md §2A).`);
+  }
 
   return {spec: errors.length ? null : spec, errors, warnings};
 }

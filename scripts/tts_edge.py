@@ -12,6 +12,28 @@ import sys
 
 try:
     import edge_tts
+    # Temporary shim (Oct 2026): Microsoft refuses synthesis on the legacy
+    # host with 403 (rany2/edge-tts#490). Edge 155 uses
+    # api.msedgeservices.com, which accepts the same token as
+    # Ocp-Apim-Subscription-Key (unmerged PR #491). Remove once the
+    # installed edge-tts already points at the new host.
+    try:
+        from edge_tts import constants as _edge_constants
+
+        if "speech.platform.bing.com" in getattr(_edge_constants, "WSS_URL", ""):
+            _new_wss = (
+                "wss://api.msedgeservices.com/tts/cognitiveservices/websocket/v1"
+                f"?Ocp-Apim-Subscription-Key={_edge_constants.TRUSTED_CLIENT_TOKEN}"
+            )
+            _edge_constants.WSS_URL = _new_wss
+            try:
+                from edge_tts import communicate as _edge_communicate
+
+                _edge_communicate.WSS_URL = _new_wss
+            except ImportError:
+                pass
+    except ImportError:
+        pass
 except ImportError:
     print("edge-tts is not installed. Run: pip install edge-tts", file=sys.stderr)
     sys.exit(3)

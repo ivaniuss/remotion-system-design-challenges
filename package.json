@@ -7,6 +7,7 @@
     "preview": "tsx scripts/preview.ts",
     "make": "tsx scripts/make.ts",
     "stills": "tsx scripts/stills.ts",
+    "thumbnail": "tsx scripts/thumbnail.ts",
     "validate": "tsx scripts/validate.ts",
     "fingerprint": "tsx scripts/fingerprint.ts",
     "dev": "remotion studio",

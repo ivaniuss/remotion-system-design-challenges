@@ -1781,5 +1781,20 @@
       "arquitecturadesoftware",
       "backend"
     ]
+  },
+  "thumbnail": {
+    "text": "Tu reporte tarda *minutos*",
+    "kicker": "Entrevista de diseño",
+    "number": "504",
+    "tone": "bad",
+    "icons": [
+      {
+        "icon": "file"
+      },
+      {
+        "icon": "gateway",
+        "status": "error"
+      }
+    ]
   }
 }

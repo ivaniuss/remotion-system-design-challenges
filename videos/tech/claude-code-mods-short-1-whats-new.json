@@ -333,5 +333,17 @@
       "ai",
       "programming"
     ]
+  },
+  "thumbnail": {
+    "text": "Claude Code got *mods*",
+    "kicker": "Claude Code",
+    "icons": [
+      {
+        "icon": "code"
+      },
+      {
+        "icon": "lambda"
+      }
+    ]
   }
 }

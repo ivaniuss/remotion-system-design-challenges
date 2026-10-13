@@ -78,6 +78,18 @@ export function youtubeMarkdown(spec: VideoSpec, tl: Timeline, voiced: boolean):
   if (short) out.push(fr ? '_Short: sin capítulos (YouTube no los muestra en Shorts). Súbelo en vertical; menos de 3 min cuenta como Short._' : '_Short: no chapters (YouTube does not show them on Shorts). Upload the vertical version; under 3 min counts as a Short._', '');
   else if (chs.length < 3) out.push(fr ? '_Menos de 3 capítulos de 10 s: YouTube no los mostraría, así que no se incluyen._' : '_Fewer than 3 chapters of 10 s or more: YouTube would ignore them, so they are left out._', '');
   if (!p) out.push(fr ? '_Añade `"publish"` al spec para títulos y descripción a medida._' : '_Add `"publish"` to the spec for custom titles and description._', '');
-  out.push(fr ? 'Miniatura: el primer fotograma del video (etiqueta + título grandes).' : 'Thumbnail: the first frame of the video (tag + big heading).', '');
+  const thumb = `${spec.theme}.thumbnail.png`;
+  const cover = `${spec.theme}.cover.png`;
+  const custom = spec.thumbnail ? '' : fr ? ' (hecha desde el título; añade `"thumbnail"` al spec para diseñarla)' : ' (built from the title; add `"thumbnail"` to the spec to design it)';
+  out.push(
+    short
+      ? fr
+        ? `Portada: \`${cover}\` (9:16, en esta carpeta)${custom}. Para un video de 16:9: \`${thumb}\`.`
+        : `Cover: \`${cover}\` (9:16, in this folder)${custom}. For a 16:9 upload: \`${thumb}\`.`
+      : fr
+        ? `Miniatura: \`${thumb}\` (1280×720, en esta carpeta)${custom}. Portada vertical: \`${cover}\`.`
+        : `Thumbnail: \`${thumb}\` (1280×720, in this folder)${custom}. Vertical cover: \`${cover}\`.`,
+    '',
+  );
   return out.join('\n');
 }
