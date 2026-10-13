@@ -25,7 +25,7 @@ const tlFile = path.join('public', 'generated', id, 'timeline.json');
 const stale = !fs.existsSync(tlFile) || fs.statSync(tlFile).mtimeMs < fs.statSync(specFile).mtimeMs;
 if (stale) {
   const tsx = path.join('node_modules', '.bin', process.platform === 'win32' ? 'tsx.cmd' : 'tsx');
-  const r = spawnSync(tsx, ['scripts/make.ts', specFile, '--no-render', '--voice', opt('--voice') ?? 'none'], {stdio: 'inherit'});
+  const r = spawnSync(tsx, ['scripts/make.ts', specFile, '--no-render', '--voice', opt('--voice') ?? 'none'], {stdio: 'inherit', shell: process.platform === 'win32'});
   if (r.status !== 0) process.exit(r.status ?? 1);
 }
 const tl = JSON.parse(fs.readFileSync(tlFile, 'utf8'));

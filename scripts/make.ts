@@ -106,7 +106,7 @@ for (const format of formats) {
   const comp = format === 'vertical' ? 'Vertical' : 'Horizontal';
   const out = path.join(vidOut, `${spec.theme}.${format}.mp4`);
   console.log(`▸ Rendering ${out}`);
-  const r = spawnSync(bin, ['render', 'src/index.ts', comp, out, `--props=${propsFile}`], {stdio: 'inherit'});
+  const r = spawnSync(bin, ['render', 'src/index.ts', comp, out, `--props=${propsFile}`], {stdio: 'inherit', shell: process.platform === 'win32'});
   if (r.status !== 0) {
     console.error(`✖ Render failed for ${format}.`);
     process.exit(r.status ?? 1);

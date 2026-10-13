@@ -13,12 +13,14 @@ if (!args.some((a) => a.endsWith('.json'))) {
 }
 const bin = (name: string) => path.join('node_modules', '.bin', process.platform === 'win32' ? `${name}.cmd` : name);
 const makeArgs = args.filter((a) => a !== '--no-studio' && a !== '--no-render');
-const made = spawnSync(bin('tsx'), ['scripts/make.ts', ...makeArgs, '--no-render'], {stdio: 'inherit'});
+const made = spawnSync(bin('tsx'), ['scripts/make.ts', ...makeArgs, '--no-render'], {stdio: 'inherit', shell: process.platform === 'win32'});
+if (made.error) console.error('No se pudo arrancar el proceso:', made.error);
 if (made.status !== 0) process.exit(made.status ?? 1);
 if (args.includes('--no-studio')) {
   console.log('✔ Timeline updated. An open Remotion Studio reloads by itself.');
   process.exit(0);
 }
 console.log('▸ Opening Remotion Studio (compositions "Vertical" and "Horizontal"). Ctrl+C to stop.');
-const studio = spawnSync(bin('remotion'), ['studio', 'src/index.ts'], {stdio: 'inherit'});
+const studio = spawnSync(bin('remotion'), ['studio', 'src/index.ts'], {stdio: 'inherit', shell: process.platform === 'win32'});
+if (studio.error) console.error('No se pudo arrancar Remotion Studio:', studio.error);
 process.exit(studio.status ?? 0);
