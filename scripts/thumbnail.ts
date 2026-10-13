@@ -19,7 +19,7 @@ const tlFile = path.join('public', 'generated', id, 'timeline.json');
 // Rebuild the timeline (silent, fast) when it is missing or older than the spec.
 if (!fs.existsSync(tlFile) || fs.statSync(tlFile).mtimeMs < fs.statSync(specFile).mtimeMs) {
   const tsx = path.join('node_modules', '.bin', process.platform === 'win32' ? 'tsx.cmd' : 'tsx');
-  const r = spawnSync(tsx, ['scripts/make.ts', specFile, '--no-render', '--voice', 'none'], {stdio: 'inherit'});
+  const r = spawnSync(tsx, ['scripts/make.ts', specFile, '--no-render', '--voice', 'none'], {stdio: 'inherit', shell: process.platform === 'win32'});
   if (r.status !== 0) process.exit(r.status ?? 1);
 }
 const tl = JSON.parse(fs.readFileSync(tlFile, 'utf8'));

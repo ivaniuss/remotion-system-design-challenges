@@ -284,5 +284,6 @@
       "neuron",
       "brain"
     ]
-  }
+  },
+  "thumbnail": {"text": "How a neuron *decides*", "kicker": "Your brain", "number": "86 billion", "tone": "warn", "figure": {"name": "neuron", "glow": ["soma", "axon"]}}
 }
