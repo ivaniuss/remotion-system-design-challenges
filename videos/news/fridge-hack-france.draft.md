@@ -9,8 +9,7 @@
 - **Theme:** news (new broadcast look)
 - **Signature visuals used:** media (real footage, user supplied) · stats · map · flow · chart ·
   quote · timeline · sources
-- **Thumbnail:** "Hacked fridges hit *50 °C*" · fridge icon in error state · sticker "300+ stores"?
-  → no: sticker "50 °C" (the one number every source agrees on).
+- **Thumbnail:** "Hacked fridges hit *50 °C*" · fridge icon in error state · sticker "50 °C" (the one number every source agrees on).
 
 Facts as of **Tuesday 13 October 2026**. The story is still moving: store counts and losses
 are provisional and are said as such.
@@ -29,8 +28,7 @@ are provisional and are said as such.
    _Visual:_ M2 (discarded food / warm freezer), lower third "Supermarkets across France ·
    Monday 12 Oct".
 
-3. **Who was hit** (stats) — The count is still moving. Intermarché and its Netto stores
-   reported between one hundred eighty and three hundred. Carrefour said eighty. U stores, about
+3. **Who was hit** (stats) — The count is still moving. Intermarché's owner says about one hundred fifty to one hundred eighty of its stores, other reports say three hundred. Carrefour said eighty. U stores, about
    eighty. Monoprix, around thirty. E.Leclerc, several.
    _Visual:_ five figures pop in on their names: "180–300", "80", "~80", "~30", "several".
 
@@ -48,7 +46,7 @@ are provisional and are said as such.
 
 6. **Defrost, stretched** (chart, schematic) — Defrosting is normal. Heaters melt the ice for a
    short while, and alarms expect it. In some stores, according to Le Monde, cycles were stretched
-   from one hour to eight. The alarms stayed quiet while the food warmed.
+   from one hour to eight, to delay the alarms. Meanwhile, the food warmed up.
    _Visual:_ temperature curve: normal fridge ~3 °C with short defrost bumps, then the attacked
    curve climbing to 50 °C for hours; mark "alarms delayed".
 
@@ -80,9 +78,9 @@ are provisional and are said as such.
     controllers off the internet, or allow only trusted addresses. Install the fixes, or replace
     old models. And treat any exposed unit as already compromised.
 
-12. **The question** (summary) — Nothing was stolen here. The damage was physical: heat, spoiled
+12. **The question** (summary) — No data theft has been reported. The damage was physical: heat, spoiled
     food, fires. So, should equipment like this be online at all? Tell me in the comments.
-    _Visual:_ points "Remote heat, not stolen data", "Old, exposed controllers", "Investigation
+    _Visual:_ points "Remote heat, no data theft reported", "Old, exposed controllers", "Investigation
     open, no claim yet"; cta "Should a fridge be online?"
 
 13. **Sources** (sources) — Sources are on screen and in the description.
@@ -126,7 +124,7 @@ are provisional and are said as such.
 
 ## Reviewer pass (fact-check by a separate agent, 13 Oct 2026)
 
-Must fix, all applied in the approved narration (see `fridge-hack-france.json`):
+Must fix, all applied in the narration of `fridge-hack-france.json`:
 1. Scene 3: Intermarché counts attributed correctly — the owner says ~150–180 (Reuters, TIME); 300 comes from BFM/AFP.
 2. Scene 6: Le Monde says the cycles were stretched *to delay* the alarms, not that alarms stayed quiet.
 3. Scene 7: CERT-FR widened its alert on 13 Oct to Dixell xweb and Copeland xweb; the "60 %" figure (one firm, U.K. Cyber Defence) moved to notes.
@@ -135,4 +133,4 @@ Must fix, all applied in the approved narration (see `fridge-hack-france.json`):
 
 Also applied: attacks probably still ongoing (CERT-FR) in "Still unknown"; "some equipment caught fire"; La Haye attributed to an Intermarché; quote order as said; "flaws that updates had fixed".
 
-Approved by the user on 13 Oct 2026.
+Status: pending the user's approval.

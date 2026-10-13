@@ -65,6 +65,10 @@ The skill lives in `skills/make-video/SKILL.md`:
 - **Any other agent:** `AGENTS.md` (and `CLAUDE.md`) at the root point it to the skill
   and the guide.
 
+Other skills in `skills/`: `make-news` (a current event as a sourced broadcast
+report, `skills/make-news/SKILL.md`) and `make-film` (a documentary short,
+`skills/make-film/SKILL.md`). Same project, same commands.
+
 **In a terminal:**
 
 ```bash
@@ -255,6 +259,8 @@ src/video/        VideoFrame (whole picture at time t), Video (Remotion + audio)
 scripts/          preview, make, stills, validate, check, fingerprint, export-schema, tts_edge.py,
                   make-sfx.sh; lib/script.ts (script.md), lib/youtube.ts (youtube.md)
 skills/make-video the /make-video skill (idea → draft → spec → video)
+                  skills/make-news the /make-news skill (news → sourced draft → spec → broadcast report)
+                  skills/make-film the /make-film skill (idea → shot scenes → documentary short)
 docs/             AUTHORING.md (rules for every video + spec reference), SHAPES.md (story
                   shapes, hooks, variety guard), REVIEWER.md (the review rubric),
                   DRAFT-TEMPLATE.md, packs/<pack>.md

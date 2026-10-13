@@ -8,6 +8,9 @@ repeating itself, and a menu of patterns for Shorts.
 
 Read it in Phase A (the draft), after `docs/AUTHORING.md` and the pack guide.
 
+The news pack has its own shape, `news-report` (fact, who, where, how, reactions, what is
+unknown, sources). It is described in `docs/packs/news.md` §3, not in this file.
+
 ## 1. How to choose
 
 1. Run `npm run fingerprint` (§7). It lists the recent videos with their shape, hook, theme,
