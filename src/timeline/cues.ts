@@ -13,6 +13,7 @@ export function cuePhrases(scene: Scene): (string | undefined)[] {
     case 'chart':
     case 'figure':
     case 'sequence':
+    case 'shot':
       return scene.steps.map((s) => s.at);
     case 'list':
       return scene.items.map((i) => i.at);

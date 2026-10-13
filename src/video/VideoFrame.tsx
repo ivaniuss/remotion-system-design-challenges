@@ -11,6 +11,7 @@ import {CodeScene} from '../scenes/CodeScene';
 import {ChartScene} from '../scenes/ChartScene';
 import {FigureScene} from '../scenes/FigureScene';
 import {SequenceScene} from '../scenes/SequenceScene';
+import {ShotScene} from '../scenes/ShotScene';
 import {BoardLayer} from '../scenes/BoardLayer';
 import {isBoard} from '../board/board';
 import {clamp01, easeInOut, easeOut, enter} from './anim';
@@ -42,6 +43,8 @@ const SceneBody: React.FC<{scene: TimedScene; t: number; frame: Frame; theme: Th
       return <FigureScene scene={p.scene} {...common} />;
     case 'sequence':
       return <SequenceScene scene={p.scene} {...common} />;
+    case 'shot':
+      return <ShotScene scene={p.scene} {...common} />;
     case 'board':
       return null; // drawn by the persistent BoardLayer
   }
@@ -166,6 +169,41 @@ const Captions: React.FC<{words: Word[]; t: number; frame: Frame; theme: Theme}>
   );
 };
 
+// Film look: plain subtitles, one line group at a time, no word highlight.
+const Subtitles: React.FC<{words: Word[]; t: number; frame: Frame}> = ({words, t, frame}) => {
+  if (!words.length) return null;
+  const vertical = frame.format === 'vertical';
+  const groups = captionGroups(words, vertical ? 7 : 12);
+  const gi = groups.findIndex((g, i) => t >= g.start - 0.08 && t < (groups[i + 1]?.start ?? g.end + 0.6) - 0.08 && t <= g.end + 0.6);
+  if (gi < 0) return null;
+  const g = groups[gi];
+  const text = words.slice(g.from, g.to + 1).map((w) => w.w.replace(/\*/g, '')).join(' ');
+  const box = frame.captions;
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: box.x,
+        top: box.y,
+        width: box.w,
+        height: box.h,
+        display: 'flex',
+        alignItems: vertical ? 'center' : 'flex-end',
+        justifyContent: 'center',
+        fontFamily: FONT.sans,
+        fontWeight: 500,
+        fontSize: vertical ? 46 : 38,
+        lineHeight: 1.25,
+        textAlign: 'center',
+        color: '#F4F0FB',
+        textShadow: '0 2px 6px rgba(0,0,0,0.95), 0 0 18px rgba(0,0,0,0.7)',
+      }}
+    >
+      <span>{text}</span>
+    </div>
+  );
+};
+
 const Progress: React.FC<{tl: Timeline; t: number; frame: Frame; theme: Theme}> = ({tl, t, frame, theme}) => {
   const p = frame.progress;
   const gap = frame.format === 'vertical' ? 8 : 0;
@@ -220,16 +258,18 @@ export const VideoFrame: React.FC<{tl: Timeline; t: number; frame: Frame; words?
   const isLast = scene.index === tl.scenes.length - 1;
   // Scene transition: quick fade/slide in, fade out at the end. The first scene is
   // fully there on frame 0: the first frame is the thumbnail and the hook.
-  const inK = scene.index === 0 ? 1 : easeOut(clamp01(local / 0.35));
-  const outK = isLast ? 1 : clamp01((scene.duration - local) / 0.25);
+  // The film look cuts through black, slower, and never slides.
+  const film = theme.name === 'film';
+  const inK = scene.index === 0 ? 1 : film ? easeInOut(clamp01(local / 0.7)) : easeOut(clamp01(local / 0.35));
+  const outK = isLast ? 1 : clamp01((scene.duration - local) / (film ? 0.5 : 0.25));
   const danger = dangerAt(dangerMoments(tl), t);
   const shake = {x: danger.x, y: danger.y};
   const showCaptions = frame.format === 'vertical' ? tl.captions.vertical : tl.captions.horizontal;
-  const title = scene.type === 'title' ? undefined : scene.title;
+  const title = scene.type === 'title' || scene.type === 'shot' ? undefined : scene.title;
   return (
     <div style={{position: 'absolute', inset: 0, width: frame.width, height: frame.height, background: theme.bg, overflow: 'hidden'}}>
-      <Dots frame={frame} theme={theme} />
-      <Progress tl={tl} t={t} frame={frame} theme={theme} />
+      {!film && <Dots frame={frame} theme={theme} />}
+      {!film && <Progress tl={tl} t={t} frame={frame} theme={theme} />}
       {tl.handle && (
         <div
           style={{
@@ -247,11 +287,11 @@ export const VideoFrame: React.FC<{tl: Timeline; t: number; frame: Frame; words?
       )}
       {tl.board && <BoardLayer tl={tl} t={t} frame={frame} theme={theme} alpha={boardAlpha(tl, scene, local)} offset={shake} />}
       {danger.flash > 0 && <div style={{position: 'absolute', inset: 0, background: theme.colors.red.stroke, opacity: danger.flash}} />}
-      <div style={{position: 'absolute', inset: 0, opacity: inK * outK, transform: `translate(${shake.x}px, ${(1 - inK) * 30 + shake.y}px)`}}>
+      <div style={{position: 'absolute', inset: 0, opacity: inK * outK, transform: film ? undefined : `translate(${shake.x}px, ${(1 - inK) * 30 + shake.y}px)`}}>
         {title && <Header title={title} t={local} frame={frame} theme={theme} />}
         <SceneBody scene={scene} t={local} frame={frame} theme={theme} lang={tl.lang} cta={tl.cta} />
       </div>
-      {showCaptions && <Captions words={words ?? globalWords(tl)} t={t} frame={frame} theme={theme} />}
+      {showCaptions && (film ? <Subtitles words={words ?? globalWords(tl)} t={t} frame={frame} /> : <Captions words={words ?? globalWords(tl)} t={t} frame={frame} theme={theme} />)}
     </div>
   );
 };

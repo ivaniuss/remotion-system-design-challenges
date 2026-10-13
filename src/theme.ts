@@ -30,6 +30,8 @@ export type Theme = {
 export const FONT = {
   sans: '"Inter", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif',
   mono: '"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace',
+  // Title cards of the film look.
+  display: '"Instrument Serif", Georgia, "Times New Roman", serif',
 };
 
 const STROKES: Record<ColorName, string> = {
@@ -153,6 +155,26 @@ export const neon: Theme = {
   editor: {...EDITOR, bg: '#0B1220', bar: '#111A2E'},
 };
 
-export const THEMES = {light, dark, neon};
-export const themeFor = (name: string): Theme => (name === 'neon' ? neon : name === 'dark' ? dark : light);
+// Film: the documentary look. Near-black with a violet cast, warm amber for the one thing
+// that matters (the spark), no hard shadows. Built for `shot` scenes, which draw their own
+// world full-frame; the other scene types still render, on the dark palette.
+export const film: Theme = {
+  ...dark,
+  name: 'film',
+  glow: false,
+  shadowOpacity: 0,
+  bg: '#05040B',
+  dots: '#14122A',
+  surface: '#110F22',
+  surfaceAlt: '#16142E',
+  border: '#2C2850',
+  text: '#EFEAF8',
+  textSoft: '#A49FC4',
+  edge: '#6E64A8',
+  accent: '#FFC35A',
+  accentText: '#1A1206',
+};
+
+export const THEMES = {light, dark, neon, film};
+export const themeFor = (name: string): Theme => (name === 'film' ? film : name === 'neon' ? neon : name === 'dark' ? dark : light);
 export const toneSwatch = (theme: Theme, tone: Tone) => theme.colors[TONE_COLOR[tone]];

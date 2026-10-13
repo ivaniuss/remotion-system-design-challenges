@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {CODE_LANGUAGES, COLORS, CROWD_DENSITY, FIGURES, HOOKS, ICONS, LANGS, PACKS, SFX, SHAPES, STATUSES, THEME_NAMES, TONES} from './vocab';
+import {CAMERA_MOVES, CODE_LANGUAGES, COLORS, CROWD_DENSITY, FIGURES, HOOKS, ICONS, LANGS, PACKS, SFX, SHAPES, STATUSES, THEME_NAMES, TONES, WORLDS} from './vocab';
 
 // The video spec is the ONLY thing an LLM writes. Everything visual (layout, camera,
 // timing, animation) is derived from it by the engine, so the spec stays small and
@@ -355,6 +355,36 @@ export const SequenceScene = z.object({
   spans: z.array(SeqSpan).max(4).default([]),
 });
 
+// ---------- shot: the documentary look (theme "film", docs/FILM.md)
+// A full-frame world the camera is inside of (a neuron, a membrane, a synapse…). The
+// world animates by itself; steps only say WHEN its named moments happen (`event`), pin
+// a few labels and, once per film, show the title card.
+export const ShotStep = z.object({
+  at: Cue,
+  // A named moment of the world ("fire", "release"…; WORLD_INFO in vocab.ts lists them).
+  event: z.string().min(1).max(24).optional(),
+  // A label with a thin leader line, pinned to a named point of the world. Stays until
+  // the shot ends. Keep it to 1–3 per shot: a documentary names, it does not annotate.
+  label: z.object({anchor: z.string().min(1).max(24), text: z.string().min(1).max(32)}).optional(),
+  // The title card: big serif title (+ small subtitle) over the picture, from this cue on.
+  card: z.object({title: z.string().min(1).max(40), subtitle: z.string().max(80).optional()}).optional(),
+  sfx: Sfx,
+});
+
+export const ShotScene = z.object({
+  type: z.literal('shot'),
+  chapter: Chapter,
+  narration: Narration,
+  // What the shot shows, small in the corner ("Cell body"). Not a header.
+  title: Title.optional(),
+  world: z.enum(WORLDS),
+  // The real scale of what is on screen, under the title ("≈ 20 µm").
+  scale: z.string().max(24).optional(),
+  // A slow move on top of the world's own framing.
+  camera: z.enum(CAMERA_MOVES).default('push'),
+  steps: z.array(ShotStep).max(12).default([]),
+});
+
 export const Scene = z.discriminatedUnion('type', [
   TitleScene,
   CalloutScene,
@@ -367,6 +397,7 @@ export const Scene = z.discriminatedUnion('type', [
   ChartScene,
   FigureScene,
   SequenceScene,
+  ShotScene,
 ]);
 
 // What to paste into YouTube: written by `make`/`preview` to out/<id>/youtube.md,
@@ -422,6 +453,8 @@ export type ChartSeries = z.output<typeof ChartSeries>;
 export type FigureScene = z.output<typeof FigureScene>;
 export type SequenceScene = z.output<typeof SequenceScene>;
 export type SeqStep = z.output<typeof SeqStep>;
+export type ShotScene = z.output<typeof ShotScene>;
+export type ShotStep = z.output<typeof ShotStep>;
 export type CrowdSpec = z.output<typeof Crowd>;
 export type MeterSpec = z.output<typeof Meter>;
 export type ClockSpec = z.output<typeof Clock>;

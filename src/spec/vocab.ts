@@ -42,6 +42,23 @@ export const FIGURE_INFO: Record<FigureName, {pack: Pack; regions: readonly stri
   neuron: {pack: 'science', regions: ['dendrites', 'soma', 'axon', 'myelin', 'node', 'terminals', 'gap', 'next']},
 };
 
+// Worlds for `shot` scenes (the documentary look, theme "film"): full-frame places the
+// camera is inside of, drawn in src/worlds/. Each world knows a few named moments
+// (`event` on a step: the cell fires, the vesicles release…) and named points a label can
+// be pinned to (`label.anchor`).
+export const WORLDS = ['network', 'neuron', 'soma', 'membrane', 'axon', 'synapse'] as const;
+export type WorldName = (typeof WORLDS)[number];
+export const WORLD_INFO: Record<WorldName, {pack: Pack; events: readonly string[]; anchors: readonly string[]}> = {
+  network: {pack: 'science', events: ['cascade'], anchors: ['center']},
+  neuron: {pack: 'science', events: ['dendrites', 'go', 'brake', 'soma', 'fire'], anchors: ['dendrites', 'soma', 'nucleus', 'axon', 'myelin', 'terminals']},
+  soma: {pack: 'science', events: ['inputs', 'threshold', 'fire', 'weak'], anchors: ['soma', 'rest', 'threshold', 'spike']},
+  membrane: {pack: 'science', events: ['sodium', 'potassium', 'repeat', 'pump'], anchors: ['outside', 'inside', 'sodium', 'potassium', 'pump', 'voltage']},
+  axon: {pack: 'science', events: ['wave', 'race'], anchors: ['axon', 'myelin', 'node', 'fast', 'slow']},
+  synapse: {pack: 'science', events: ['arrive', 'calcium', 'release', 'bind'], anchors: ['terminal', 'vesicles', 'calcium', 'gap', 'receptors', 'next']},
+};
+// How the camera moves through a shot (on top of the world's own framing).
+export const CAMERA_MOVES = ['push', 'pull', 'drift', 'still'] as const;
+
 export const COLORS = ['blue', 'green', 'orange', 'purple', 'red', 'yellow', 'teal', 'gray'] as const;
 export type ColorName = (typeof COLORS)[number];
 
@@ -69,7 +86,9 @@ export type Status = (typeof STATUSES)[number];
 // cash = cost / money spent, clock = waiting / a timeout, notify = a notification,
 // alarm = outage / incident, riser = tension right before a failure (ends on the cue),
 // type = code being written. Use 1–3 per short video.
-export const SFX = ['cash', 'clock', 'notify', 'alarm', 'riser', 'type', 'pop', 'whoosh', 'error', 'success', 'impact'] as const;
+// spike = an electrode-style click with a low thump (a neuron fires), tick = a soft click
+// (a small event: an input arrives, an ion passes). Worlds add these by themselves.
+export const SFX = ['cash', 'clock', 'notify', 'alarm', 'riser', 'type', 'pop', 'whoosh', 'error', 'success', 'impact', 'spike', 'tick'] as const;
 export type SfxName = (typeof SFX)[number];
 
 export const CODE_LANGUAGES = ['ts', 'js', 'python', 'go', 'java', 'sql', 'bash', 'json', 'yaml', 'text'] as const;
@@ -80,7 +99,9 @@ export type Lang = (typeof LANGS)[number];
 
 // Looks. `light` = clean diagram (ByteByteGo-like), `dark` = editor (Fazt-like),
 // `neon` = dark with glowing active paths (night-mode look for incidents and code).
-export const THEME_NAMES = ['light', 'dark', 'neon'] as const;
+// `film` = documentary: no header or progress bar, full-frame `shot` scenes, grain,
+// vignette, a serif title card and plain subtitles (docs/FILM.md).
+export const THEME_NAMES = ['light', 'dark', 'neon', 'film'] as const;
 export type ThemeName = (typeof THEME_NAMES)[number];
 
 // The story shape of a video (docs/SHAPES.md) and the kind of hook it opens with.

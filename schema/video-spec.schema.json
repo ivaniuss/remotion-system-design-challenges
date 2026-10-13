@@ -34,7 +34,8 @@
       "enum": [
         "light",
         "dark",
-        "neon"
+        "neon",
+        "film"
       ]
     },
     "shape": {
@@ -377,7 +378,9 @@
                         "whoosh",
                         "error",
                         "success",
-                        "impact"
+                        "impact",
+                        "spike",
+                        "tick"
                       ]
                     }
                   },
@@ -399,7 +402,9 @@
                   "whoosh",
                   "error",
                   "success",
-                  "impact"
+                  "impact",
+                  "spike",
+                  "tick"
                 ]
               }
             },
@@ -519,7 +524,9 @@
                   "whoosh",
                   "error",
                   "success",
-                  "impact"
+                  "impact",
+                  "spike",
+                  "tick"
                 ]
               }
             },
@@ -636,7 +643,9 @@
                         "whoosh",
                         "error",
                         "success",
-                        "impact"
+                        "impact",
+                        "spike",
+                        "tick"
                       ]
                     }
                   },
@@ -774,7 +783,9 @@
                             "whoosh",
                             "error",
                             "success",
-                            "impact"
+                            "impact",
+                            "spike",
+                            "tick"
                           ]
                         }
                       },
@@ -889,7 +900,9 @@
                             "whoosh",
                             "error",
                             "success",
-                            "impact"
+                            "impact",
+                            "spike",
+                            "tick"
                           ]
                         }
                       },
@@ -998,7 +1011,9 @@
                         "whoosh",
                         "error",
                         "success",
-                        "impact"
+                        "impact",
+                        "spike",
+                        "tick"
                       ]
                     }
                   },
@@ -1432,7 +1447,9 @@
                         "whoosh",
                         "error",
                         "success",
-                        "impact"
+                        "impact",
+                        "spike",
+                        "tick"
                       ]
                     }
                   }
@@ -1730,7 +1747,9 @@
                         "whoosh",
                         "error",
                         "success",
-                        "impact"
+                        "impact",
+                        "spike",
+                        "tick"
                       ]
                     },
                     "camera": {
@@ -1852,7 +1871,9 @@
                         "whoosh",
                         "error",
                         "success",
-                        "impact"
+                        "impact",
+                        "spike",
+                        "tick"
                       ]
                     }
                   },
@@ -2124,7 +2145,9 @@
                         "whoosh",
                         "error",
                         "success",
-                        "impact"
+                        "impact",
+                        "spike",
+                        "tick"
                       ]
                     }
                   }
@@ -2276,7 +2299,9 @@
                         "whoosh",
                         "error",
                         "success",
-                        "impact"
+                        "impact",
+                        "spike",
+                        "tick"
                       ]
                     }
                   }
@@ -2500,7 +2525,9 @@
                         "whoosh",
                         "error",
                         "success",
-                        "impact"
+                        "impact",
+                        "spike",
+                        "tick"
                       ]
                     }
                   }
@@ -2556,6 +2583,134 @@
               "narration",
               "actors",
               "steps"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "shot"
+              },
+              "chapter": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "narration": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 900
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "world": {
+                "type": "string",
+                "enum": [
+                  "network",
+                  "neuron",
+                  "soma",
+                  "membrane",
+                  "axon",
+                  "synapse"
+                ]
+              },
+              "scale": {
+                "type": "string",
+                "maxLength": 24
+              },
+              "camera": {
+                "default": "push",
+                "type": "string",
+                "enum": [
+                  "push",
+                  "pull",
+                  "drift",
+                  "still"
+                ]
+              },
+              "steps": {
+                "default": [],
+                "maxItems": 12,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "at": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    },
+                    "event": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 24
+                    },
+                    "label": {
+                      "type": "object",
+                      "properties": {
+                        "anchor": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 24
+                        },
+                        "text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 32
+                        }
+                      },
+                      "required": [
+                        "anchor",
+                        "text"
+                      ]
+                    },
+                    "card": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 40
+                        },
+                        "subtitle": {
+                          "type": "string",
+                          "maxLength": 80
+                        }
+                      },
+                      "required": [
+                        "title"
+                      ]
+                    },
+                    "sfx": {
+                      "type": "string",
+                      "enum": [
+                        "cash",
+                        "clock",
+                        "notify",
+                        "alarm",
+                        "riser",
+                        "type",
+                        "pop",
+                        "whoosh",
+                        "error",
+                        "success",
+                        "impact",
+                        "spike",
+                        "tick"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "type",
+              "narration",
+              "world"
             ]
           }
         ]

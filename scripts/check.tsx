@@ -12,6 +12,14 @@ import {frameFor, Format} from '../src/layout/frame';
 import {layoutFlow} from '../src/layout/flow';
 import {boardBox, boardHasNotes, fullBoardZoom} from '../src/board/board';
 import {VideoFrame} from '../src/video/VideoFrame';
+import {drawShot} from '../src/worlds/render';
+import {setCanvasFactory} from '../src/worlds/kit';
+import {mockContext} from './lib/mock-canvas';
+
+// Worlds draw on a canvas, which static markup cannot show: they are checked by drawing
+// every checked frame into a mock context that reports NaN/Infinity (no offscreen
+// canvases in node, so glows use their gradient fallback).
+setCanvasFactory(() => null);
 
 const argv = process.argv.slice(2);
 const everyIdx = argv.indexOf('--every');
@@ -51,7 +59,21 @@ for (const file of files) {
         if (failures <= 8) console.error(`✖ ${file} ${format} frame ${f}: "${m[0]}" in markup`);
       }
     }
-    console.log(`✔ ${file} ${format}: ${count} frames checked`);
+    let worldFrames = 0;
+    for (const s of tl.scenes) {
+      if (s.type !== 'shot') continue;
+      let where = '';
+      const ctx = mockContext(frame.width, frame.height, (what) => {
+        failures++;
+        if (failures <= 8) console.error(`✖ ${file} ${format} scene ${s.index + 1} (${s.world}) ${where}: ${what}`);
+      });
+      for (let f = Math.ceil(s.start * 30); f < (s.start + s.duration) * 30; f += EVERY) {
+        where = `frame ${f}`;
+        drawShot(ctx, s, f / 30 - s.start, frame);
+        worldFrames++;
+      }
+    }
+    console.log(`✔ ${file} ${format}: ${count} frames checked${worldFrames ? ` (+ ${worldFrames} world frames drawn)` : ''}`);
   }
 }
 if (failures) {

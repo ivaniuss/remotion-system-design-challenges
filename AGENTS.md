@@ -38,6 +38,12 @@ The short version of the workflow:
 5. **Deliver** the sheets, `out/<id>/script.md` (teleprompter + talking points) and
    `out/<id>/youtube.md` (titles, description, chapters timed from the voice).
 
+## Documentary videos (the film look)
+
+When asked for a documentary, cinematic or "cortometraje" version, follow
+**`skills/make-film/SKILL.md`**: same pipeline and commands, `"theme": "film"`, every scene
+a `shot` in a world from `src/worlds/` (guide: `docs/FILM.md`).
+
 ## Rules the user cares about (details in the guide)
 
 - **Videos are in English by default** (the channel's audience), even though the user

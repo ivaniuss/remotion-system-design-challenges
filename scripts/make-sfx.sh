@@ -29,4 +29,10 @@ gen alarm "0.28*(sin(2*PI*if(lt(mod(t,0.3),0.15),880,660)*t)+0.3*sin(2*PI*3*if(l
 gen riser "(0.25*(random(0)*2-1)+0.3*sin(2*PI*(200*t+300*t*t)*1))*pow(t/1.2,2)" 1.2 "highpass=f=300,afade=t=out:st=1.12:d=0.08"
 # type: code being written (keyboard clicks)
 gen type "0.45*(random(0)*2-1)*exp(-90*mod(t,0.1))*(0.55+0.45*pow(sin(13*t),2))" 0.8 "highpass=f=1500,lowpass=f=7000,afade=t=out:st=0.7:d=0.1"
+
+# ---- Film look (worlds add these by themselves; see docs/FILM.md) ----
+# spike: a neuron fires, as an electrode amplifier plays it (sharp click + low thump)
+gen spike "0.8*(random(0)*2-1)*exp(-260*t)+0.6*sin(2*PI*t*(140-170*t))*exp(-9*t)" 0.42 "highpass=f=50,lowpass=f=6500,afade=t=out:st=0.34:d=0.08"
+# tick: a small event (an input arrives, an ion passes): a soft, short click
+gen tick "0.55*(random(0)*2-1)*exp(-380*t)" 0.07 "highpass=f=1400,lowpass=f=7500"
 ls -la

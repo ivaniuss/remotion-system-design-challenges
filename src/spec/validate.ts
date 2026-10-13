@@ -1,5 +1,5 @@
 import {Scene, VideoSpec} from './schema';
-import {FIGURE_INFO, PACKS, PACK_ALIASES, PACK_ICONS, type Pack} from './vocab';
+import {FIGURE_INFO, PACKS, PACK_ALIASES, PACK_ICONS, WORLD_INFO, type Pack} from './vocab';
 import {cuePhrases} from '../timeline/cues';
 import {findPhrase, splitWords} from '../timeline/words';
 
@@ -147,6 +147,21 @@ export function validateSpec(raw: unknown): Validation {
         const used = [...(st.glow ?? []), ...(st.label ? [st.label.region] : []), ...(st.signal ? [st.signal.from, st.signal.to] : []), ...(st.zoom ? [st.zoom] : [])];
         for (const r of used) if (!ok(r)) errors.push(`${where}.steps[${k}]: "${r}" is not a region of ${scene.figure}. Regions: ${info.regions.join(', ')}`);
       });
+    }
+    if (scene.type === 'shot') {
+      const info = WORLD_INFO[scene.world];
+      if (info.pack !== spec.pack) errors.push(`${where}: world "${scene.world}" belongs to the ${info.pack} pack; this video's pack is "${spec.pack}".`);
+      let cards = 0;
+      let labels = 0;
+      scene.steps.forEach((st, k) => {
+        if (st.event && !info.events.includes(st.event)) errors.push(`${where}.steps[${k}].event: "${st.event}" is not a moment of ${scene.world}. Events: ${info.events.join(', ')}`);
+        if (st.label && !info.anchors.includes(st.label.anchor)) errors.push(`${where}.steps[${k}].label.anchor: "${st.label.anchor}" is not a point of ${scene.world}. Anchors: ${info.anchors.join(', ')}`);
+        if (st.card) cards++;
+        if (st.label) labels++;
+      });
+      if (cards > 1) errors.push(`${where}: only one title card per shot.`);
+      if (labels > 4) warnings.push(`${where}: ${labels} labels; a documentary names 1–3 things per shot and lets the picture speak.`);
+      if (spec.theme !== 'film') warnings.push(`${where}: "shot" scenes are made for "theme": "film" (grain, subtitles, no header).`);
     }
     if (scene.type === 'board' && spec.board) checkSteps(spec.board.nodes, spec.board.edges, scene.steps, where, errors);
     if (scene.type === 'sequence') checkSequence(scene, where, errors, warnings);

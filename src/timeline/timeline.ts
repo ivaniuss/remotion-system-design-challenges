@@ -61,6 +61,7 @@ export const MIN_SCENE: Record<Scene['type'], number> = {
   chart: 4,
   figure: 3.5,
   sequence: 4.5,
+  shot: 4,
 };
 
 // Silent timing: each scene lasts as long as its estimated narration.

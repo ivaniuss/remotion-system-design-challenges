@@ -14,11 +14,11 @@ type Raw = Record<string, any>;
 
 const SCENE_LETTER: Record<string, string> = {
   title: 'T', callout: 'C', board: 'B', flow: 'F', code: 'K', list: 'L',
-  compare: 'X', summary: 'S', chart: 'H', figure: 'G', sequence: 'Q',
+  compare: 'X', summary: 'S', chart: 'H', figure: 'G', sequence: 'Q', shot: 'P',
 };
 const SHAPES = ['progressive', 'post-mortem', 'request-journey', 'a-vs-b', 'numbers-first', 'code-first'];
 const HOOKS = ['interview-question', 'incident', 'surprising-number', 'broken-thing'];
-const THEMES = ['light', 'dark', 'neon'];
+const THEMES = ['light', 'dark', 'neon', 'film'];
 const VISUALS = ['crowd', 'meter', 'clock', 'sequence', 'code', 'chart', 'compare', 'flow'];
 const SHORT_PATTERNS = ['classic', 'contrast', 'decision', 'timeline', 'code', 'crowd'];
 const SHORT_WORDS = 230; // about 75 s of speech: above this it is a long video

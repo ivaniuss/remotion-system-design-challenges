@@ -1,0 +1,288 @@
+{
+  "id": "neuron-spark-film",
+  "title": "How does one neuron decide to fire?",
+  "lang": "en",
+  "pack": "science",
+  "theme": "film",
+  "hook": "surprising-number",
+  "notes": [
+    "86 billion: Azevedo et al. 2009, J Comp Neurol 513:532-541 — the isotropic-fractionator count of 86.1 ± 8.1 billion neurons, from four adult male brains. Individuals differ; the voice says \"about\".",
+    "Summation: a typical central neuron receives input from several thousand cells, and a single input is usually under 1 mV, so many must arrive close together in time and space. Inhibitory inputs partly or fully cancel excitatory ones (University of Washington open textbook, \"Summation of synaptic potentials\").",
+    "Where the spike starts: at the axon initial segment, right next to the cell body, which is where the summed signal is checked against the threshold. The video says \"cell body\" as a simplification.",
+    "Typical values: rest around −70 mV (range roughly −60 to −80) and a threshold 10–20 mV above it. They differ by cell type and species; the chart is a sketch, and the peak of the spike is deliberately not given a number because sources vary.",
+    "The spike is all-or-none; intensity is coded by how often the cell fires, not by the size of the spike. A spike lasts about a millisecond: sodium ions enter first, then potassium ions leave.",
+    "After a spike there is a refractory period: that is why the spike does not run backwards and why firing has a maximum rate. A possible follow-up Short.",
+    "Cost: every spike lets sodium in and potassium out; the sodium-potassium pump has to restore the gradients, and it uses ATP. Signalling is a big part of the brain's energy budget; cite a source before adding any percentage.",
+    "Myelin: the signal is regenerated at the gaps (nodes of Ranvier) and spreads passively under the sheath. Fastest wrapped fibres conduct at roughly 80–120 m/s; unwrapped fibres at roughly 0.5–2 m/s (Wikipedia, \"Nerve conduction velocity\"). Not every axon is wrapped, and thin or short ones work fine without it.",
+    "Synapse: the cleft is about 20 nm (the literature says roughly 20–40 nm). Calcium enters through voltage-gated channels, vesicles fuse with the membrane, and the neurotransmitter binds receptors on the next cell. The chemical step adds a small delay and is probabilistic. Electrical synapses (gap junctions) also exist.",
+    "Spiking is the classic model. Not every neuron works like this: some sensory neurons, for example in the retina, use graded signals and no spikes.",
+    "Follow-ups: \"Why doesn't the spike run backwards?\", \"How do neurons learn?\" (synaptic plasticity), \"How does a memory form?\". The closing question collects votes for the next Short. This is a simplified model of one neuron; nothing here is clinical.",
+    "Film version of neuron-spark: same narration, documentary look (docs/FILM.md). On screen, the bare axon's speed is not to scale: at 1 m/s vs 120 m/s its glow would not move at all; the labels carry the real numbers."
+  ],
+  "scenes": [
+    {
+      "type": "shot",
+      "world": "network",
+      "camera": "pull",
+      "narration": "Your brain has about eighty-six billion neurons. Each one keeps getting signals from other cells, and has to decide: pass it on, or stay silent. How does one tiny cell make that call?",
+      "steps": [
+        {
+          "at": "eighty-six billion neurons",
+          "event": "cascade"
+        },
+        {
+          "at": "How does one",
+          "card": {
+            "title": "spark",
+            "subtitle": "How one neuron decides to fire"
+          }
+        }
+      ]
+    },
+    {
+      "type": "shot",
+      "world": "neuron",
+      "title": "A neuron",
+      "scale": "≈ 1 mm",
+      "camera": "push",
+      "narration": "Here's a simplified neuron. Its branches, called dendrites, listen to thousands of other cells. Some signals push it to fire. Others hold it back. Everything flows into the cell body, which adds it all up.",
+      "steps": [
+        {
+          "at": "called dendrites",
+          "event": "dendrites",
+          "label": {
+            "anchor": "dendrites",
+            "text": "Dendrites"
+          }
+        },
+        {
+          "at": "push it to",
+          "event": "go"
+        },
+        {
+          "at": "hold it back",
+          "event": "brake"
+        },
+        {
+          "at": "the cell body",
+          "event": "soma",
+          "label": {
+            "anchor": "soma",
+            "text": "Cell body"
+          }
+        }
+      ]
+    },
+    {
+      "type": "shot",
+      "world": "soma",
+      "title": "Cell body",
+      "scale": "≈ 20 µm",
+      "camera": "still",
+      "narration": "At rest, the inside sits near minus seventy millivolts, a tiny voltage. Each signal nudges it up or down. Reach about minus fifty-five, and the cell fires. Fall short, and nothing happens.",
+      "steps": [
+        {
+          "at": "At rest",
+          "label": {
+            "anchor": "rest",
+            "text": "Rest ≈ −70 mV"
+          }
+        },
+        {
+          "at": "nudges it up",
+          "event": "inputs"
+        },
+        {
+          "at": "Reach about minus",
+          "event": "threshold",
+          "label": {
+            "anchor": "threshold",
+            "text": "Threshold ≈ −55 mV"
+          }
+        },
+        {
+          "at": "the cell fires",
+          "event": "fire"
+        },
+        {
+          "at": "Fall short",
+          "event": "weak"
+        }
+      ]
+    },
+    {
+      "type": "shot",
+      "world": "membrane",
+      "title": "Membrane",
+      "scale": "≈ 10 nm",
+      "camera": "drift",
+      "narration": "That's a spike: sodium ions rush in, then potassium ions flow out, in about a thousandth of a second. It's all or nothing. A stronger push gives more spikes, not bigger ones. And every spike costs energy: pumps push the ions back.",
+      "steps": [
+        {
+          "at": "That's a spike",
+          "event": "sodium",
+          "label": {
+            "anchor": "sodium",
+            "text": "Na⁺ in"
+          }
+        },
+        {
+          "at": "potassium ions flow",
+          "event": "potassium",
+          "label": {
+            "anchor": "potassium",
+            "text": "K⁺ out"
+          }
+        },
+        {
+          "at": "A stronger push",
+          "event": "repeat"
+        },
+        {
+          "at": "costs energy",
+          "event": "pump",
+          "label": {
+            "anchor": "pump",
+            "text": "Pump: 3 Na⁺ out · 2 K⁺ in"
+          }
+        }
+      ]
+    },
+    {
+      "type": "shot",
+      "world": "axon",
+      "title": "Axon",
+      "scale": "≈ 1 cm",
+      "camera": "drift",
+      "narration": "The spike travels down the axon, the cell's long output cable. Many axons are wrapped in myelin, an insulating layer with small gaps. The spike jumps from gap to gap, which speeds it up.",
+      "steps": [
+        {
+          "at": "travels down the",
+          "event": "wave"
+        },
+        {
+          "at": "long output cable",
+          "label": {
+            "anchor": "axon",
+            "text": "Axon"
+          }
+        },
+        {
+          "at": "wrapped in myelin",
+          "label": {
+            "anchor": "myelin",
+            "text": "Myelin"
+          }
+        },
+        {
+          "at": "small gaps",
+          "label": {
+            "anchor": "node",
+            "text": "Gap (node)"
+          }
+        }
+      ]
+    },
+    {
+      "type": "shot",
+      "world": "axon",
+      "title": "Speed",
+      "scale": "≈ 1 cm",
+      "camera": "still",
+      "narration": "In the fastest axons, that's about a hundred and twenty meters per second. Without myelin, closer to one.",
+      "steps": [
+        {
+          "at": "about a hundred",
+          "event": "race",
+          "label": {
+            "anchor": "fast",
+            "text": "Myelin: up to 120 m/s"
+          }
+        },
+        {
+          "at": "Without myelin",
+          "label": {
+            "anchor": "slow",
+            "text": "No myelin: ≈ 1 m/s"
+          }
+        }
+      ]
+    },
+    {
+      "type": "shot",
+      "world": "synapse",
+      "title": "Synapse",
+      "scale": "≈ 1 µm",
+      "camera": "push",
+      "narration": "At the end, the signal changes form. Calcium enters, tiny packets release chemical messengers called neurotransmitters, and they cross a gap about twenty nanometers wide. For the next neuron, that is just one more input.",
+      "steps": [
+        {
+          "at": "signal changes form",
+          "event": "arrive",
+          "label": {
+            "anchor": "terminal",
+            "text": "Axon terminal"
+          }
+        },
+        {
+          "at": "Calcium enters",
+          "event": "calcium",
+          "label": {
+            "anchor": "calcium",
+            "text": "Ca²⁺ in"
+          }
+        },
+        {
+          "at": "chemical messengers called",
+          "event": "release"
+        },
+        {
+          "at": "cross a gap",
+          "label": {
+            "anchor": "gap",
+            "text": "Gap ≈ 20 nm"
+          }
+        },
+        {
+          "at": "For the next neuron",
+          "event": "bind"
+        }
+      ]
+    },
+    {
+      "type": "shot",
+      "world": "network",
+      "camera": "pull",
+      "narration": "So a neuron adds up its inputs, fires only past a threshold, and passes the message on. Which should I explain next: how neurons learn, or how a memory forms?",
+      "steps": [
+        {
+          "at": "So a neuron",
+          "event": "cascade"
+        },
+        {
+          "at": "Which should I",
+          "card": {
+            "title": "spark",
+            "subtitle": "Next: how neurons learn, or how a memory forms?"
+          }
+        }
+      ]
+    }
+  ],
+  "publish": {
+    "titles": [
+      "How Does a Neuron Decide to Fire? (Action Potential Explained)",
+      "How One Brain Cell Makes a Yes-or-No Call"
+    ],
+    "description": "Your brain has about 86 billion neurons, and each one has to decide: pass the signal on, or stay silent. A 90-second tour of the decision: inputs that add up, a threshold, an all-or-nothing spike, myelin, and the chemical handoff to the next cell.",
+    "extra": [
+      "Simplified model: real neurons vary in shape and in these numbers. Values shown (rest about −70 mV, threshold about −55 mV, up to about 120 m/s, gap about 20 nm) are typical textbook examples."
+    ],
+    "comment": "Which should I explain next: how neurons learn, or how a memory forms?",
+    "hashtags": [
+      "neuroscience",
+      "neuron",
+      "brain"
+    ]
+  }
+}

@@ -38,7 +38,7 @@ Never write coordinates in pixels, durations or frame numbers.
    (or `--format horizontal` for a YouTube-only video).
 
 Every `preview` and `make` also writes, in `out/<id>/` (one folder per video; `<theme>` is the
-spec's theme, `light`, `dark` or `neon`, so a video rendered in two themes never mixes):
+spec's theme, `light`, `dark`, `neon` or `film`, so a video rendered in two themes never mixes):
 `script.md` (teleprompter with timestamps, what is on screen, talking points) and
 `youtube.md` (title options and a description with chapters timed from the voice).
 
@@ -216,7 +216,7 @@ non-functional one with a number). Rules for every pack and every shape:
   "title": "Human title",
   "lang": "es",                     // "en" | "es" | "pt" (narration language)
   "pack": "tech",                   // "tech" (default) | "science": which icons and guide (§3)
-  "theme": "light",                 // "light" = clean diagrams, "dark" = code/editor vibe, "neon" = dark with glowing active paths
+  "theme": "light",                 // "light" = clean diagrams, "dark" = code/editor vibe, "neon" = dark with glowing active paths, "film" = documentary (docs/FILM.md)
   "shape": "progressive",           // optional: progressive | post-mortem | request-journey | a-vs-b | numbers-first | code-first
   "hook": "interview-question",     // optional: interview-question | incident | surprising-number | broken-thing
   "board": { "nodes": [...], "edges": [...] },   // the shared diagram (see below)
@@ -229,6 +229,9 @@ non-functional one with a number). Rules for every pack and every shape:
 with a soft glow on active paths, packets with comet trails and a radial glow behind the
 board: use it for incidents, post-mortems and code-first videos, and for variety. It
 changes only colors and glow, never the layout, so any spec renders in any theme.
+`film` is a different look, not only a palette: the documentary style of `docs/FILM.md`,
+made of `shot` scenes (no header, no progress bar, grain, plain subtitles, a title card).
+Use it with `shot` scenes only.
 
 **`shape` and `hook`** are optional and change nothing on screen. They are the record that
 `npm run fingerprint` reads to keep the channel from repeating itself, and they tell the
@@ -568,6 +571,27 @@ succeeds but is never recorded, anything where **the order and the waiting are t
 - Use it when *where* or *how parts talk* matters (memory moving from the hippocampus to
   the cortex). For the story of the whole video keep the `board` as the model; a figure
   is a close-up, 1–3 per video.
+
+### `shot` — a documentary shot (theme `film`)
+```json
+{"type": "shot", "world": "synapse", "title": "Synapse", "scale": "≈ 1 µm", "camera": "push",
+ "steps": [
+   {"at": "signal changes form", "event": "arrive", "label": {"anchor": "terminal", "text": "Axon terminal"}},
+   {"at": "Calcium enters", "event": "calcium", "label": {"anchor": "calcium", "text": "Ca²⁺ in"}},
+   {"at": "chemical messengers called", "event": "release"},
+   {"at": "For the next neuron", "event": "bind"}
+ ],
+ "narration": "…"}
+```
+- `world`: a full-frame place from `src/worlds/` (`network`, `neuron`, `soma`, `membrane`,
+  `axon`, `synapse`; all science). It animates by itself.
+- Steps: `event` (a named moment of the world: when the cell fires, when calcium enters),
+  `label` (`anchor` + `text` ≤ 32, a hairline label; 1–3 per shot), `card` (the title
+  card, once), `sfx`.
+- `title` (the shot's name, small in the corner), `scale` (its real size), `camera`
+  (`push` | `pull` | `drift` | `still`).
+- The worlds, their events and anchors, and the writing rules of the film look are in
+  `docs/FILM.md`. A film is all shots: never mix shots with diagram scenes.
 
 ### `publish` and `chapter` — what to paste into YouTube
 Every `make` / `preview` also writes `out/<id>/youtube.md`: title options, and a

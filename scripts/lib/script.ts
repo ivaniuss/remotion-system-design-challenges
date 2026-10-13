@@ -63,6 +63,11 @@ function onScreen(s: TimedScene, label: (id: string) => string): string[] {
       ];
     case 'summary':
       return [...s.points.map((p, i) => `${at(i)} ${plain(p.text)}`), ...(s.cta ? [`CTA: ${s.cta}`] : [])];
+    case 'shot':
+      return [
+        `world: ${s.world}${s.scale ? ` (${s.scale})` : ''} · camera ${s.camera}`,
+        ...s.steps.map((st, i) => `${at(i)} “${st.at ?? '…'}” → ${[st.event ? `${st.event}` : '', st.label ? `label "${st.label.text}" on ${st.label.anchor}` : '', st.card ? `title card "${plain(st.card.title)}"${st.card.subtitle ? ` / ${st.card.subtitle}` : ''}` : '', st.sfx ? `sound: ${st.sfx}` : ''].filter(Boolean).join('; ') || '—'}`),
+      ];
     case 'sequence': {
       const who = new Map(s.actors.map((a) => [a.id, a.label]));
       const nm = (id?: string) => (id ? who.get(id) ?? id : '?');

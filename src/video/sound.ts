@@ -2,6 +2,9 @@ import type {Timeline} from '../timeline/timeline';
 import {boardEvents, boardState} from '../board/board';
 import {flowState} from '../scenes/flowState';
 import type {SfxName} from '../spec/vocab';
+import {WORLD_DRAW} from '../worlds';
+import {worldFrame} from '../worlds/render';
+import {frameFor} from '../layout/frame';
 
 // Sound effects derived from the same events that drive the animation, so every pop,
 // whoosh and buzz lands exactly on its visual. Files live in public/sfx/
@@ -13,15 +16,18 @@ export type SoundEvent = {t: number; kind: SoundKind; volume: number};
 const VOLUME: Record<SoundKind, number> = {
   pop: 0.32, whoosh: 0.2, error: 0.45, success: 0.38, impact: 0.5,
   cash: 0.42, clock: 0.4, notify: 0.4, alarm: 0.22, riser: 0.3, type: 0.3,
+  spike: 0.5, tick: 0.28,
 };
 // Minimum gap between two sounds of the same kind (seconds).
 const MIN_GAP: Record<SoundKind, number> = {
   pop: 0.12, whoosh: 0.3, error: 0.8, success: 0.8, impact: 0.5,
   cash: 0.8, clock: 1.2, notify: 0.8, alarm: 1.2, riser: 1.5, type: 1,
+  spike: 0.18, tick: 0.09,
 };
 export const SOUND_SECONDS: Record<SoundKind, number> = {
   pop: 0.2, whoosh: 0.5, error: 0.7, success: 0.9, impact: 0.8,
   cash: 1, clock: 1.1, notify: 0.7, alarm: 1, riser: 1.3, type: 0.9,
+  spike: 0.45, tick: 0.08,
 };
 // The riser builds up to the cue instead of starting on it.
 const LEAD: Partial<Record<SoundKind, number>> = {riser: 1.15};
@@ -34,8 +40,13 @@ export function soundEvents(tl: Timeline): SoundEvent[] {
     if (kind) add(t - (LEAD[kind] ?? 0), kind);
   };
 
+  // The film look has no interface sounds (no impact on frame 0, no whoosh per scene):
+  // only the worlds' own sounds and the author's cues.
+  const film = tl.theme === 'film';
   for (const s of tl.scenes) {
-    if (s.index === 0) add(0.05, 'impact', 0.7);
+    if (film) {
+      // nothing: a documentary cuts in silence
+    } else if (s.index === 0) add(0.05, 'impact', 0.7);
     else if (s.type !== 'callout') add(s.start, 'whoosh', 0.7);
 
     if (s.type === 'title' || s.type === 'callout') cue(s.start + 0.15, s.sfx);
@@ -44,7 +55,7 @@ export function soundEvents(tl: Timeline): SoundEvent[] {
         add(s.start + (s.cues[i] ?? 0), 'pop');
         cue(s.start + (s.cues[i] ?? 0), b.sfx);
       });
-    if (s.type === 'flow' || s.type === 'board' || s.type === 'code' || s.type === 'chart' || s.type === 'figure' || s.type === 'sequence') s.steps.forEach((st, i) => cue(s.start + (s.cues[i] ?? 0), st.sfx));
+    if (s.type === 'flow' || s.type === 'board' || s.type === 'code' || s.type === 'chart' || s.type === 'figure' || s.type === 'sequence' || s.type === 'shot') s.steps.forEach((st, i) => cue(s.start + (s.cues[i] ?? 0), st.sfx));
     if (s.type === 'list') s.items.forEach((it, i) => cue(s.start + (s.cues[i] ?? 0), it.sfx));
     if (s.type === 'summary') s.points.forEach((it, i) => cue(s.start + (s.cues[i] ?? 0), it.sfx));
     if (s.type === 'compare') [...s.left.items, ...s.right.items].forEach((it, i) => cue(s.start + (s.cues[i] ?? 0), it.sfx));
@@ -96,6 +107,12 @@ export function soundEvents(tl: Timeline): SoundEvent[] {
           else if (step.glow?.length) add(at, 'pop', 0.6);
         });
         break;
+      case 'shot': {
+        // The world's own sounds (a cell firing, ions passing). Same in both formats.
+        const f = worldFrame(s, 0, frameFor('horizontal', false));
+        for (const snd of WORLD_DRAW[s.world].sounds?.(f) ?? []) if (snd.t >= 0 && snd.t <= s.duration) add(s.start + snd.t, snd.kind, snd.gain ?? 1);
+        break;
+      }
       case 'list':
       case 'compare':
       case 'summary': {
