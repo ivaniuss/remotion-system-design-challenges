@@ -1,6 +1,7 @@
 import {Scene, VideoSpec} from './schema';
 import {FIGURE_INFO, PACKS, PACK_ALIASES, PACK_ICONS, WORLD_INFO, type Pack} from './vocab';
 import {cuePhrases} from '../timeline/cues';
+import {findCountry} from '../geo/world';
 import {findPhrase, splitWords} from '../timeline/words';
 
 export type Validation = {spec: VideoSpec | null; errors: string[]; warnings: string[]};
@@ -121,6 +122,11 @@ export function validateSpec(raw: unknown): Validation {
   if (spec.board) checkGraph(spec.board.nodes, spec.board.edges, 'board', errors, warnings);
   if (spec.board && !boardScenes) warnings.push('board: defined but no scene has type "board", so it is never shown.');
 
+  if (spec.thumbnail?.media && !(spec.thumbnail.media in (spec.media ?? {}))) errors.push(`thumbnail.media: "${spec.thumbnail.media}" is not in the top-level "media" library.`);
+  for (const [id, m] of Object.entries(spec.media ?? {})) {
+    if (!/^[a-z0-9][a-z0-9_-]*$/.test(id)) errors.push(`media.${id}: ids are lowercase kebab-case.`);
+    if (/^https?:/.test(m.file)) errors.push(`media.${id}.file: download the file into public/ and give its path; URLs are not rendered (put the URL in "url").`);
+  }
   if (spec.thumbnail) {
     const th = spec.thumbnail;
     if (th.icons && th.figure) errors.push('thumbnail: use "icons" or "figure", not both.');
@@ -184,6 +190,25 @@ export function validateSpec(raw: unknown): Validation {
       if (labels > 4) warnings.push(`${where}: ${labels} labels; a documentary names 1–3 things per shot and lets the picture speak.`);
       if (spec.theme !== 'film') warnings.push(`${where}: "shot" scenes are made for "theme": "film" (grain, subtitles, no header).`);
     }
+    // News scenes: media ids must be in the library, countries must exist on the map.
+    const mediaIds = new Set(Object.keys(spec.media ?? {}));
+    const needMedia = (id: string | undefined, w: string) => {
+      if (id && !mediaIds.has(id)) errors.push(`${w}: media "${id}" is not in the top-level "media" library. Known: ${[...mediaIds].join(', ') || 'none'}`);
+    };
+    if (scene.type === 'headline') needMedia(scene.media, where);
+    if (scene.type === 'media') {
+      needMedia(scene.media, where);
+      scene.steps.forEach((st, k) => needMedia(st.media, `${where}.steps[${k}]`));
+    }
+    if (scene.type === 'quote') scene.quotes.forEach((q, k) => needMedia(q.media, `${where}.quotes[${k}]`));
+    if (scene.type === 'map') {
+      const names = [...scene.highlight, ...scene.steps.flatMap((st) => st.highlight ?? [])];
+      for (const n of names) if (!findCountry(n)) errors.push(`${where}: "${n}" is not a country on the map (Natural Earth names in English, e.g. "France", "United Kingdom", "Czechia").`);
+      const boxes = [scene.view, ...(scene.from ? [scene.from] : []), ...scene.steps.flatMap((st) => (st.zoom ? [st.zoom] : []))];
+      for (const b of boxes) if (b[0][0] >= b[1][0] || b[0][1] >= b[1][1]) errors.push(`${where}: a map box is [[west, south], [east, north]]; west < east and south < north.`);
+    }
+    if (['headline', 'media', 'map', 'stats', 'quote', 'timeline', 'sources'].includes(scene.type) && spec.theme !== 'news')
+      warnings.push(`${where}: "${scene.type}" scenes are made for "theme": "news" (bug, red tabs, lower thirds).`);
     if (scene.type === 'board' && spec.board) checkSteps(spec.board.nodes, spec.board.edges, scene.steps, where, errors);
     if (scene.type === 'sequence') checkSequence(scene, where, errors, warnings);
     if (scene.type === 'code') {

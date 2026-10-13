@@ -1,5 +1,5 @@
 import type {FlowStep, VideoSpec} from '../../src/spec/schema';
-import type {Timeline, TimedScene} from '../../src/timeline/timeline';
+import {sceneLabel, type Timeline, type TimedScene} from '../../src/timeline/timeline';
 
 // The video as a document: a teleprompter (narration per scene with timestamps), what
 // appears on screen at each cue, and the talking points that are said but not shown.
@@ -68,6 +68,26 @@ function onScreen(s: TimedScene, label: (id: string) => string): string[] {
         `world: ${s.world}${s.scale ? ` (${s.scale})` : ''} · camera ${s.camera}`,
         ...s.steps.map((st, i) => `${at(i)} “${st.at ?? '…'}” → ${[st.event ? `${st.event}` : '', st.label ? `label "${st.label.text}" on ${st.label.anchor}` : '', st.card ? `title card "${plain(st.card.title)}"${st.card.subtitle ? ` / ${st.card.subtitle}` : ''}` : '', st.sfx ? `sound: ${st.sfx}` : ''].filter(Boolean).join('; ') || '—'}`),
       ];
+    case 'headline':
+      return [`${s.banner ? `[${s.banner}] ` : ''}${s.kicker ? `${s.kicker} · ` : ''}**${plain(s.heading)}**${s.dateline ? ` — ${s.dateline}` : ''}${s.media ? ` (footage: ${s.media})` : ''}`];
+    case 'media':
+      return [
+        `footage: ${s.media} (${s.move})${s.lower ? ` · lower third "${s.lower.title}${s.lower.sub ? ` / ${s.lower.sub}` : ''}"` : ''}`,
+        ...s.steps.map((st, i) => `${at(i)} “${st.at ?? '…'}” → ${[st.media ? `cut to ${st.media}` : '', st.lower ? (st.lower === 'off' ? 'lower third off' : `lower third "${st.lower.title}"`) : ''].filter(Boolean).join('; ') || '—'}`),
+      ];
+    case 'map':
+      return [
+        `map${s.highlight.length ? ` · ${s.highlight.join(', ')}` : ''}`,
+        ...s.steps.map((st, i) => `${at(i)} “${st.at ?? '…'}” → ${[st.highlight?.length ? `lights ${st.highlight.join(', ')}` : '', st.pin ? `pin "${st.pin.label}${st.pin.sub ? ` — ${st.pin.sub}` : ''}"` : '', st.zoom ? 'zoom' : '', st.note ? `note "${plain(st.note.text)}"` : ''].filter(Boolean).join('; ') || '—'}`),
+      ];
+    case 'stats':
+      return [...s.items.map((it, i) => `${at(i)} **${it.value}** ${plain(it.label)}${it.sub ? ` (${it.sub})` : ''}`), ...(s.footnote ? [`_${s.footnote}_`] : [])];
+    case 'quote':
+      return s.quotes.map((q, i) => `${at(i)} “${plain(q.text)}” — ${q.who}${q.role ? `, ${q.role}` : ''}${q.tag ? ` [${q.tag}]` : ''}`);
+    case 'timeline':
+      return s.items.map((it, i) => `${at(i)} ${it.when}: ${plain(it.text)}`);
+    case 'sources':
+      return [...s.items.map((x) => `${x.name}${x.detail ? ` — ${x.detail}` : ''}`), ...(s.asOf ? [s.asOf] : [])];
     case 'sequence': {
       const who = new Map(s.actors.map((a) => [a.id, a.label]));
       const nm = (id?: string) => (id ? who.get(id) ?? id : '?');
@@ -99,7 +119,7 @@ export function scriptMarkdown(spec: VideoSpec, tl: Timeline, voiced: boolean): 
   out.push('Read it in one take, scene after scene. Pauses between scenes are fine: the video');
   out.push('re-aligns to your voice (see "Record your own voice" below).', '');
   for (const s of tl.scenes) {
-    const name = s.type === 'title' ? plain(s.heading) : s.type === 'callout' ? s.text : s.title ? plain(s.title) : s.type;
+    const name = sceneLabel(s);
     out.push(`### ${s.index + 1}. ${name}  ·  ${mmss(s.start)}–${mmss(s.start + s.duration)}  ·  ${s.type}`, '');
     out.push(`> ${s.narration}`, '');
     const lines = onScreen(s, label);

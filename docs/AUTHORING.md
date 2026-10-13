@@ -182,6 +182,7 @@ guide before writing the draft.
 | --- | --- | --- | --- |
 | `tech` (default) | software, backend, system design, programming | `docs/packs/tech.md` | `videos/tech/` |
 | `science` | the brain, biology, health, learning, languages, habits | `docs/packs/science.md` | `videos/science/` |
+| `news` | current events: cyberattacks, economy, institutions, weather and climate | `docs/packs/news.md` | `videos/news/` |
 
 A video uses one pack: only that pack's icons (plus the common ones) are accepted, so
 topics never mix by accident. Choose by the topic, not by the words ("memory leaks"
@@ -217,7 +218,7 @@ non-functional one with a number). Rules for every pack and every shape:
   "title": "Human title",
   "lang": "es",                     // "en" | "es" | "pt" (narration language)
   "pack": "tech",                   // "tech" (default) | "science": which icons and guide (§3)
-  "theme": "light",                 // "light" = clean diagrams, "dark" = code/editor vibe, "neon" = dark with glowing active paths, "film" = documentary (docs/FILM.md)
+  "theme": "light",                 // "light" = clean diagrams, "dark" = code/editor vibe, "neon" = dark with glowing active paths, "film" = documentary (docs/FILM.md), "news" = broadcast (docs/packs/news.md)
   "shape": "progressive",           // optional: progressive | post-mortem | request-journey | a-vs-b | numbers-first | code-first
   "hook": "interview-question",     // optional: interview-question | incident | surprising-number | broken-thing
   "board": { "nodes": [...], "edges": [...] },   // the shared diagram (see below)
@@ -652,6 +653,56 @@ and `npm run thumbnail -- <spec>` (a few seconds, only the two pictures) write t
   (`push` | `pull` | `drift` | `still`).
 - The worlds, their events and anchors, and the writing rules of the film look are in
   `docs/FILM.md`. A film is all shots: never mix shots with diagram scenes.
+
+### News scenes (theme `news`, pack `news`; guide: `docs/packs/news.md`)
+
+The broadcast look: a channel bug (`news.brand` + `news.date`) in the corner, scene titles as
+red tabs, a red wipe at each cut, captions on a dark band, and, in 16:9 without captions, a
+ticker (`news.ticker`, up to 8 lines). Real pictures come from a top-level `media` library:
+
+```json
+"news": {"brand": "NEWS", "date": "13 Oct 2026", "ticker": ["Paris prosecutors open an investigation…"]},
+"media": {
+  "m1": {"file": "media/<id>/m1-freezer-cabinet", "alt": "A supermarket chest freezer",
+         "credit": "Photo: Leon Brooks / Wikimedia Commons", "license": "Public domain",
+         "url": "https://commons.wikimedia.org/wiki/File:…", "illustrative": true, "focus": [0.5, 0.45]}
+}
+```
+- `file`: under `public/`, extension optional (`.mp4 .webm .mov .jpg .jpeg .png .webp`).
+  Missing → a "material pending" card; `make` lists them. Never a URL.
+- `alt` (what it shows), `credit` (always on screen), `license`, `url` (listed in youtube.md).
+- `illustrative: true`: not footage of the event (stock, archive): an "Illustrative image" tag.
+- `focus`: the point kept in frame when cropping; `start`: seconds into a clip. Clips are muted.
+
+**`headline`** — the opening. `banner` ("Breaking", ≤ 16), `kicker` (the red tab, ≤ 32),
+`heading` (≤ 90, `*emphasis*`), `dateline` (≤ 60), `media` (darkened behind), `beats` (as in
+`title`). Frame 0 shows everything, like `title`.
+
+**`media`** — full-frame picture or clip with a slow move (`move`: in · out · left · right ·
+still), the credit top-right and an optional `lower` third (`{title ≤ 48, sub ≤ 64}`). Steps:
+`media` (cut to another item), `lower` (change it, or `"off"`), `sfx`. `title` is only for the
+script and chapters.
+
+**`map`** — `view` and optional `from` are boxes `[[west, south], [east, north]]` in degrees;
+the camera flies from `from` to `view`. `highlight` lights countries from the start (English
+Natural Earth names: "France", "United Kingdom", "Czechia"). Steps: `highlight` (more
+countries), `pin` (`{lon, lat, label ≤ 28, sub ≤ 32, tone}`; 1–3 per map), `zoom` (a new box),
+`note`, `sfx`.
+
+**`stats`** — 1–6 `items` `{value ≤ 14, label ≤ 40, sub?, tone, icon?, countUp?, at}` as
+cards; `footnote` ("Provisional counts as of…").
+
+**`quote`** — 1–2 `quotes` `{text ≤ 170, who, role?, media? (portrait), tag? ("Translated
+from French", "Not verified"), at}`.
+
+**`timeline`** — 2–6 `items` `{when ≤ 18, text ≤ 70, tone, at}` on a line (down in 9:16,
+across in 16:9); the current one is lit.
+
+**`sources`** — 1–12 `items` `{name ≤ 40, detail ≤ 80}` and `asOf`. Its narration is one line
+("Sources are on screen and in the description."); `youtube.md` lists them and every media
+credit automatically.
+
+The thumbnail of a news video can put a photo behind the words: `"thumbnail": {"media": "m1", …}`.
 
 ### `publish` and `chapter` — what to paste into YouTube
 Every `make` / `preview` also writes `out/<id>/youtube.md`: title options, and a

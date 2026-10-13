@@ -3,23 +3,25 @@
 import * as common from '../packs/common/vocab';
 import * as tech from '../packs/tech/vocab';
 import * as science from '../packs/science/vocab';
+import * as news from '../packs/news/vocab';
 
 // Icon packs. A video declares its pack ("pack": "tech" | "science"; default tech) and may
 // only use that pack's icons plus the common ones, so topics never mix by accident.
 // To add a pack: src/packs/<name>/{vocab.ts,icons.tsx}, register it here and in
 // src/components/icons.tsx, and write docs/packs/<name>.md.
-export const PACKS = ['tech', 'science'] as const;
+export const PACKS = ['tech', 'science', 'news'] as const;
 export type Pack = (typeof PACKS)[number];
 
-const BY_PACK = {tech, science} as const;
+const BY_PACK = {tech, science, news} as const;
 
-export const ICONS = [...common.ICONS, ...tech.ICONS, ...science.ICONS] as const;
-export type IconName = common.Name | tech.Name | science.Name;
+export const ICONS = [...common.ICONS, ...tech.ICONS, ...science.ICONS, ...news.ICONS] as const;
+export type IconName = common.Name | tech.Name | science.Name | news.Name;
 
 // Icons a video of this pack may use (common first).
 export const PACK_ICONS: Record<Pack, readonly IconName[]> = {
   tech: [...common.ICONS, ...tech.ICONS],
   science: [...common.ICONS, ...science.ICONS],
+  news: [...common.ICONS, ...news.ICONS],
 };
 
 // Common words an LLM may use instead of the canonical icon name, per pack.
@@ -65,13 +67,13 @@ export const COLORS = ['blue', 'green', 'orange', 'purple', 'red', 'yellow', 'te
 export type ColorName = (typeof COLORS)[number];
 
 // Default card color per icon so the author rarely needs to choose one.
-export const ICON_COLOR: Record<IconName, ColorName> = {...common.COLOR, ...tech.COLOR, ...science.COLOR};
+export const ICON_COLOR: Record<IconName, ColorName> = {...common.COLOR, ...tech.COLOR, ...science.COLOR, ...news.COLOR};
 
 // Generic node status -> the illustration's own animated state, per icon.
 export const ICON_STATES: Record<string, Partial<Record<IconName, string>>> = Object.fromEntries(
-  ['idle', 'busy', 'ok', 'error', 'warn'].map((st) => [st, {...common.STATES[st], ...tech.STATES[st], ...science.STATES[st]}]),
+  ['idle', 'busy', 'ok', 'error', 'warn'].map((st) => [st, {...common.STATES[st], ...tech.STATES[st], ...science.STATES[st], ...news.STATES[st]}]),
 );
-export const ICON_DEFAULT_STATE: Partial<Record<IconName, string>> = {...common.DEFAULT_STATE, ...tech.DEFAULT_STATE, ...science.DEFAULT_STATE};
+export const ICON_DEFAULT_STATE: Partial<Record<IconName, string>> = {...common.DEFAULT_STATE, ...tech.DEFAULT_STATE, ...science.DEFAULT_STATE, ...news.DEFAULT_STATE};
 
 export const TONES = ['good', 'bad', 'info', 'warn', 'neutral'] as const;
 export type Tone = (typeof TONES)[number];
@@ -103,15 +105,17 @@ export type Lang = (typeof LANGS)[number];
 // `neon` = dark with glowing active paths (night-mode look for incidents and code).
 // `film` = documentary: no header or progress bar, full-frame `shot` scenes, grain,
 // vignette, a serif title card and plain subtitles (docs/FILM.md).
-export const THEME_NAMES = ['light', 'dark', 'neon', 'film'] as const;
+// `news` = broadcast look: channel bug, red title tabs, lower thirds, real footage
+// (`media` scenes), maps and an optional ticker (docs/packs/news.md).
+export const THEME_NAMES = ['light', 'dark', 'neon', 'film', 'news'] as const;
 export type ThemeName = (typeof THEME_NAMES)[number];
 
 // The story shape of a video (docs/SHAPES.md) and the kind of hook it opens with.
 // Both are optional in the spec: they are recorded so `npm run fingerprint` can keep a
 // channel from repeating itself, and so the reviewer knows which skeleton to expect.
-export const SHAPES = ['progressive', 'post-mortem', 'request-journey', 'a-vs-b', 'numbers-first', 'code-first'] as const;
+export const SHAPES = ['progressive', 'post-mortem', 'request-journey', 'a-vs-b', 'numbers-first', 'code-first', 'news-report'] as const;
 export type Shape = (typeof SHAPES)[number];
-export const HOOKS = ['interview-question', 'incident', 'surprising-number', 'broken-thing'] as const;
+export const HOOKS = ['interview-question', 'incident', 'surprising-number', 'broken-thing', 'headline'] as const;
 export type Hook = (typeof HOOKS)[number];
 
 // How crowded a `crowd` is. The dots are a picture of load, not a count: the real

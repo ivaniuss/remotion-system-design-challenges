@@ -25,7 +25,8 @@
       "type": "string",
       "enum": [
         "tech",
-        "science"
+        "science",
+        "news"
       ]
     },
     "theme": {
@@ -35,7 +36,8 @@
         "light",
         "dark",
         "neon",
-        "film"
+        "film",
+        "news"
       ]
     },
     "shape": {
@@ -46,7 +48,8 @@
         "request-journey",
         "a-vs-b",
         "numbers-first",
-        "code-first"
+        "code-first",
+        "news-report"
       ]
     },
     "hook": {
@@ -55,7 +58,8 @@
         "interview-question",
         "incident",
         "surprising-number",
-        "broken-thing"
+        "broken-thing",
+        "headline"
       ]
     },
     "voice": {
@@ -136,7 +140,25 @@
                   "hand",
                   "flame",
                   "spine",
-                  "muscle"
+                  "muscle",
+                  "hacker",
+                  "internet",
+                  "controller",
+                  "technician",
+                  "store",
+                  "fridge",
+                  "thermometer",
+                  "fire",
+                  "agency",
+                  "justice",
+                  "government",
+                  "money",
+                  "factory",
+                  "world",
+                  "wave",
+                  "sun",
+                  "rain",
+                  "pin"
                 ]
               },
               "color": {
@@ -307,7 +329,25 @@
                   "hand",
                   "flame",
                   "spine",
-                  "muscle"
+                  "muscle",
+                  "hacker",
+                  "internet",
+                  "controller",
+                  "technician",
+                  "store",
+                  "fridge",
+                  "thermometer",
+                  "fire",
+                  "agency",
+                  "justice",
+                  "government",
+                  "money",
+                  "factory",
+                  "world",
+                  "wave",
+                  "sun",
+                  "rain",
+                  "pin"
                 ]
               },
               "beats": {
@@ -373,7 +413,25 @@
                         "hand",
                         "flame",
                         "spine",
-                        "muscle"
+                        "muscle",
+                        "hacker",
+                        "internet",
+                        "controller",
+                        "technician",
+                        "store",
+                        "fridge",
+                        "thermometer",
+                        "fire",
+                        "agency",
+                        "justice",
+                        "government",
+                        "money",
+                        "factory",
+                        "world",
+                        "wave",
+                        "sun",
+                        "rain",
+                        "pin"
                       ]
                     },
                     "at": {
@@ -524,7 +582,25 @@
                   "hand",
                   "flame",
                   "spine",
-                  "muscle"
+                  "muscle",
+                  "hacker",
+                  "internet",
+                  "controller",
+                  "technician",
+                  "store",
+                  "fridge",
+                  "thermometer",
+                  "fire",
+                  "agency",
+                  "justice",
+                  "government",
+                  "money",
+                  "factory",
+                  "world",
+                  "wave",
+                  "sun",
+                  "rain",
+                  "pin"
                 ]
               },
               "countUp": {
@@ -646,7 +722,25 @@
                         "hand",
                         "flame",
                         "spine",
-                        "muscle"
+                        "muscle",
+                        "hacker",
+                        "internet",
+                        "controller",
+                        "technician",
+                        "store",
+                        "fridge",
+                        "thermometer",
+                        "fire",
+                        "agency",
+                        "justice",
+                        "government",
+                        "money",
+                        "factory",
+                        "world",
+                        "wave",
+                        "sun",
+                        "rain",
+                        "pin"
                       ]
                     },
                     "at": {
@@ -790,7 +884,25 @@
                             "hand",
                             "flame",
                             "spine",
-                            "muscle"
+                            "muscle",
+                            "hacker",
+                            "internet",
+                            "controller",
+                            "technician",
+                            "store",
+                            "fridge",
+                            "thermometer",
+                            "fire",
+                            "agency",
+                            "justice",
+                            "government",
+                            "money",
+                            "factory",
+                            "world",
+                            "wave",
+                            "sun",
+                            "rain",
+                            "pin"
                           ]
                         },
                         "at": {
@@ -911,7 +1023,25 @@
                             "hand",
                             "flame",
                             "spine",
-                            "muscle"
+                            "muscle",
+                            "hacker",
+                            "internet",
+                            "controller",
+                            "technician",
+                            "store",
+                            "fridge",
+                            "thermometer",
+                            "fire",
+                            "agency",
+                            "justice",
+                            "government",
+                            "money",
+                            "factory",
+                            "world",
+                            "wave",
+                            "sun",
+                            "rain",
+                            "pin"
                           ]
                         },
                         "at": {
@@ -1155,7 +1285,25 @@
                         "hand",
                         "flame",
                         "spine",
-                        "muscle"
+                        "muscle",
+                        "hacker",
+                        "internet",
+                        "controller",
+                        "technician",
+                        "store",
+                        "fridge",
+                        "thermometer",
+                        "fire",
+                        "agency",
+                        "justice",
+                        "government",
+                        "money",
+                        "factory",
+                        "world",
+                        "wave",
+                        "sun",
+                        "rain",
+                        "pin"
                       ]
                     },
                     "color": {
@@ -1890,7 +2038,25 @@
                         "hand",
                         "flame",
                         "spine",
-                        "muscle"
+                        "muscle",
+                        "hacker",
+                        "internet",
+                        "controller",
+                        "technician",
+                        "store",
+                        "fridge",
+                        "thermometer",
+                        "fire",
+                        "agency",
+                        "justice",
+                        "government",
+                        "money",
+                        "factory",
+                        "world",
+                        "wave",
+                        "sun",
+                        "rain",
+                        "pin"
                       ]
                     },
                     "at": {
@@ -2457,7 +2623,25 @@
                         "hand",
                         "flame",
                         "spine",
-                        "muscle"
+                        "muscle",
+                        "hacker",
+                        "internet",
+                        "controller",
+                        "technician",
+                        "store",
+                        "fridge",
+                        "thermometer",
+                        "fire",
+                        "agency",
+                        "justice",
+                        "government",
+                        "money",
+                        "factory",
+                        "world",
+                        "wave",
+                        "sun",
+                        "rain",
+                        "pin"
                       ]
                     },
                     "color": {
@@ -2765,8 +2949,1081 @@
               "narration",
               "world"
             ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "headline"
+              },
+              "chapter": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "narration": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 900
+              },
+              "kicker": {
+                "type": "string",
+                "maxLength": 32
+              },
+              "banner": {
+                "type": "string",
+                "maxLength": 16
+              },
+              "heading": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 90
+              },
+              "dateline": {
+                "type": "string",
+                "maxLength": 60
+              },
+              "media": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "beats": {
+                "maxItems": 5,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 24
+                    },
+                    "icon": {
+                      "type": "string",
+                      "enum": [
+                        "user",
+                        "users",
+                        "mobile",
+                        "file",
+                        "mail",
+                        "search",
+                        "bell",
+                        "chart",
+                        "ai",
+                        "client",
+                        "api",
+                        "gateway",
+                        "instances",
+                        "lambda",
+                        "container",
+                        "db",
+                        "replica",
+                        "cache",
+                        "storage",
+                        "queue",
+                        "broker",
+                        "worker",
+                        "scheduler",
+                        "cdn",
+                        "external",
+                        "ratelimit",
+                        "lock",
+                        "code",
+                        "brain",
+                        "neuron",
+                        "ear",
+                        "eye",
+                        "speech",
+                        "chat",
+                        "book",
+                        "calendar",
+                        "clock",
+                        "repeat",
+                        "moon",
+                        "idea",
+                        "target",
+                        "dna",
+                        "cell",
+                        "heart",
+                        "flask",
+                        "globe",
+                        "hand",
+                        "flame",
+                        "spine",
+                        "muscle",
+                        "hacker",
+                        "internet",
+                        "controller",
+                        "technician",
+                        "store",
+                        "fridge",
+                        "thermometer",
+                        "fire",
+                        "agency",
+                        "justice",
+                        "government",
+                        "money",
+                        "factory",
+                        "world",
+                        "wave",
+                        "sun",
+                        "rain",
+                        "pin"
+                      ]
+                    },
+                    "at": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    },
+                    "sfx": {
+                      "type": "string",
+                      "enum": [
+                        "cash",
+                        "clock",
+                        "notify",
+                        "alarm",
+                        "riser",
+                        "type",
+                        "pop",
+                        "whoosh",
+                        "error",
+                        "success",
+                        "impact",
+                        "spike",
+                        "tick"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "text"
+                  ]
+                }
+              },
+              "sfx": {
+                "type": "string",
+                "enum": [
+                  "cash",
+                  "clock",
+                  "notify",
+                  "alarm",
+                  "riser",
+                  "type",
+                  "pop",
+                  "whoosh",
+                  "error",
+                  "success",
+                  "impact",
+                  "spike",
+                  "tick"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "narration",
+              "heading"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "media"
+              },
+              "chapter": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "narration": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 900
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "media": {
+                "type": "string",
+                "pattern": "^[a-z0-9][a-z0-9_-]*$"
+              },
+              "move": {
+                "default": "in",
+                "type": "string",
+                "enum": [
+                  "in",
+                  "out",
+                  "left",
+                  "right",
+                  "still"
+                ]
+              },
+              "lower": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 48
+                  },
+                  "sub": {
+                    "type": "string",
+                    "maxLength": 64
+                  }
+                },
+                "required": [
+                  "title"
+                ]
+              },
+              "steps": {
+                "default": [],
+                "maxItems": 8,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "at": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    },
+                    "media": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                    },
+                    "lower": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "title": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 48
+                            },
+                            "sub": {
+                              "type": "string",
+                              "maxLength": 64
+                            }
+                          },
+                          "required": [
+                            "title"
+                          ]
+                        },
+                        {
+                          "type": "string",
+                          "const": "off"
+                        }
+                      ]
+                    },
+                    "sfx": {
+                      "type": "string",
+                      "enum": [
+                        "cash",
+                        "clock",
+                        "notify",
+                        "alarm",
+                        "riser",
+                        "type",
+                        "pop",
+                        "whoosh",
+                        "error",
+                        "success",
+                        "impact",
+                        "spike",
+                        "tick"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "type",
+              "narration",
+              "media"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "map"
+              },
+              "chapter": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "narration": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 900
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "view": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "type": "number",
+                        "minimum": -180,
+                        "maximum": 180
+                      },
+                      {
+                        "type": "number",
+                        "minimum": -85,
+                        "maximum": 85
+                      }
+                    ],
+                    "items": false,
+                    "minItems": 2,
+                    "maxItems": 2
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "type": "number",
+                        "minimum": -180,
+                        "maximum": 180
+                      },
+                      {
+                        "type": "number",
+                        "minimum": -85,
+                        "maximum": 85
+                      }
+                    ],
+                    "items": false,
+                    "minItems": 2,
+                    "maxItems": 2
+                  }
+                ],
+                "items": false,
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "from": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "type": "number",
+                        "minimum": -180,
+                        "maximum": 180
+                      },
+                      {
+                        "type": "number",
+                        "minimum": -85,
+                        "maximum": 85
+                      }
+                    ],
+                    "items": false,
+                    "minItems": 2,
+                    "maxItems": 2
+                  },
+                  {
+                    "type": "array",
+                    "prefixItems": [
+                      {
+                        "type": "number",
+                        "minimum": -180,
+                        "maximum": 180
+                      },
+                      {
+                        "type": "number",
+                        "minimum": -85,
+                        "maximum": 85
+                      }
+                    ],
+                    "items": false,
+                    "minItems": 2,
+                    "maxItems": 2
+                  }
+                ],
+                "items": false,
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "highlight": {
+                "default": [],
+                "maxItems": 12,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 40
+                }
+              },
+              "steps": {
+                "default": [],
+                "maxItems": 10,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "at": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    },
+                    "highlight": {
+                      "maxItems": 12,
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 40
+                      }
+                    },
+                    "pin": {
+                      "type": "object",
+                      "properties": {
+                        "lon": {
+                          "type": "number",
+                          "minimum": -180,
+                          "maximum": 180
+                        },
+                        "lat": {
+                          "type": "number",
+                          "minimum": -85,
+                          "maximum": 85
+                        },
+                        "label": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 28
+                        },
+                        "sub": {
+                          "type": "string",
+                          "maxLength": 32
+                        },
+                        "tone": {
+                          "default": "bad",
+                          "type": "string",
+                          "enum": [
+                            "good",
+                            "bad",
+                            "info",
+                            "warn",
+                            "neutral"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "lon",
+                        "lat",
+                        "label"
+                      ]
+                    },
+                    "zoom": {
+                      "type": "array",
+                      "prefixItems": [
+                        {
+                          "type": "array",
+                          "prefixItems": [
+                            {
+                              "type": "number",
+                              "minimum": -180,
+                              "maximum": 180
+                            },
+                            {
+                              "type": "number",
+                              "minimum": -85,
+                              "maximum": 85
+                            }
+                          ],
+                          "items": false,
+                          "minItems": 2,
+                          "maxItems": 2
+                        },
+                        {
+                          "type": "array",
+                          "prefixItems": [
+                            {
+                              "type": "number",
+                              "minimum": -180,
+                              "maximum": 180
+                            },
+                            {
+                              "type": "number",
+                              "minimum": -85,
+                              "maximum": 85
+                            }
+                          ],
+                          "items": false,
+                          "minItems": 2,
+                          "maxItems": 2
+                        }
+                      ],
+                      "items": false,
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "note": {
+                      "type": "object",
+                      "properties": {
+                        "text": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 60
+                        },
+                        "tone": {
+                          "default": "info",
+                          "type": "string",
+                          "enum": [
+                            "good",
+                            "bad",
+                            "info",
+                            "warn",
+                            "neutral"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "text"
+                      ]
+                    },
+                    "sfx": {
+                      "type": "string",
+                      "enum": [
+                        "cash",
+                        "clock",
+                        "notify",
+                        "alarm",
+                        "riser",
+                        "type",
+                        "pop",
+                        "whoosh",
+                        "error",
+                        "success",
+                        "impact",
+                        "spike",
+                        "tick"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "type",
+              "narration",
+              "view"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "stats"
+              },
+              "chapter": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "narration": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 900
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "items": {
+                "minItems": 1,
+                "maxItems": 6,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 14
+                    },
+                    "label": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 40
+                    },
+                    "sub": {
+                      "type": "string",
+                      "maxLength": 40
+                    },
+                    "tone": {
+                      "default": "neutral",
+                      "type": "string",
+                      "enum": [
+                        "good",
+                        "bad",
+                        "info",
+                        "warn",
+                        "neutral"
+                      ]
+                    },
+                    "icon": {
+                      "type": "string",
+                      "enum": [
+                        "user",
+                        "users",
+                        "mobile",
+                        "file",
+                        "mail",
+                        "search",
+                        "bell",
+                        "chart",
+                        "ai",
+                        "client",
+                        "api",
+                        "gateway",
+                        "instances",
+                        "lambda",
+                        "container",
+                        "db",
+                        "replica",
+                        "cache",
+                        "storage",
+                        "queue",
+                        "broker",
+                        "worker",
+                        "scheduler",
+                        "cdn",
+                        "external",
+                        "ratelimit",
+                        "lock",
+                        "code",
+                        "brain",
+                        "neuron",
+                        "ear",
+                        "eye",
+                        "speech",
+                        "chat",
+                        "book",
+                        "calendar",
+                        "clock",
+                        "repeat",
+                        "moon",
+                        "idea",
+                        "target",
+                        "dna",
+                        "cell",
+                        "heart",
+                        "flask",
+                        "globe",
+                        "hand",
+                        "flame",
+                        "spine",
+                        "muscle",
+                        "hacker",
+                        "internet",
+                        "controller",
+                        "technician",
+                        "store",
+                        "fridge",
+                        "thermometer",
+                        "fire",
+                        "agency",
+                        "justice",
+                        "government",
+                        "money",
+                        "factory",
+                        "world",
+                        "wave",
+                        "sun",
+                        "rain",
+                        "pin"
+                      ]
+                    },
+                    "countUp": {
+                      "default": false,
+                      "type": "boolean"
+                    },
+                    "at": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    },
+                    "sfx": {
+                      "type": "string",
+                      "enum": [
+                        "cash",
+                        "clock",
+                        "notify",
+                        "alarm",
+                        "riser",
+                        "type",
+                        "pop",
+                        "whoosh",
+                        "error",
+                        "success",
+                        "impact",
+                        "spike",
+                        "tick"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "value",
+                    "label"
+                  ]
+                }
+              },
+              "footnote": {
+                "type": "string",
+                "maxLength": 80
+              }
+            },
+            "required": [
+              "type",
+              "narration",
+              "items"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "quote"
+              },
+              "chapter": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "narration": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 900
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "quotes": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 170
+                    },
+                    "who": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 40
+                    },
+                    "role": {
+                      "type": "string",
+                      "maxLength": 60
+                    },
+                    "media": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                    },
+                    "tag": {
+                      "type": "string",
+                      "maxLength": 28
+                    },
+                    "at": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    },
+                    "sfx": {
+                      "type": "string",
+                      "enum": [
+                        "cash",
+                        "clock",
+                        "notify",
+                        "alarm",
+                        "riser",
+                        "type",
+                        "pop",
+                        "whoosh",
+                        "error",
+                        "success",
+                        "impact",
+                        "spike",
+                        "tick"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "text",
+                    "who"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "type",
+              "narration",
+              "quotes"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "timeline"
+              },
+              "chapter": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "narration": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 900
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "items": {
+                "minItems": 2,
+                "maxItems": 6,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "when": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 18
+                    },
+                    "text": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 70
+                    },
+                    "tone": {
+                      "default": "neutral",
+                      "type": "string",
+                      "enum": [
+                        "good",
+                        "bad",
+                        "info",
+                        "warn",
+                        "neutral"
+                      ]
+                    },
+                    "at": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    },
+                    "sfx": {
+                      "type": "string",
+                      "enum": [
+                        "cash",
+                        "clock",
+                        "notify",
+                        "alarm",
+                        "riser",
+                        "type",
+                        "pop",
+                        "whoosh",
+                        "error",
+                        "success",
+                        "impact",
+                        "spike",
+                        "tick"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "when",
+                    "text"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "type",
+              "narration",
+              "items"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "sources"
+              },
+              "chapter": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "narration": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 900
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "items": {
+                "minItems": 1,
+                "maxItems": 12,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 40
+                    },
+                    "detail": {
+                      "type": "string",
+                      "maxLength": 80
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ]
+                }
+              },
+              "asOf": {
+                "type": "string",
+                "maxLength": 40
+              }
+            },
+            "required": [
+              "type",
+              "narration",
+              "items"
+            ]
           }
         ]
+      }
+    },
+    "media": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "alt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "credit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "license": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 300
+          },
+          "illustrative": {
+            "default": false,
+            "type": "boolean"
+          },
+          "focus": {
+            "default": [
+              0.5,
+              0.5
+            ],
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            ],
+            "items": false,
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "start": {
+            "default": 0,
+            "type": "number",
+            "minimum": 0,
+            "maximum": 3600
+          }
+        },
+        "required": [
+          "file",
+          "alt",
+          "credit"
+        ]
+      }
+    },
+    "news": {
+      "type": "object",
+      "properties": {
+        "brand": {
+          "default": "NEWS",
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16
+        },
+        "date": {
+          "type": "string",
+          "maxLength": 24
+        },
+        "ticker": {
+          "maxItems": 8,
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        }
       }
     },
     "publish": {
@@ -2911,7 +4168,25 @@
                   "hand",
                   "flame",
                   "spine",
-                  "muscle"
+                  "muscle",
+                  "hacker",
+                  "internet",
+                  "controller",
+                  "technician",
+                  "store",
+                  "fridge",
+                  "thermometer",
+                  "fire",
+                  "agency",
+                  "justice",
+                  "government",
+                  "money",
+                  "factory",
+                  "world",
+                  "wave",
+                  "sun",
+                  "rain",
+                  "pin"
                 ]
               },
               "status": {
@@ -2966,8 +4241,14 @@
           "enum": [
             "light",
             "dark",
-            "neon"
+            "neon",
+            "film",
+            "news"
           ]
+        },
+        "media": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9_-]*$"
         }
       },
       "required": [

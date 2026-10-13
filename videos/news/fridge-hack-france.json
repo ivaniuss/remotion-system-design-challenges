@@ -1,0 +1,276 @@
+{
+  "id": "fridge-hack-france",
+  "title": "Hackers heated French supermarket fridges to 50 °C",
+  "lang": "en",
+  "pack": "news",
+  "theme": "news",
+  "shape": "news-report",
+  "hook": "headline",
+  "news": {
+    "brand": "NEWS",
+    "date": "13 Oct 2026",
+    "ticker": [
+      "Paris prosecutors open an investigation into the attack on supermarket refrigeration",
+      "CERT-FR: attacks on refrigeration controllers are probably still ongoing",
+      "Alert widened on Tuesday to Dixell and Copeland controllers",
+      "No claim of responsibility so far"
+    ]
+  },
+  "media": {
+    "m1": {
+      "file": "media/fridge-hack-france/m1-freezer-cabinet",
+      "alt": "A supermarket chest freezer full of food",
+      "credit": "Photo: Leon Brooks / Wikimedia Commons",
+      "license": "Public domain",
+      "url": "https://commons.wikimedia.org/wiki/File:Freezer_cabinet_with_food.jpg",
+      "illustrative": true,
+      "focus": [0.5, 0.45]
+    },
+    "m2": {
+      "file": "media/fridge-hack-france/m2-supermarket-dumpster",
+      "alt": "Food thrown into a supermarket dumpster",
+      "credit": "Photo: KVDP / Wikimedia Commons",
+      "license": "Public domain",
+      "url": "https://commons.wikimedia.org/wiki/File:Supermarket_dumpster.jpg",
+      "illustrative": true,
+      "focus": [0.5, 0.5]
+    },
+    "m3": {
+      "file": "media/fridge-hack-france/m3-storefront",
+      "alt": "An Intermarché supermarket in Vonnas, France",
+      "credit": "Photo: Chabe01 / Wikimedia Commons",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Supermarch%C3%A9_Intermarch%C3%A9_Super_Vonnas_1.jpg",
+      "illustrative": true,
+      "focus": [0.45, 0.55]
+    },
+    "m4": {
+      "file": "media/fridge-hack-france/m4-schelcher",
+      "alt": "Dominique Schelcher, CEO of Coopérative U",
+      "credit": "Photo: GregPresident / Wikimedia Commons",
+      "license": "CC BY-SA 4.0",
+      "url": "https://commons.wikimedia.org/wiki/File:Dominique_Schelcher.jpg",
+      "focus": [0.55, 0.28]
+    }
+  },
+  "thumbnail": {
+    "text": "Hackers heated fridges to *50 °C*",
+    "kicker": "Cyberattack · France",
+    "number": "100s of stores",
+    "tone": "bad",
+    "media": "m1",
+    "icons": [{"icon": "fridge", "status": "error"}]
+  },
+  "scenes": [
+    {
+      "type": "headline",
+      "chapter": "What happened",
+      "banner": "Breaking",
+      "kicker": "Cyberattack · France",
+      "heading": "Hackers heated supermarket fridges to *50 °C*",
+      "dateline": "Night of 11–12 October 2026",
+      "media": "m1",
+      "beats": [
+        {"text": "Supermarkets", "icon": "store", "at": "French supermarkets"},
+        {"text": "Internet", "icon": "internet", "at": "over the internet"},
+        {"text": "50 °C", "icon": "fridge", "at": "fifty degrees Celsius"},
+        {"text": "?", "at": "How is that"}
+      ],
+      "narration": "Overnight into Monday, hundreds of French supermarkets lost their cold. Nobody broke in. Someone, over the internet, pushed fridges and freezers to fifty degrees Celsius. How is that even possible?"
+    },
+    {
+      "type": "media",
+      "title": "The morning after",
+      "media": "m3",
+      "move": "in",
+      "lower": {"title": "Supermarkets across France", "sub": "Monday, 12 October"},
+      "steps": [
+        {"at": "had to be thrown", "media": "m2", "lower": {"title": "Stock thrown away", "sub": "Fresh and frozen food"}},
+        {"at": "some equipment caught", "lower": {"title": "Fires reported", "sub": "According to Paris prosecutors"}}
+      ],
+      "narration": "On Monday morning, staff found warm freezers and spoiled stock. Fresh and frozen food had to be thrown away. And according to Paris prosecutors, some equipment caught fire."
+    },
+    {
+      "type": "stats",
+      "title": "Stores hit",
+      "items": [
+        {"value": "150–300", "label": "Intermarché & Netto", "sub": "Owner: 150–180 · reports: 300", "tone": "bad", "at": "Intermarché's owner says"},
+        {"value": "80", "label": "Carrefour", "tone": "bad", "at": "Carrefour said eighty"},
+        {"value": "80", "label": "Coopérative U", "sub": "Its CEO's count", "tone": "bad", "at": "U, eighty"},
+        {"value": "~30", "label": "Monoprix", "tone": "bad", "at": "Monoprix, around thirty"},
+        {"value": "Several", "label": "E.Leclerc", "tone": "warn", "at": "E.Leclerc, several"}
+      ],
+      "footnote": "Provisional counts as of 13 October 2026",
+      "narration": "The count is still moving. Intermarché's owner says about one hundred fifty to one hundred eighty of its stores, other reports say three hundred. Carrefour said eighty. U, eighty, its boss says. Monoprix, around thirty. E.Leclerc, several."
+    },
+    {
+      "type": "map",
+      "title": "Across France",
+      "from": [[-12, 35], [28, 60]],
+      "view": [[-5.2, 41.5], [9.6, 51.2]],
+      "steps": [
+        {"at": "It was nationwide", "highlight": ["France"]},
+        {"at": "An Intermarché in", "pin": {"lon": -1.55, "lat": 49.29, "label": "La Haye, Normandy", "sub": "Cases hit 80 °C"}},
+        {"at": "In Alsace, two", "pin": {"lon": 7.79, "lat": 48.82, "label": "Haguenau, Alsace", "sub": "2 stores · ~€270,000 lost"}, "sfx": "cash"}
+      ],
+      "narration": "It was nationwide. An Intermarché in La Haye, in Normandy, said its cases hit eighty degrees. In Alsace, two stores reported about two hundred seventy thousand euros in losses."
+    },
+    {
+      "type": "flow",
+      "chapter": "How it worked",
+      "title": "How do you hack a fridge?",
+      "nodes": [
+        {"id": "tech", "label": "Maintenance firm", "icon": "technician"},
+        {"id": "net", "label": "Internet", "icon": "internet"},
+        {"id": "ctrl", "label": "Store controller", "sub": "Danfoss AK-SM · AK-SC", "icon": "controller"},
+        {"id": "cases", "label": "Cold cases", "icon": "fridge"},
+        {"id": "hack", "label": "Attackers", "icon": "hacker"}
+      ],
+      "edges": [
+        {"from": "tech", "to": "net"},
+        {"from": "hack", "to": "net"},
+        {"from": "net", "to": "ctrl"},
+        {"from": "ctrl", "to": "cases"}
+      ],
+      "steps": [
+        {"at": "one central controller", "show": ["ctrl", "cases"], "packet": {"from": "ctrl", "to": "cases", "label": "keep cold"}, "status": {"cases": "ok"}},
+        {"at": "maintenance companies reach", "show": ["tech", "net"], "packet": {"from": "tech", "to": "ctrl", "via": ["net"], "label": "remote access"}},
+        {"at": "The attackers reached", "show": ["hack"], "packet": {"from": "hack", "to": "ctrl", "via": ["net"], "label": "same door"}, "status": {"hack": "busy"}, "focus": ["hack", "net", "ctrl"]},
+        {"at": "switched the cases", "packet": {"from": "ctrl", "to": "cases", "label": "defrost · 50 °C"}, "status": {"ctrl": "error", "cases": "error"}, "focus": [], "sfx": "riser"}
+      ],
+      "narration": "Big stores run their cold cases from one central controller. Maintenance companies reach it over the internet. The attackers reached these controllers remotely too, and switched the cases into defrost mode."
+    },
+    {
+      "type": "chart",
+      "title": "Defrost, stretched",
+      "schematic": true,
+      "x": {"label": "hours", "max": 12, "ticks": [{"at": 0, "label": "Night"}, {"at": 12, "label": "Morning"}]},
+      "y": {"label": "Temperature in the case", "min": 0, "max": 56, "ticks": [{"at": 3, "label": "~3 °C"}, {"at": 50, "label": "50 °C"}]},
+      "series": [
+        {"id": "normal", "label": "Normal defrost", "tone": "good", "points": [[0, 3], [3.6, 3], [3.6, 3], [4, 10], [4.6, 3], [7.6, 3], [8, 10], [8.6, 3], [12, 3]]},
+        {"id": "attack", "label": "Attacked", "tone": "bad", "points": [[0, 3], [2, 3], [3, 44], [5, 50], [11, 50], [12, 50]]}
+      ],
+      "steps": [
+        {"at": "Defrosting is normal", "draw": ["normal"]},
+        {"at": "for a short while", "mark": {"x": 4, "label": "~1 h defrost", "series": "normal", "tone": "good"}},
+        {"at": "cycles were stretched", "draw": ["attack"], "focus": ["attack"]},
+        {"at": "one hour to eight", "mark": {"x": 7, "label": "up to 8 h", "series": "attack", "tone": "bad"}},
+        {"at": "delay the alarms", "note": {"text": "Longer defrost = *alarms delayed*", "tone": "bad"}}
+      ],
+      "narration": "Defrosting is normal. Heaters melt the ice for a short while, and alarms expect it. In some stores, according to Le Monde, cycles were stretched from one hour to eight, to delay the alarms. Meanwhile, the food warmed up."
+    },
+    {
+      "type": "list",
+      "title": "Why these machines",
+      "items": [
+        {"text": "Mostly *Danfoss* controllers", "icon": "controller", "at": "made by Danfoss"},
+        {"text": "Old models: *no security updates*", "icon": "controller", "at": "were old models"},
+        {"text": "Newer units on *old firmware*", "icon": "controller", "at": "Some newer ones"},
+        {"text": "Tuesday: *Dixell* and *Copeland* added", "icon": "agency", "at": "On Tuesday, the"}
+      ],
+      "narration": "Most of the controllers hit are made by Danfoss, a Danish company. Danfoss says most were old models that no longer get security updates. Some newer ones ran outdated software. On Tuesday, the alert grew to two more brands, Dixell and Copeland."
+    },
+    {
+      "type": "quote",
+      "chapter": "Reactions",
+      "title": "Reactions",
+      "quotes": [
+        {"text": "Targeting this equipment is of extreme gravity, and unprecedented.", "who": "Dominique Schelcher", "role": "CEO, Coopérative U", "media": "m4", "tag": "Translated from French", "at": "The head of"},
+        {"text": "Tens of millions of euros nationwide, in a single day.", "who": "Thierry Cotillard", "role": "CEO, Intermarché", "tag": "Not verified", "at": "Intermarché's boss spoke"}
+      ],
+      "narration": "The head of Coopérative U said targeting this equipment is of extreme gravity, and unprecedented. Intermarché's boss spoke of tens of millions of euros in losses nationwide, a figure not verified yet."
+    },
+    {
+      "type": "timeline",
+      "title": "How it unfolded",
+      "items": [
+        {"when": "Aug 2026", "text": "Researchers publish flaws in a *Danfoss* controller, already patched", "at": "In August, researchers"},
+        {"when": "18 Sep", "text": "Danfoss flags another flaw", "at": "In September, Danfoss"},
+        {"when": "11–12 Oct", "text": "Overnight attack on store refrigeration", "tone": "bad", "at": "the night of"},
+        {"when": "12 Oct", "text": "Cyber agency alert · Paris investigation opens", "at": "On Monday, the"}
+      ],
+      "narration": "The warnings came first. In August, researchers published flaws in a Danfoss controller, flaws that updates had fixed. In September, Danfoss flagged another. Then came the night of October eleventh. On Monday, the national cyber agency issued an alert, and Paris prosecutors opened an investigation."
+    },
+    {
+      "type": "list",
+      "chapter": "What we don't know",
+      "title": "Still unknown",
+      "numbered": false,
+      "items": [
+        {"text": "Attacks *may be ongoing*", "icon": "hacker", "at": "probably still going"},
+        {"text": "No claim of responsibility", "icon": "justice", "at": "nobody has claimed"},
+        {"text": "How they got in", "icon": "internet", "at": "how they got"},
+        {"text": "The final bill", "icon": "money", "at": "the final bill"}
+      ],
+      "narration": "And it may not be over. The agency warns attacks are probably still going on. We still don't know who did it, since nobody has claimed it. Or exactly how they got in. Or the final bill."
+    },
+    {
+      "type": "list",
+      "title": "What stores are told",
+      "items": [
+        {"text": "Take controllers *off the internet*", "icon": "internet", "at": "off the internet"},
+        {"text": "Access only via a *secure private link*", "icon": "agency", "at": "secure private link"},
+        {"text": "Update, change *default passwords*", "icon": "controller", "at": "change default passwords"},
+        {"text": "Old, exposed units: *likely compromised*", "icon": "hacker", "at": "Old, exposed units"}
+      ],
+      "narration": "The agency's advice is direct. Take these controllers off the internet, and reach them only through a secure private link. Update them, and change default passwords. Old, exposed units are very likely compromised already."
+    },
+    {
+      "type": "summary",
+      "title": "The question",
+      "points": [
+        {"text": "No data theft reported", "at": "No data theft"},
+        {"text": "The damage was *physical*", "at": "damage was physical"},
+        {"text": "Should it be *online* at all?", "at": "should equipment like"}
+      ],
+      "cta": "Should a fridge be online?",
+      "narration": "No data theft has been reported. The damage was physical: heat, spoiled food, fires. So, should equipment like this be online at all? Tell me in the comments."
+    },
+    {
+      "type": "sources",
+      "title": "Sources",
+      "items": [
+        {"name": "CERT-FR (ANSSI)", "detail": "Alert CERTFR-2026-ALE-012, 12–13 Oct"},
+        {"name": "AFP", "detail": "Retailers' counts, prosecutors, ANSSI"},
+        {"name": "Le Monde", "detail": "Defrost cycles stretched to 8 h"},
+        {"name": "BFM TV", "detail": "50 °C, Alsace losses, Intermarché CEO"},
+        {"name": "Reuters", "detail": "Carrefour count, Danfoss statement"},
+        {"name": "TIME · CBS News", "detail": "Stores hit, La Haye, quotes"}
+      ],
+      "asOf": "Facts as of 13 October 2026",
+      "narration": "Sources are on screen and in the description."
+    }
+  ],
+  "notes": [
+    "Nobody has claimed the attack. Do not attribute it: security researcher Bluetouff warned that blaming a country without evidence is premature (MacGeneration).",
+    "Store counts are provisional and differ by source: Les Mousquetaires told Reuters about 150 and TIME about 180 stores; AFP and BFM TV reported at least 300 Intermarché/Netto stores. Coopérative U: 'at least 100' (TIME), 80 per its CEO on Tuesday (AFP). Monoprix: about 30 (AFP), about 5% of its stores (Reuters).",
+    "La Haye (Normandy): an Intermarché said on Facebook its cases reached 80 °C (reported by TIME). Haguenau (Alsace): two stores, about €270,000 in losses (La Dépêche via MacGeneration; BFM TV via TIME says 'Alsace').",
+    "Danfoss: AK-SM 800 is end of life since May 2021, AK-SC 355 phased out in 2016; neither gets security updates. Some AK-SM 800A units on outdated firmware were also hit (Danfoss via Reuters/CBS).",
+    "CERT-FR updated its alert on 13 October to add Dixell xweb and Copeland xweb, and says attack campaigns are probably still ongoing. An E.Leclerc in the Tarn using Dixell regulators reported a cold-chain break on Tuesday; a link with the Danfoss cases is not established.",
+    "CERT-FR advice: remove internet exposure, restore access only through a secure VPN or protected network (IP filtering only as an emergency measure), check defrost schedules, update firmware, enable Danfoss 'Strict' security, change default passwords; for compromised units, factory reset and reconfigure (a reset alone is not enough). End-of-life units exposed online have a very high probability of compromise.",
+    "Exposure is not compromise: scan data (U.K. Cyber Defence via TIME) found France held nearly 60% of exposed Danfoss controllers; a reachable controller is not necessarily a hacked one.",
+    "Reuters cited a Sekoia analyst saying stores in Spain, Portugal, Poland, Germany and Belgium may also be affected; none confirmed. Ahold Delhaize reported a separate cybersecurity incident the same day; no link established.",
+    "Intermarché told AFP some insurance contracts may not cover this kind of incident. U's CEO said only a minority of its 80 stores threw stock away: tens of thousands of euros in a small store, €180,000–200,000 in a hypermarket.",
+    "Photos are illustrative (Wikimedia Commons, public domain or CC BY-SA 4.0): they do not show stores confirmed as affected."
+  ],
+  "publish": {
+    "titles": [
+      "Hackers Heated French Supermarket Fridges to 50 °C: What We Know",
+      "The Cyberattack That Turned Supermarket Fridges Into Heaters",
+      "How Do You Hack a Fridge? The French Supermarket Attack Explained"
+    ],
+    "description": "Overnight on 11–12 October 2026, attackers remotely forced refrigeration in hundreds of French supermarkets into defrost mode, up to 50 °C. Food was thrown away and some equipment caught fire. What happened, how it worked, and what is still unknown, as of 13 October.",
+    "learn": [
+      "Which chains were hit, and why the counts differ",
+      "How a store's refrigeration controller was reached over the internet",
+      "Why stretched defrost cycles delayed the alarms",
+      "What France's cyber agency tells stores to do now"
+    ],
+    "extra": [
+      "Figures are provisional and come from the retailers and press reports; we will update if they change.",
+      "Photos are illustrative and do not show stores confirmed as affected."
+    ],
+    "comment": "Should equipment like store fridges be reachable over the internet at all?",
+    "hashtags": ["cybersecurity", "france", "news"]
+  }
+}

@@ -14,7 +14,16 @@ export function cuePhrases(scene: Scene): (string | undefined)[] {
     case 'figure':
     case 'sequence':
     case 'shot':
+    case 'media':
+    case 'map':
       return scene.steps.map((s) => s.at);
+    case 'stats':
+    case 'timeline':
+      return scene.items.map((i) => i.at);
+    case 'quote':
+      return scene.quotes.map((q) => q.at);
+    case 'headline':
+      return (scene.beats ?? []).map((b) => b.at);
     case 'list':
       return scene.items.map((i) => i.at);
     case 'compare':

@@ -16,8 +16,8 @@ const SCENE_LETTER: Record<string, string> = {
   title: 'T', callout: 'C', board: 'B', flow: 'F', code: 'K', list: 'L',
   compare: 'X', summary: 'S', chart: 'H', figure: 'G', sequence: 'Q', shot: 'P',
 };
-const SHAPES = ['progressive', 'post-mortem', 'request-journey', 'a-vs-b', 'numbers-first', 'code-first'];
-const HOOKS = ['interview-question', 'incident', 'surprising-number', 'broken-thing'];
+const SHAPES = ['progressive', 'post-mortem', 'request-journey', 'a-vs-b', 'numbers-first', 'code-first', 'news-report'];
+const HOOKS = ['interview-question', 'incident', 'surprising-number', 'broken-thing', 'headline'];
 const THEMES = ['light', 'dark', 'neon', 'film'];
 const VISUALS = ['crowd', 'meter', 'clock', 'sequence', 'code', 'chart', 'compare', 'flow'];
 const SHORT_PATTERNS = ['classic', 'contrast', 'decision', 'timeline', 'code', 'crowd'];

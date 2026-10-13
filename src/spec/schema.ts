@@ -390,6 +390,159 @@ export const ShotScene = z.object({
   steps: z.array(ShotStep).max(12).default([]),
 });
 
+
+// ---------- news: real footage, maps and broadcast scenes (theme "news", docs/packs/news.md)
+// Footage and photos are declared ONCE in the top-level `media` library (with their credit and
+// licence) and referenced by id from scenes. A file that is not there yet is drawn as a
+// "material pending" card, so a report can be reviewed before the footage arrives.
+const MediaRef = Id;
+export const MediaItem = z.object({
+  // Path under public/ ("media/<video-id>/m1-freezer-aisle"); the extension is optional
+  // (.mp4, .webm, .mov, .jpg, .jpeg, .png, .webp are tried in that order).
+  file: z.string().min(1).max(160),
+  // What it shows, in a few words. Shown on the placeholder until the file exists.
+  alt: z.string().min(1).max(120),
+  // Always on screen while it is: "Photo: Jane Doe / Wikimedia Commons".
+  credit: z.string().min(1).max(80),
+  license: z.string().max(40).optional(), // "CC BY-SA 4.0", "Pexels License"
+  url: z.string().max(300).optional(), // where it came from (listed in youtube.md)
+  // Stock or archive footage that is not from the event itself: an "Illustrative image" tag
+  // is shown, so the viewer never takes it for footage of the story.
+  illustrative: z.boolean().default(false),
+  // The point that must stay in frame when the picture is cropped (0–1, 0–1).
+  focus: z.tuple([z.number().min(0).max(1), z.number().min(0).max(1)]).default([0.5, 0.5]),
+  start: z.number().min(0).max(3600).default(0), // video: seconds into the clip
+});
+
+// A lower third: the name of a place or a person, and one line under it.
+const LowerThird = z.object({title: z.string().min(1).max(48), sub: z.string().max(64).optional()});
+
+// The opening of a report: a banner, the headline, the dateline, footage behind it.
+export const HeadlineScene = z.object({
+  type: z.literal('headline'),
+  chapter: Chapter,
+  narration: Narration,
+  kicker: z.string().max(32).optional(), // the red tab: "Cyberattack · France"
+  banner: z.string().max(16).optional(), // a flashing flag: "Breaking", "Update", "Live"
+  heading: z.string().min(1).max(90),
+  dateline: z.string().max(60).optional(), // "Night of 11–12 Oct 2026"
+  media: MediaRef.optional(), // footage behind the headline (darkened)
+  beats: z.array(TitleBeat).max(5).optional(),
+  sfx: Sfx,
+});
+
+export const MediaStep = z.object({
+  at: Cue,
+  media: MediaRef.optional(), // cut to another clip of the library
+  lower: z.union([LowerThird, z.literal('off')]).optional(),
+  sfx: Sfx,
+});
+
+// Full-frame footage or a photo, with a slow move, the credit and an optional lower third.
+export const MediaScene = z.object({
+  type: z.literal('media'),
+  chapter: Chapter,
+  narration: Narration,
+  title: Title.optional(), // only for the script and chapters; not drawn
+  media: MediaRef,
+  move: z.enum(['in', 'out', 'left', 'right', 'still']).default('in'),
+  lower: LowerThird.optional(),
+  steps: z.array(MediaStep).max(8).default([]),
+});
+
+// A map: [[west, south], [east, north]] in degrees.
+const LonLat = z.tuple([z.number().min(-180).max(180), z.number().min(-85).max(85)]);
+const Bbox = z.tuple([LonLat, LonLat]);
+export const MapPin = z.object({
+  lon: z.number().min(-180).max(180),
+  lat: z.number().min(-85).max(85),
+  label: z.string().min(1).max(28),
+  sub: z.string().max(32).optional(),
+  tone: Tone.default('bad'),
+});
+export const MapStep = z.object({
+  at: Cue,
+  highlight: z.array(z.string().min(1).max(40)).max(12).optional(), // country names (English)
+  pin: MapPin.optional(),
+  zoom: Bbox.optional(),
+  note: z.object({text: z.string().min(1).max(60), tone: Tone.default('info')}).optional(),
+  sfx: Sfx,
+});
+export const MapScene = z.object({
+  type: z.literal('map'),
+  chapter: Chapter,
+  narration: Narration,
+  title: Title.optional(),
+  view: Bbox, // where the camera ends (or starts, when a step zooms)
+  from: Bbox.optional(), // a wider view the scene opens on, then flies to `view`
+  highlight: z.array(z.string().min(1).max(40)).max(12).default([]),
+  steps: z.array(MapStep).max(10).default([]),
+});
+
+// Key figures: 1–6 numbers with what they count.
+export const StatItem = z.object({
+  value: z.string().min(1).max(14),
+  label: z.string().min(1).max(40),
+  sub: z.string().max(40).optional(),
+  tone: Tone.default('neutral'),
+  icon: Icon.optional(),
+  countUp: z.boolean().default(false),
+  at: Cue,
+  sfx: Sfx,
+});
+export const StatsScene = z.object({
+  type: z.literal('stats'),
+  chapter: Chapter,
+  narration: Narration,
+  title: Title.optional(),
+  items: z.array(StatItem).min(1).max(6),
+  footnote: z.string().max(80).optional(), // "Provisional figures, 13 Oct"
+});
+
+// What someone said, with who and their role. 1–2 quotes.
+export const QuoteItem = z.object({
+  text: z.string().min(1).max(170),
+  who: z.string().min(1).max(40),
+  role: z.string().max(60).optional(),
+  media: MediaRef.optional(), // a portrait
+  tag: z.string().max(28).optional(), // "Translated from French", "Not verified"
+  at: Cue,
+  sfx: Sfx,
+});
+export const QuoteScene = z.object({
+  type: z.literal('quote'),
+  chapter: Chapter,
+  narration: Narration,
+  title: Title.optional(),
+  quotes: z.array(QuoteItem).min(1).max(2),
+});
+
+// What happened when: 2–6 dated events on a line.
+export const DateItem = z.object({
+  when: z.string().min(1).max(18),
+  text: z.string().min(1).max(70),
+  tone: Tone.default('neutral'),
+  at: Cue,
+  sfx: Sfx,
+});
+export const DatesScene = z.object({
+  type: z.literal('timeline'),
+  chapter: Chapter,
+  narration: Narration,
+  title: Title.optional(),
+  items: z.array(DateItem).min(2).max(6),
+});
+
+// The sources of the report, on screen.
+export const SourcesScene = z.object({
+  type: z.literal('sources'),
+  chapter: Chapter,
+  narration: Narration,
+  title: Title.optional(),
+  items: z.array(z.object({name: z.string().min(1).max(40), detail: z.string().max(80).optional()})).min(1).max(12),
+  asOf: z.string().max(40).optional(), // "Facts as of 13 Oct 2026"
+});
+
 export const Scene = z.discriminatedUnion('type', [
   TitleScene,
   CalloutScene,
@@ -403,6 +556,13 @@ export const Scene = z.discriminatedUnion('type', [
   FigureScene,
   SequenceScene,
   ShotScene,
+  HeadlineScene,
+  MediaScene,
+  MapScene,
+  StatsScene,
+  QuoteScene,
+  DatesScene,
+  SourcesScene,
 ]);
 
 // What to paste into YouTube: written by `make`/`preview` to out/<id>/youtube.md,
@@ -435,6 +595,7 @@ export const Thumbnail = z.object({
   // …or a figure of the pack with some regions lit.
   figure: z.object({name: z.enum(FIGURES), glow: z.array(z.string()).default([]), props: z.array(z.string()).max(4).default([])}).optional(),
   theme: z.enum(THEME_NAMES).optional(), // default: the video's theme
+  media: Id.optional(), // a photo of the `media` library behind the text (news)
 });
 
 export const VideoSpec = z.object({
@@ -454,6 +615,16 @@ export const VideoSpec = z.object({
   // questions). Exported to out/<id>/script.md together with the narration.
   notes: z.array(z.string().min(1).max(900)).max(20).optional(),
   scenes: z.array(Scene).min(1).max(30),
+  // Footage and photos, by id (news). See MediaItem.
+  media: z.record(z.string(), MediaItem).optional(),
+  // The broadcast look's chrome: the channel bug, its date, and a ticker (16:9 only).
+  news: z
+    .object({
+      brand: z.string().min(1).max(16).default('NEWS'),
+      date: z.string().max(24).optional(),
+      ticker: z.array(z.string().min(1).max(100)).max(8).optional(),
+    })
+    .optional(),
   publish: Publish.optional(),
   thumbnail: Thumbnail.optional(),
 });
@@ -483,6 +654,11 @@ export type SequenceScene = z.output<typeof SequenceScene>;
 export type SeqStep = z.output<typeof SeqStep>;
 export type ShotScene = z.output<typeof ShotScene>;
 export type ShotStep = z.output<typeof ShotStep>;
+export type MediaItem = z.output<typeof MediaItem>;
+export type MapPin = z.output<typeof MapPin>;
+export type HeadlineScene = z.output<typeof HeadlineScene>;
+export type MediaScene = z.output<typeof MediaScene>;
+export type MapScene = z.output<typeof MapScene>;
 export type CrowdSpec = z.output<typeof Crowd>;
 export type MeterSpec = z.output<typeof Meter>;
 export type ClockSpec = z.output<typeof Clock>;

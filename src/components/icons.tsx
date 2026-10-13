@@ -4,10 +4,11 @@ import type {IconProps} from '../packs/draw';
 import {ICONS as COMMON} from '../packs/common/icons';
 import {ICONS as TECH} from '../packs/tech/icons';
 import {ICONS as SCIENCE} from '../packs/science/icons';
+import {ICONS as NEWS} from '../packs/news/icons';
 
 // Dispatcher over every icon pack (src/packs/<pack>/icons.tsx). The drawings live in
 // the packs; scenes only use NodeIcon and iconState from here.
-const MAP: Record<string, React.FC<IconProps>> = {...COMMON, ...TECH, ...SCIENCE};
+const MAP: Record<string, React.FC<IconProps>> = {...COMMON, ...TECH, ...SCIENCE, ...NEWS};
 
 export const iconState = (icon: IconName, status: Status): string =>
   ICON_STATES[status]?.[icon] ?? ICON_DEFAULT_STATE[icon] ?? 'idle';

@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill} from 'remotion';
+import {AbsoluteFill, Img, staticFile} from 'remotion';
 import {FONT, THEMES, toneSwatch, type Theme} from '../theme';
 import {NodeIcon, iconState} from '../components/icons';
 import {parseRich} from '../components/Rich';
@@ -21,8 +21,10 @@ type Resolved = Omit<ThumbnailSpec, 'theme'> & {theme: Theme};
 export function resolveThumbnail(tl: Timeline): Resolved {
   const theme = THEMES[tl.thumbnail?.theme ?? tl.theme];
   const title = tl.scenes.find((s) => s.type === 'title');
-  const tag = title && title.type === 'title' ? title.tag : undefined;
+  const headline = tl.scenes.find((s) => s.type === 'headline');
+  const tag = title && title.type === 'title' ? title.tag : headline && headline.type === 'headline' ? headline.kicker : undefined;
   if (tl.thumbnail) return {...tl.thumbnail, kicker: tl.thumbnail.kicker ?? tag, theme};
+  if (headline && headline.type === 'headline') return {text: headline.heading, kicker: tag, tone: 'bad', media: headline.media, theme};
   const heading = title && title.type === 'title' ? title.heading : tl.title;
   const beatIcons = title && title.type === 'title' ? (title.beats ?? []).flatMap((b) => (b.icon ? [b.icon] : [])) : [];
   const single = title && title.type === 'title' && title.icon ? [title.icon] : [];
@@ -250,6 +252,8 @@ export const Thumbnail: React.FC<ThumbProps> = (tl) => {
   const W = wide ? 1280 : 1080;
   const H = wide ? 720 : 1920;
   const hasArt = Boolean(th.figure || th.icons?.length);
+  // News: a photo of the media library behind the words.
+  const photo = th.media ? tl.media?.[th.media] : undefined;
   // Text box: the left side in 16:9 (all the width without a picture); the top in 9:16.
   const tb = wide
     ? {x: 64, y: th.kicker ? 150 : 90, w: hasArt ? 660 : 1150, h: th.kicker ? 500 : 560}
@@ -261,9 +265,21 @@ export const Thumbnail: React.FC<ThumbProps> = (tl) => {
   const dots = theme.dots;
   return (
     <AbsoluteFill style={{background: theme.bg, overflow: 'hidden'}}>
-      <AbsoluteFill style={{backgroundImage: `radial-gradient(${dots} 2.4px, transparent 2.8px)`, backgroundSize: '34px 34px', opacity: 0.8}} />
+      {photo?.src && photo.kind === 'image' && (
+        <>
+          <Img src={staticFile(photo.src)} style={{position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: `${photo.focus[0] * 100}% ${photo.focus[1] * 100}%`}} />
+          <AbsoluteFill
+            style={{
+              background: wide
+                ? 'linear-gradient(to right, rgba(10,20,38,0.96) 0%, rgba(10,20,38,0.8) 50%, rgba(10,20,38,0.15) 100%)'
+                : 'linear-gradient(to bottom, rgba(10,20,38,0.2) 0%, rgba(10,20,38,0.85) 35%, rgba(10,20,38,0.95) 100%)',
+            }}
+          />
+        </>
+      )}
+      {!photo?.src && <AbsoluteFill style={{backgroundImage: `radial-gradient(${dots} 2.4px, transparent 2.8px)`, backgroundSize: '34px 34px', opacity: 0.8}} />}
       {/* a soft pool of the accent color behind the picture */}
-      <div
+      {!photo?.src && <div
         style={{
           position: 'absolute',
           left: ab.x + ab.w / 2 - (wide ? 420 : 560),
@@ -273,7 +289,7 @@ export const Thumbnail: React.FC<ThumbProps> = (tl) => {
           borderRadius: '50%',
           background: `radial-gradient(circle, ${theme.accent}${theme.name === 'light' ? '40' : '55'} 0%, ${theme.accent}00 68%)`,
         }}
-      />
+      />}
       {th.kicker && (
         <div style={{position: 'absolute', left: wide ? tb.x : 0, width: wide ? undefined : W, top: wide ? 64 : 250, textAlign: 'center'}}>
           <Kicker text={th.kicker} theme={theme} size={wide ? 30 : 42} />

@@ -1,5 +1,5 @@
 import type {VideoSpec} from '../../src/spec/schema';
-import type {Timeline, TimedScene} from '../../src/timeline/timeline';
+import {sceneLabel, type Timeline, type TimedScene} from '../../src/timeline/timeline';
 
 // Everything to paste into YouTube when uploading: title options and a ready
 // description with chapters timed from the real voice. Written by `make` (and
@@ -17,11 +17,7 @@ const stamp = (s: number) => {
 };
 const plain = (s: string) => s.replace(/\*/g, '');
 
-function sceneName(s: TimedScene): string {
-  if (s.type === 'title') return plain(s.heading);
-  if (s.type === 'callout') return s.title ? plain(s.title) : s.text;
-  return s.title ? plain(s.title) : s.type;
-}
+const sceneName = (s: TimedScene): string => sceneLabel(s);
 
 export type Chapter = {t: number; title: string};
 
@@ -63,6 +59,15 @@ export function youtubeMarkdown(spec: VideoSpec, tl: Timeline, voiced: boolean):
   if (p?.learn?.length) desc.push('', L.learn, ...p.learn.map((x) => `• ${x}`));
   if (chs.length >= 3) desc.push('', L.chapters, ...chs.map((c) => `${stamp(c.t)} ${c.title}`));
   if (p?.extra?.length) for (const x of p.extra) desc.push('', x);
+  // News: the sources on screen and the credit of every photo and clip.
+  const sources = spec.scenes.find((s) => s.type === 'sources');
+  if (sources && sources.type === 'sources') {
+    desc.push('', spec.lang === 'es' ? 'Fuentes:' : spec.lang === 'pt' ? 'Fontes:' : 'Sources:', ...sources.items.map((x) => `• ${x.name}${x.detail ? ` — ${x.detail}` : ''}`));
+  }
+  const media = Object.values(spec.media ?? {});
+  if (media.length) {
+    desc.push('', spec.lang === 'es' ? 'Imágenes:' : spec.lang === 'pt' ? 'Imagens:' : 'Footage and photos:', ...media.map((m) => `• ${m.alt}: ${m.credit}${m.license ? ` (${m.license})` : ''}${m.url ? ` ${m.url}` : ''}${m.illustrative ? (spec.lang === 'es' ? ' [ilustrativa]' : ' [illustrative]') : ''}`));
+  }
   if (comment) desc.push('', `💬 ${comment}`);
   if (p?.hashtags?.length) desc.push('', p.hashtags.map((h) => (h.startsWith('#') ? h : `#${h}`)).join(' '));
 

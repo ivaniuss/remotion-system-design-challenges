@@ -11,6 +11,7 @@ Topics come in **packs**, each with its own icons, guide and folder, on the same
 | --- | --- | --- | --- |
 | `tech` (default) | system design, backend, programming | `docs/packs/tech.md` | `videos/tech/` |
 | `science` | the brain, biology, health, learning, languages | `docs/packs/science.md` | `videos/science/` |
+| `news` | current events as a broadcast report: real footage, maps, figures, quotes, sources | `docs/packs/news.md` | `videos/news/` |
 
 A spec says `"pack": "science"` and may only use that pack's icons (plus the common
 ones), so topics never mix. Everything else (commands, voice, sound, render) is shared.
@@ -245,7 +246,7 @@ src/figures/      large illustrations for `figure` scenes (brain.tsx) + registry
 src/worlds/       full-frame canvas worlds for `shot` scenes (film look): kit.ts (deterministic
                   noise, glows, paths, camera), render.ts (camera move, grain, vignette), one
                   file per world, index.ts (registry)
-src/packs/        icon packs: draw.tsx (shared drawing kit), common/, tech/, science/
+src/packs/        icon packs: draw.tsx (shared drawing kit), common/, tech/, science/, news/
                   (each: vocab.ts = names, aliases, colors, states; icons.tsx = drawings)
 src/components/   icons.tsx (dispatcher over the packs), glyphs, *emphasis* text
 src/code/         small deterministic syntax highlighter

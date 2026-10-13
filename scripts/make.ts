@@ -7,7 +7,8 @@ import {spawnSync} from 'node:child_process';
 import {loadConfig} from './lib/config';
 import {loadSpec} from './lib/spec';
 import {edgeAvailable, edgeSpeech, estimateSpeech, recordedSpeech} from './lib/speech';
-import {buildTimeline, Speech} from '../src/timeline/timeline';
+import {buildTimeline, sceneLabel, Speech} from '../src/timeline/timeline';
+import {resolveMedia} from './lib/media';
 import {scriptMarkdown} from './lib/script';
 import {youtubeMarkdown} from './lib/youtube';
 
@@ -68,11 +69,12 @@ if (config.music) {
   if (fs.existsSync(path.join('public', config.music.file))) music = {src: config.music.file, volume: config.music.volume ?? 0.12};
   else console.log(`  ⚠ music: public/${config.music.file} not found; rendering without music.`);
 }
-const {timeline, warnings} = buildTimeline(spec, speech, {handle: config.handle, cta: config.cta, captions: config.captions, sfx: config.sfx, music});
+const media = resolveMedia(spec);
+const {timeline, warnings} = buildTimeline(spec, speech, {handle: config.handle, cta: config.cta, captions: config.captions, sfx: config.sfx, music, media});
 for (const w of warnings) console.log(`  ⚠ ${w}`);
 console.log(`▸ ${timeline.scenes.length} scenes, ${timeline.duration.toFixed(1)} s`);
 for (const s of timeline.scenes) {
-  const label = s.type === 'title' ? s.heading : s.type === 'callout' ? s.text : s.title ?? '';
+  const label = sceneLabel(s);
   console.log(`  ${String(s.index + 1).padStart(2)}  ${s.start.toFixed(1).padStart(6)}s  ${s.duration.toFixed(1).padStart(5)}s  ${s.type.padEnd(8)} ${label.replace(/\*/g, '')}`);
 }
 const tlFile = path.join(outDir, 'timeline.json');

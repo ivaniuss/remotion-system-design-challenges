@@ -135,7 +135,7 @@ export const TitleScene: React.FC<SceneProps<'title'>> = ({scene, t, frame, them
 // The hook's beats: cards that pop in on their cues, joined by arrows that draw
 // themselves; once all are there a dot keeps flowing through them, so the opening is
 // never a still picture.
-const BeatRow: React.FC<{beats: NonNullable<TitleSpec['beats']>; cues: number[]; t: number; vertical: boolean; theme: Theme}> = ({beats, cues, t, vertical, theme}) => {
+export const BeatRow: React.FC<{beats: NonNullable<TitleSpec['beats']>; cues: number[]; t: number; vertical: boolean; theme: Theme}> = ({beats, cues, t, vertical, theme}) => {
   const n = beats.length;
   const w = vertical ? (n > 4 ? 168 : n > 3 ? 200 : 230) : n > 4 ? 240 : 290;
   const h = Math.round(w * 1.02);
@@ -219,7 +219,7 @@ const BeatRow: React.FC<{beats: NonNullable<TitleSpec['beats']>; cues: number[];
 // "50M ventas" → counts 0 → 50M while the card lands. Only the leading number moves; the
 // prefix and suffix stay. The final text is laid out invisibly underneath so the card does
 // not change width while the digits run.
-function countedText(text: string, t: number): string {
+export function countedText(text: string, t: number): string {
   const m = /^(\D*?)(\d[\d.,]*)(.*)$/.exec(text);
   if (!m) return text;
   const [, pre, num, post] = m;

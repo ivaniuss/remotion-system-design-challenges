@@ -175,6 +175,49 @@ export const film: Theme = {
   accentText: '#1A1206',
 };
 
-export const THEMES = {light, dark, neon, film};
-export const themeFor = (name: string): Theme => (name === 'film' ? film : name === 'neon' ? neon : name === 'dark' ? dark : light);
+// News: the broadcast look. Deep navy, white type, a red brand color for the bug, the title
+// tabs and lower thirds, flat cards (no hard shadows). Diagram scenes (flow, chart, list…)
+// render on this palette too, so a report mixes footage, maps and diagrams in one look.
+const NEWS_FILLS: Record<ColorName, string> = {
+  blue: '#13294F',
+  green: '#0F3524',
+  orange: '#3D2610',
+  purple: '#28204F',
+  red: '#46141C',
+  yellow: '#3A300C',
+  teal: '#0C3337',
+  gray: '#1C2638',
+};
+export const news: Theme = {
+  name: 'news',
+  glow: false,
+  shadowOpacity: 0,
+  bg: '#0A1426',
+  dots: '#16233D',
+  surface: '#111E36',
+  surfaceAlt: '#172744',
+  border: '#2B3E63',
+  text: '#F4F7FC',
+  textSoft: '#9DB0CF',
+  edge: '#7F95BC',
+  accent: '#E5202E',
+  accentText: '#FFFFFF',
+  shadow: '#000000',
+  colors: swatches(NEWS_FILLS, '#F4F7FC'),
+  editor: {...EDITOR, bg: '#0E1A30', bar: '#14223D'},
+};
+
+// Extra colors of the broadcast look (bug, tabs, lower thirds, ticker).
+export const NEWS = {
+  red: '#E5202E',
+  redDark: '#A3121C',
+  ink: '#0A1426',
+  band: 'rgba(7, 14, 28, 0.86)',
+  white: '#FFFFFF',
+  gold: '#FFC933',
+};
+
+export const THEMES = {light, dark, neon, film, news};
+export const themeFor = (name: string): Theme =>
+  name === 'news' ? news : name === 'film' ? film : name === 'neon' ? neon : name === 'dark' ? dark : light;
 export const toneSwatch = (theme: Theme, tone: Tone) => theme.colors[TONE_COLOR[tone]];

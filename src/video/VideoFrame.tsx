@@ -1,6 +1,6 @@
 import React from 'react';
 import type {Frame} from '../layout/frame';
-import {FONT, Theme, themeFor} from '../theme';
+import {FONT, NEWS, Theme, themeFor} from '../theme';
 import {globalWords, Timeline, TimedScene} from '../timeline/timeline';
 import type {Word} from '../timeline/words';
 import {Rich} from '../components/Rich';
@@ -12,6 +12,9 @@ import {ChartScene} from '../scenes/ChartScene';
 import {FigureScene} from '../scenes/FigureScene';
 import {SequenceScene} from '../scenes/SequenceScene';
 import {ShotScene} from '../scenes/ShotScene';
+import {DatesScene, HeadlineScene, MediaScene, QuoteScene, SourcesScene, StatsScene} from '../scenes/NewsScenes';
+import {MapScene} from '../scenes/MapScene';
+import type {ResolvedMedia} from '../timeline/timeline';
 import {BoardLayer} from '../scenes/BoardLayer';
 import {isBoard} from '../board/board';
 import {clamp01, easeInOut, easeOut, enter} from './anim';
@@ -20,8 +23,8 @@ import {dangerAt, dangerMoments} from './effects';
 // The whole picture at absolute time t. Pure (no hooks), so the SSR check and the
 // Remotion composition render exactly the same thing.
 
-const SceneBody: React.FC<{scene: TimedScene; t: number; frame: Frame; theme: Theme; lang: string; cta: string | null}> = (p) => {
-  const common = {t: p.t, frame: p.frame, theme: p.theme, lang: p.lang, cta: p.cta};
+const SceneBody: React.FC<{scene: TimedScene; t: number; frame: Frame; theme: Theme; lang: string; cta: string | null; media?: Record<string, ResolvedMedia>; fps: number}> = (p) => {
+  const common = {t: p.t, frame: p.frame, theme: p.theme, lang: p.lang, cta: p.cta, media: p.media, fps: p.fps};
   switch (p.scene.type) {
     case 'title':
       return <TitleScene scene={p.scene} {...common} />;
@@ -45,6 +48,20 @@ const SceneBody: React.FC<{scene: TimedScene; t: number; frame: Frame; theme: Th
       return <SequenceScene scene={p.scene} {...common} />;
     case 'shot':
       return <ShotScene scene={p.scene} {...common} />;
+    case 'headline':
+      return <HeadlineScene scene={p.scene} {...common} />;
+    case 'media':
+      return <MediaScene scene={p.scene} {...common} />;
+    case 'map':
+      return <MapScene scene={p.scene} {...common} />;
+    case 'stats':
+      return <StatsScene scene={p.scene} {...common} />;
+    case 'quote':
+      return <QuoteScene scene={p.scene} {...common} />;
+    case 'timeline':
+      return <DatesScene scene={p.scene} {...common} />;
+    case 'sources':
+      return <SourcesScene scene={p.scene} {...common} />;
     case 'board':
       return null; // drawn by the persistent BoardLayer
   }
@@ -66,6 +83,62 @@ function boardAlpha(tl: Timeline, scene: TimedScene, local: number): number {
   if (next < cur) a = next + (a - next) * clamp01((scene.duration - local) / 0.25);
   return a;
 }
+
+// News: the scene title is a red tab on the left with a thin rule, like a broadcast graphic.
+const NewsHeader: React.FC<{title: string; t: number; frame: Frame}> = ({title, t, frame}) => {
+  const h = frame.header;
+  const vertical = frame.format === 'vertical';
+  const e = enter(t, 0.05, 0.35, 0);
+  const rule = easeOut(clamp01((t - 0.15) / 0.5));
+  const size = vertical ? (title.length > 28 ? 46 : 54) : 48;
+  return (
+    <div style={{position: 'absolute', left: h.x, top: h.y + (vertical ? 0 : 22), width: h.w, height: h.h, display: 'flex', alignItems: 'center', gap: 0, fontFamily: FONT.sans}}>
+      <div style={{background: NEWS.red, color: '#FFFFFF', fontWeight: 900, fontSize: size, lineHeight: 1.1, letterSpacing: 0.5, textTransform: 'uppercase', padding: '12px 24px', opacity: e.opacity, transform: `translateX(${(1 - e.opacity) * -40}px)`, maxWidth: h.w * 0.9, boxShadow: '0 6px 18px rgba(0,0,0,0.35)'}}>
+        {title.replace(/\*/g, '')}
+      </div>
+      <div style={{flex: 1, height: 4, background: '#FFFFFF', opacity: 0.85, transformOrigin: 'left', transform: `scaleX(${rule})`}} />
+    </div>
+  );
+};
+
+// News: the channel bug (brand + date) in the top-left corner, the whole video.
+const NewsBug: React.FC<{brand: string; date?: string; frame: Frame}> = ({brand, date, frame}) => {
+  const vertical = frame.format === 'vertical';
+  const size = vertical ? 26 : 24;
+  return (
+    <div style={{position: 'absolute', left: vertical ? 60 : 40, top: vertical ? 146 : 30, display: 'flex', fontFamily: FONT.sans, fontWeight: 900, fontSize: size, letterSpacing: 2, textTransform: 'uppercase'}}>
+      <div style={{background: NEWS.red, color: '#FFFFFF', padding: '6px 14px'}}>{brand}</div>
+      {date && <div style={{background: 'rgba(255,255,255,0.92)', color: NEWS.ink, padding: '6px 14px'}}>{date}</div>}
+    </div>
+  );
+};
+
+// News: a ticker along the bottom of the 16:9 video (when its captions are off).
+const NewsTicker: React.FC<{items: string[]; brand: string; t: number; frame: Frame}> = ({items, brand, t, frame}) => {
+  const h = 58;
+  const text = items.join('     •     ');
+  const speed = 110; // px per second
+  const charW = 15.5;
+  const loopW = (text.length + 11) * charW;
+  const x = -((t * speed) % loopW);
+  return (
+    <div style={{position: 'absolute', left: 0, top: frame.height - h, width: frame.width, height: h, background: NEWS.band, display: 'flex', alignItems: 'center', overflow: 'hidden', fontFamily: FONT.sans}}>
+      <div style={{position: 'absolute', left: 230 + x, top: 0, height: h, display: 'flex', alignItems: 'center', whiteSpace: 'pre', fontWeight: 700, fontSize: 28, color: '#FFFFFF'}}>
+        {`${text}     •     ${text}     •     ${text}`}
+      </div>
+      <div style={{position: 'absolute', left: 0, top: 0, width: 210, height: h, background: NEWS.red, color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 26, letterSpacing: 2, textTransform: 'uppercase'}}>{brand}</div>
+    </div>
+  );
+};
+
+// News: a red band sweeps across at each cut.
+const NewsWipe: React.FC<{local: number; frame: Frame}> = ({local, frame}) => {
+  const k = local / 0.42;
+  if (k <= 0 || k >= 1) return null;
+  const W = frame.width;
+  const x = -W * 0.6 + k * W * 2.2;
+  return <div style={{position: 'absolute', left: x, top: -frame.height * 0.2, width: W * 0.45, height: frame.height * 1.4, background: NEWS.red, transform: 'skewX(-14deg)', opacity: 0.92}} />;
+};
 
 const Header: React.FC<{title: string; t: number; frame: Frame; theme: Theme}> = ({title, t, frame, theme}) => {
   const h = frame.header;
@@ -145,6 +218,7 @@ const Captions: React.FC<{words: Word[]; t: number; frame: Frame; theme: Theme}>
       </span>,
     );
   }
+  const band = theme.name === 'news';
   return (
     <div
       style={{
@@ -164,7 +238,7 @@ const Captions: React.FC<{words: Word[]; t: number; frame: Frame; theme: Theme}>
         textAlign: 'center',
       }}
     >
-      {items}
+      {band ? <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', background: NEWS.band, borderRadius: 14, padding: '6px 10px'}}>{items}</div> : items}
     </div>
   );
 };
@@ -260,16 +334,19 @@ export const VideoFrame: React.FC<{tl: Timeline; t: number; frame: Frame; words?
   // fully there on frame 0: the first frame is the thumbnail and the hook.
   // The film look cuts through black, slower, and never slides.
   const film = theme.name === 'film';
+  const isNews = theme.name === 'news';
   const inK = scene.index === 0 ? 1 : film ? easeInOut(clamp01(local / 0.7)) : easeOut(clamp01(local / 0.35));
   const outK = isLast ? 1 : clamp01((scene.duration - local) / (film ? 0.5 : 0.25));
   const danger = dangerAt(dangerMoments(tl), t);
   const shake = {x: danger.x, y: danger.y};
   const showCaptions = frame.format === 'vertical' ? tl.captions.vertical : tl.captions.horizontal;
-  const title = scene.type === 'title' || scene.type === 'shot' ? undefined : scene.title;
+  const title = scene.type === 'title' || scene.type === 'shot' || scene.type === 'headline' || scene.type === 'media' ? undefined : scene.title;
+  const ticker = isNews && frame.format === 'horizontal' && !showCaptions && tl.news?.ticker?.length ? tl.news.ticker : null;
   return (
     <div style={{position: 'absolute', inset: 0, width: frame.width, height: frame.height, background: theme.bg, overflow: 'hidden'}}>
-      {!film && <Dots frame={frame} theme={theme} />}
-      {!film && <Progress tl={tl} t={t} frame={frame} theme={theme} />}
+      {isNews && <div style={{position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 30%, #13254A 0%, #0A1426 62%)'}} />}
+      {!film && !isNews && <Dots frame={frame} theme={theme} />}
+      {!film && !isNews && <Progress tl={tl} t={t} frame={frame} theme={theme} />}
       {tl.handle && (
         <div
           style={{
@@ -287,10 +364,14 @@ export const VideoFrame: React.FC<{tl: Timeline; t: number; frame: Frame; words?
       )}
       {tl.board && <BoardLayer tl={tl} t={t} frame={frame} theme={theme} alpha={boardAlpha(tl, scene, local)} offset={shake} />}
       {danger.flash > 0 && <div style={{position: 'absolute', inset: 0, background: theme.colors.red.stroke, opacity: danger.flash}} />}
-      <div style={{position: 'absolute', inset: 0, opacity: inK * outK, transform: film ? undefined : `translate(${shake.x}px, ${(1 - inK) * 30 + shake.y}px)`}}>
-        {title && <Header title={title} t={local} frame={frame} theme={theme} />}
-        <SceneBody scene={scene} t={local} frame={frame} theme={theme} lang={tl.lang} cta={tl.cta} />
+      <div style={{position: 'absolute', inset: 0, opacity: inK * outK, transform: film ? undefined : isNews ? `translate(${shake.x}px, ${shake.y}px)` : `translate(${shake.x}px, ${(1 - inK) * 30 + shake.y}px)`}}>
+        <SceneBody scene={scene} t={local} frame={frame} theme={theme} lang={tl.lang} cta={tl.cta} media={tl.media} fps={tl.fps} />
+        {title && (isNews ? <NewsHeader title={title} t={local} frame={frame} /> : <Header title={title} t={local} frame={frame} theme={theme} />)}
       </div>
+      {isNews && <Progress tl={tl} t={t} frame={frame} theme={theme} />}
+      {isNews && <NewsBug brand={tl.news?.brand ?? 'NEWS'} date={tl.news?.date} frame={frame} />}
+      {ticker && <NewsTicker items={ticker} brand={tl.news?.brand ?? 'NEWS'} t={t} frame={frame} />}
+      {isNews && scene.index > 0 && <NewsWipe local={local} frame={frame} />}
       {showCaptions && (film ? <Subtitles words={words ?? globalWords(tl)} t={t} frame={frame} /> : <Captions words={words ?? globalWords(tl)} t={t} frame={frame} theme={theme} />)}
     </div>
   );

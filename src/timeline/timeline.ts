@@ -1,4 +1,4 @@
-import type {BoardSpec, Scene, ThumbnailSpec, VideoSpec} from '../spec/schema';
+import type {BoardSpec, MediaItem, Scene, ThumbnailSpec, VideoSpec} from '../spec/schema';
 import type {ThemeName} from '../spec/vocab';
 import {cuePhrases, resolveCues} from './cues';
 import {estimateWords, round, Word} from './words';
@@ -15,6 +15,10 @@ export type TimedScene = Scene & {
 };
 
 export type AudioClip = {src: string; start: number};
+// A media item of the spec with the file that was found for it under public/ (null = not
+// there yet: the scene draws a "material pending" card).
+export type ResolvedMedia = MediaItem & {src: string | null; kind: 'image' | 'video' | null};
+export type NewsChrome = {brand: string; date?: string; ticker?: string[]};
 export type Music = {src: string; volume: number};
 
 export type Timeline = {
@@ -33,6 +37,8 @@ export type Timeline = {
   music: Music | null; // background track under the voice (file in public/)
   board: BoardSpec | null;
   thumbnail?: ThumbnailSpec | null; // the designed still (optional in older timelines)
+  media?: Record<string, ResolvedMedia>; // footage and photos (news), resolved by `make`
+  news?: NewsChrome | null; // the broadcast look's bug and ticker
   scenes: TimedScene[];
 };
 
@@ -47,6 +53,8 @@ export type TimelineOptions = {
   captions?: {vertical: boolean; horizontal: boolean};
   sfx?: boolean;
   music?: Music | null;
+  // Which file was found for each media id (scripts/lib/media.ts). Missing = placeholder.
+  media?: Record<string, {src: string | null; kind: 'image' | 'video' | null}>;
 };
 
 // Minimum time on screen per scene type, so short narration still reads well.
@@ -63,6 +71,13 @@ export const MIN_SCENE: Record<Scene['type'], number> = {
   figure: 3.5,
   sequence: 4.5,
   shot: 4,
+  headline: 2.8,
+  media: 3,
+  map: 4,
+  stats: 3.5,
+  quote: 4,
+  timeline: 4,
+  sources: 6,
 };
 
 // Silent timing: each scene lasts as long as its estimated narration.
@@ -104,6 +119,10 @@ export function buildTimeline(spec: VideoSpec, speech: Speech, opts: TimelineOpt
     music: opts.music ?? null,
     board: spec.board ?? null,
     thumbnail: spec.thumbnail ?? null,
+    media: Object.fromEntries(
+      Object.entries(spec.media ?? {}).map(([id, m]) => [id, {...m, src: opts.media?.[id]?.src ?? null, kind: opts.media?.[id]?.kind ?? null}]),
+    ),
+    news: spec.news ?? null,
     scenes,
   };
   return {timeline, warnings};
@@ -114,4 +133,12 @@ export function globalWords(tl: Timeline): Word[] {
   const out: Word[] = [];
   for (const s of tl.scenes) for (const w of s.words) out.push({w: w.w, start: s.start + w.start, end: s.start + w.end});
   return out;
+}
+
+// The name of a scene in the script, the chapters and the console (no *emphasis*).
+export function sceneLabel(s: Scene): string {
+  const plain = (x: string) => x.replace(/\*/g, '');
+  if (s.type === 'title' || s.type === 'headline') return plain(s.heading);
+  if (s.type === 'callout') return s.title ? plain(s.title) : s.text;
+  return s.title ? plain(s.title) : s.type;
 }

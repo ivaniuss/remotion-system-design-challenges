@@ -2,8 +2,9 @@
 
 This project turns an idea, a topic or a transcript into an animated explainer video
 (ByteByteGo / Fazt Code / midudev style), 9:16 and 16:9, with Remotion. Topics come in
-**packs** on the same engine: `tech` (system design, backend, programming) and
-`science` (the brain, biology, health, learning, languages), each with its own icons,
+**packs** on the same engine: `tech` (system design, backend, programming),
+`science` (the brain, biology, health, learning, languages) and `news` (current events,
+told as a broadcast report with real footage), each with its own icons,
 guide (`docs/packs/<pack>.md`) and folder (`videos/<pack>/`).
 You write one declarative JSON spec; the engine does layout, camera, timing, voice,
 sound, captions and rendering. No API key is involved.
@@ -44,6 +45,13 @@ The short version of the workflow:
 When asked for a documentary, cinematic or "cortometraje" version, follow
 **`skills/make-film/SKILL.md`**: same pipeline and commands, `"theme": "film"`, every scene
 a `shot` in a world from `src/worlds/` (guide: `docs/FILM.md`).
+
+## News reports (the broadcast look)
+
+When asked for a news video (a current event: a cyberattack, El Niño, an economic story),
+follow **`skills/make-news/SKILL.md`**: research with sources first, a fact-check pass by a
+separate agent, `"pack": "news"`, `"theme": "news"`, real photos and clips in a `media`
+library with credits (guide: `docs/packs/news.md`).
 
 ## Rules the user cares about (details in the guide)
 

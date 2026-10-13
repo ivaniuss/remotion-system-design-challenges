@@ -49,7 +49,15 @@ export function soundEvents(tl: Timeline): SoundEvent[] {
     } else if (s.index === 0) add(0.05, 'impact', 0.7);
     else if (s.type !== 'callout') add(s.start, 'whoosh', 0.7);
 
-    if (s.type === 'title' || s.type === 'callout') cue(s.start + 0.15, s.sfx);
+    if (s.type === 'title' || s.type === 'callout' || s.type === 'headline') cue(s.start + 0.15, s.sfx);
+    if (s.type === 'headline')
+      (s.beats ?? []).forEach((b, i) => {
+        add(s.start + (s.cues[i] ?? 0), 'pop');
+        cue(s.start + (s.cues[i] ?? 0), b.sfx);
+      });
+    if (s.type === 'media' || s.type === 'map') s.steps.forEach((st, i) => cue(s.start + (s.cues[i] ?? 0), st.sfx));
+    if (s.type === 'stats' || s.type === 'timeline') s.items.forEach((it, i) => cue(s.start + (s.cues[i] ?? 0), it.sfx));
+    if (s.type === 'quote') s.quotes.forEach((q, i) => cue(s.start + (s.cues[i] ?? 0), q.sfx));
     if (s.type === 'title')
       (s.beats ?? []).forEach((b, i) => {
         add(s.start + (s.cues[i] ?? 0), 'pop');
@@ -113,6 +121,27 @@ export function soundEvents(tl: Timeline): SoundEvent[] {
         for (const snd of WORLD_DRAW[s.world].sounds?.(f) ?? []) if (snd.t >= 0 && snd.t <= s.duration) add(s.start + snd.t, snd.kind, snd.gain ?? 1);
         break;
       }
+      case 'media':
+        s.steps.forEach((st, i) => {
+          if (st.sfx) return;
+          if (st.media) add(s.start + (s.cues[i] ?? 0), 'whoosh', 0.6);
+        });
+        break;
+      case 'map':
+        s.steps.forEach((st, i) => {
+          if (st.sfx) return;
+          const at = s.start + (s.cues[i] ?? 0);
+          if (st.pin) add(at + 0.02, 'pop');
+          else if (st.zoom) add(at, 'whoosh', 0.6);
+          else if (st.highlight?.length) add(at, 'pop', 0.6);
+        });
+        break;
+      case 'stats':
+      case 'timeline':
+        s.items.forEach((it, i) => {
+          if (!it.sfx) add(s.start + (s.cues[i] ?? 0), 'pop');
+        });
+        break;
       case 'list':
       case 'compare':
       case 'summary': {
