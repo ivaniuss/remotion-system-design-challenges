@@ -38,7 +38,7 @@ const episodes = (fs.existsSync(DIR) ? fs.readdirSync(DIR) : [])
   })
   .sort((a, b) => a.n - b.n);
 
-console.log(`Daily Brain episodes in ${DIR}/ (format from the scenes, rendered = MP4 in out/ on this computer)\n`);
+console.log(`Mind Reps episodes in ${DIR}/ (format from the scenes, rendered = MP4 in out/ on this computer)\n`);
 const warnings: string[] = [];
 for (const e of episodes) {
   const slot = cycleSlot(e.n);

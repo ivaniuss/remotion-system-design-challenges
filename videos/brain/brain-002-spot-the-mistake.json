@@ -1,6 +1,6 @@
 {
   "id": "brain-002-spot-the-mistake",
-  "title": "Daily Brain #002: three claims, right or wrong?",
+  "title": "Mind Reps #002: three claims, right or wrong?",
   "lang": "en",
   "pack": "brain",
   "theme": "dark",
@@ -16,7 +16,7 @@
   "scenes": [
     {
       "type": "puzzle",
-      "title": "Daily Brain #002: Spot the mistake",
+      "title": "Mind Reps #002: Spot the mistake",
       "level": "easy",
       "question": "Right or *wrong*?",
       "claim": {
@@ -44,7 +44,7 @@
     },
     {
       "type": "puzzle",
-      "title": "Daily Brain #002: Spot the mistake",
+      "title": "Mind Reps #002: Spot the mistake",
       "level": "medium",
       "question": "A shirt costs *$80* after a *20% discount*.",
       "claim": {
@@ -123,7 +123,7 @@
     },
     {
       "type": "puzzle",
-      "title": "Daily Brain #002: Spot the mistake",
+      "title": "Mind Reps #002: Spot the mistake",
       "level": "hard",
       "question": "A price goes *up 50%*, then *down 50%*.",
       "claim": {
@@ -197,7 +197,7 @@
     {
       "type": "score",
       "cta": "What's your score out of 6?",
-      "next": "Daily Brain #003 · tomorrow",
+      "next": "Mind Reps #003 · tomorrow",
       "narration": "What's your score out of six?"
     }
   ],
@@ -206,13 +206,13 @@
       "3 claims about percentages. Which are wrong?",
       "Up 50%, down 50%: back where you started?"
     ],
-    "description": "Daily Brain #002. Three claims: easy (1 pt), medium (2 pts), hard (3 pts). Some are right, some are wrong. Decide before the timer and comment your score.",
+    "description": "Mind Reps #002. Three claims: easy (1 pt), medium (2 pts), hard (3 pts). Some are right, some are wrong. Decide before the timer and comment your score.",
     "comment": "What's your score out of 6? Which claim fooled you?",
     "hashtags": [
       "#puzzle",
       "#math",
       "#percentages",
-      "#dailybrain"
+      "#mindreps"
     ]
   },
   "thumbnail": {

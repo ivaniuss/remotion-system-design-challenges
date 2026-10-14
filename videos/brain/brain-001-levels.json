@@ -1,6 +1,6 @@
 {
   "id": "brain-001-levels",
-  "title": "Daily Brain #001: three sequences, six points",
+  "title": "Mind Reps #001: three sequences, six points",
   "lang": "en",
   "pack": "brain",
   "theme": "light",
@@ -15,7 +15,7 @@
   "scenes": [
     {
       "type": "puzzle",
-      "title": "Daily Brain #001",
+      "title": "Mind Reps #001",
       "level": "easy",
       "question": "What comes *next*?",
       "sequence": [
@@ -37,11 +37,17 @@
           "at": "Each number doubles"
         }
       ],
-      "narration": "Forty-eight. Each number doubles."
+      "narration": "Forty-eight. Each number doubles.",
+      "ops": [
+        "×2",
+        "×2",
+        "×2",
+        "×2"
+      ]
     },
     {
       "type": "puzzle",
-      "title": "Daily Brain #001",
+      "title": "Mind Reps #001",
       "level": "medium",
       "question": "What comes *next*?",
       "sequence": [
@@ -68,11 +74,18 @@
           "at": "plus twelve"
         }
       ],
-      "narration": "Forty-two. The gaps grow by two, so next is plus twelve."
+      "narration": "Forty-two. The gaps grow by two, so next is plus twelve.",
+      "ops": [
+        "+4",
+        "+6",
+        "+8",
+        "+10",
+        "+12"
+      ]
     },
     {
       "type": "puzzle",
-      "title": "Daily Brain #001",
+      "title": "Mind Reps #001",
       "level": "hard",
       "question": "What comes *next*?",
       "sequence": [
@@ -99,12 +112,18 @@
           "at": "times five"
         }
       ],
-      "narration": "One hundred twenty. Times two, times three, times four, then times five."
+      "narration": "One hundred twenty. Times two, times three, times four, then times five.",
+      "ops": [
+        "×2",
+        "×3",
+        "×4",
+        "×5"
+      ]
     },
     {
       "type": "score",
       "cta": "What's your score out of 6?",
-      "next": "Daily Brain #002 · tomorrow",
+      "next": "Mind Reps #002 · tomorrow",
       "narration": "What's your score out of six? New puzzle tomorrow."
     }
   ],
@@ -113,18 +132,18 @@
       "Can you get 6/6? Three number sequences",
       "3 sequences, 6 points: what comes next?"
     ],
-    "description": "Daily Brain #001. Three number sequences: easy (1 pt), medium (2 pts), hard (3 pts). Answer before the timer runs out and comment your score.",
+    "description": "Mind Reps #001. Three number sequences: easy (1 pt), medium (2 pts), hard (3 pts). Answer before the timer runs out and comment your score.",
     "comment": "What's your score out of 6? Did the hard one get you?",
     "hashtags": [
       "#puzzle",
       "#brainteaser",
       "#math",
-      "#dailybrain"
+      "#mindreps"
     ]
   },
   "thumbnail": {
     "text": "Can you get *6/6*?",
-    "kicker": "Daily Brain #001",
+    "kicker": "Mind Reps #001",
     "number": "3·6·12·?",
     "tone": "warn",
     "icons": [

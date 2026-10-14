@@ -1,6 +1,6 @@
 {
   "id": "brain-003-fast-answer",
-  "title": "Daily Brain #003: three questions your gut gets wrong",
+  "title": "Mind Reps #003: three questions your gut gets wrong",
   "lang": "en",
   "pack": "brain",
   "theme": "neon",
@@ -17,7 +17,7 @@
   "scenes": [
     {
       "type": "puzzle",
-      "title": "Daily Brain #003: Answer fast",
+      "title": "Mind Reps #003: Answer fast",
       "level": "easy",
       "question": "In a race, you pass the person in *2nd place*. What place are you in?",
       "choices": [
@@ -46,7 +46,7 @@
     },
     {
       "type": "puzzle",
-      "title": "Daily Brain #003: Answer fast",
+      "title": "Mind Reps #003: Answer fast",
       "level": "medium",
       "question": "A bat and a ball cost *$1.10*. The bat costs *$1.00 more* than the ball. How much is the ball?",
       "choices": [
@@ -123,7 +123,7 @@
     },
     {
       "type": "puzzle",
-      "title": "Daily Brain #003: Answer fast",
+      "title": "Mind Reps #003: Answer fast",
       "level": "hard",
       "question": "5 machines make 5 widgets in 5 minutes. How long do *100 machines* take to make *100 widgets*?",
       "choices": [
@@ -178,7 +178,7 @@
     {
       "type": "score",
       "cta": "What's your score out of 6?",
-      "next": "Daily Brain #004 · tomorrow",
+      "next": "Mind Reps #004 · tomorrow",
       "narration": "What's your score out of six? Did ten cents get you?"
     }
   ],
@@ -187,13 +187,13 @@
       "3 questions your gut gets wrong. Can you get 6/6?",
       "10¢ or 5¢? Three fast questions"
     ],
-    "description": "Daily Brain #003. Three questions, answer fast: easy (1 pt), medium (2 pts), hard (3 pts). Two of them come from the Cognitive Reflection Test (Frederick, 2005).",
+    "description": "Mind Reps #003. Three questions, answer fast: easy (1 pt), medium (2 pts), hard (3 pts). Two of them come from the Cognitive Reflection Test (Frederick, 2005).",
     "comment": "What's your score out of 6? Did 10¢ get you?",
     "hashtags": [
       "#puzzle",
       "#psychology",
       "#brainteaser",
-      "#dailybrain"
+      "#mindreps"
     ]
   },
   "thumbnail": {

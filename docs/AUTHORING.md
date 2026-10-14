@@ -710,7 +710,7 @@ The thumbnail of a news video can put a photo behind the words: `"thumbnail": {"
 A daily-puzzle Short is built from three scene types. The puzzle is the hook: the first scene
 is complete on frame 0.
 
-**`puzzle`** — asks. `title` (the episode, "Daily Brain #014"; reveal and score keep it on
+**`puzzle`** — asks. `title` (the episode, "Mind Reps #014"; reveal and score keep it on
 screen), `level` (`easy` · `medium` · `hard` → a badge "Easy · 1 pt"), `question` (≤ 160,
 `*emphasis*`), and any of:
 - `sequence`: 2–9 tiles (≤ 8 chars each, numbers may be written as numbers); exactly one `"?"`.
@@ -752,12 +752,12 @@ It keeps the episode title of the puzzle before it.
  "narration": "One hundred, up half: one fifty. Down half of one fifty: seventy-five."}
 ```
 
-**`score`** — `cta` (≤ 60, the comment question), `next` (≤ 48, "Daily Brain #015 ·
+**`score`** — `cta` (≤ 60, the comment question), `next` (≤ 48, "Mind Reps #015 ·
 tomorrow"), and a scorecard of the video's puzzle levels with the total (`card: false` hides it
 and shows a trophy).
 
 ```json
-{"type": "puzzle", "title": "Daily Brain #001", "level": "medium", "question": "What comes *next*?",
+{"type": "puzzle", "title": "Mind Reps #001", "level": "medium", "question": "What comes *next*?",
  "sequence": ["2", "6", "12", "20", "30", "?"], "think": 5, "narration": "Medium, for two points. Same question."},
 {"type": "reveal", "answer": "42", "why": [{"text": "Gaps: +4, +6, +8, +10…", "at": "The gaps grow"}],
  "narration": "Forty-two. The gaps grow by two, so next is plus twelve."}

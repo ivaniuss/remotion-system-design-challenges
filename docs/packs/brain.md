@@ -1,10 +1,11 @@
-# Pack `brain` — Daily Brain (daily puzzles)
+# Pack `brain` — Mind Reps (daily puzzles)
 
 One challenge a day, as a Short: logic, numbers, perception, critical thinking, "spot the
 mistake" and the cognitive biases behind a wrong first answer. The goal is not to keep people
 watching; it is a game they enjoy, answer in the comments and come back to tomorrow.
 
-Specs live in `videos/brain/`, are numbered (`brain-014-<slug>`, title "Daily Brain #014: …")
+The channel and the on-screen series are **Mind Reps** ("Mind Reps #014"; the pack, folder and
+skill keep the working name `brain` / Daily Brain). Specs live in `videos/brain/`, are numbered (`brain-014-<slug>`, title "Mind Reps #014: …")
 and use `"pack": "brain"`, `"shape": "daily-puzzle"`, `"hook": "challenge"`. Skill:
 `skills/make-brain/SKILL.md` (`/make-brain`). Scene reference: `docs/AUTHORING.md` → "Puzzle
 scenes".
@@ -99,7 +100,7 @@ score question excepted).
 ## 4. Writing
 
 - **The episode number is on screen from frame 0**: the first puzzle's `title` is
-  "Daily Brain #014" or "Daily Brain #014: Spot the mistake" (the reveal and score scenes keep
+  "Mind Reps #014" or "Mind Reps #014: Spot the mistake" (the reveal and score scenes keep
   it). It tells viewers this is a series and which episode they are on; the validator warns
   when it is missing.
 - **Question on screen = what the voice asks**, shorter if needed. Numbers in tiles, money and
@@ -107,7 +108,7 @@ score question excepted).
 - **Reveal**: the answer first ("Forty-two."), then 1–3 `why` lines on cue. The why is the
   value of the video: the rule, the trap, the bias by name.
 - **Score / CTA**: one question that asks for a comment ("What's your score out of 6?", "Did
-  your brain say 10¢ first?") and `next` with the next episode ("Daily Brain #002 · tomorrow").
+  your brain say 10¢ first?") and `next` with the next episode ("Mind Reps #002 · tomorrow").
 - Levels and points: easy 1, medium 2, hard 3. The scorecard of the `score` scene adds them up
   from the video's puzzles.
 - Sources for any fact (a named test, a bias, a statistic) go in `notes`.
