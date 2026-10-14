@@ -1,65 +1,194 @@
 {
   "id": "brain-003-fast-answer",
-  "title": "Daily Brain #003: the bat and the ball",
+  "title": "Daily Brain #003: three questions your gut gets wrong",
   "lang": "en",
   "pack": "brain",
   "theme": "neon",
   "shape": "daily-puzzle",
   "hook": "challenge",
   "notes": [
-    "Checked by hand: ball x, bat x + 1.00, total 2x + 1.00 = 1.10, so x = 0.05. Ball 5¢, bat $1.05.",
-    "With a 10¢ ball the bat is $1.10 and the total $1.20.",
-    "Source: Frederick, S. (2005). Cognitive Reflection and Decision Making. Journal of Economic Perspectives, 19(4), 25–42. The bat-and-ball item is the first question of the Cognitive Reflection Test; 10 cents is the intuitive wrong answer it was designed around.",
-    "Do not claim the test measures intelligence or that practising it makes you smarter; it shows that a fast answer can skip the check."
+    "Checked by hand. Easy: passing the runner in 2nd puts you in 2nd; the runner in 1st is still ahead (classic riddle).",
+    "Medium: ball x, bat x + 1.00, 2x + 1.00 = 1.10 → x = 0.05. Ball 5¢, bat $1.05. With a 10¢ ball the bat is $1.10 and the total $1.20.",
+    "Hard: each machine makes 1 widget in 5 minutes, so 100 machines make 100 widgets in 5 minutes, working in parallel.",
+    "Medium and hard are items 1 and 2 of the Cognitive Reflection Test: Frederick, S. (2005). Cognitive Reflection and Decision Making. Journal of Economic Perspectives, 19(4), 25–42. 10¢ and 100 minutes are the intuitive wrong answers the test is built around.",
+    "Second solver: a different model, given only the questions and choices, answered 2nd, 5¢, 5 min.",
+    "Do not claim the test measures intelligence or that practising it makes you smarter."
   ],
   "scenes": [
     {
       "type": "puzzle",
       "title": "Daily Brain #003: Answer fast",
+      "level": "easy",
+      "question": "In a race, you pass the person in *2nd place*. What place are you in?",
+      "choices": [
+        "1st",
+        "2nd",
+        "3rd"
+      ],
+      "think": 3,
+      "narration": "Three questions, answer fast. You pass the runner in second place. What place are you in?"
+    },
+    {
+      "type": "reveal",
+      "answer": "2nd",
+      "correct": 1,
+      "why": [
+        {
+          "text": "You took *their* place",
+          "at": "You took their place"
+        },
+        {
+          "text": "1st is still ahead of you",
+          "at": "First is still ahead"
+        }
+      ],
+      "narration": "Second. You took their place. First is still ahead."
+    },
+    {
+      "type": "puzzle",
+      "title": "Daily Brain #003: Answer fast",
+      "level": "medium",
       "question": "A bat and a ball cost *$1.10*. The bat costs *$1.00 more* than the ball. How much is the ball?",
       "choices": [
         "10¢",
         "5¢",
         "1¢"
       ],
-      "think": 5,
-      "narration": "Answer fast. A bat and a ball cost one dollar ten. The bat costs one dollar more than the ball. How much is the ball?"
+      "think": 4,
+      "narration": "Medium. Together they cost one ten, and the bat costs a dollar more. How much is the ball?"
     },
     {
       "type": "reveal",
       "answer": "5¢",
       "correct": 1,
-      "why": [
+      "narration": "Five cents."
+    },
+    {
+      "type": "proof",
+      "suffix": "¢",
+      "bars": [
         {
-          "text": "5¢ + $1.05 = *$1.10*",
-          "at": "five cents and"
+          "id": "ball",
+          "label": "Ball",
+          "value": 5,
+          "tone": "info"
         },
         {
-          "text": "10¢ → bat $1.10 → total *$1.20*",
-          "at": "With ten cents"
-        },
-        {
-          "text": "Fast answers skip the check",
-          "at": "skips the check"
+          "id": "bat",
+          "label": "Bat = ball + $1.00",
+          "value": 105,
+          "segments": [
+            {
+              "value": 5,
+              "tone": "info"
+            },
+            {
+              "value": 100,
+              "tone": "warn"
+            }
+          ]
         }
       ],
-      "narration": "Five cents. A ball of five cents and a bat of one oh five make one ten. With ten cents, the bat is one ten and the total one twenty. It's from the Cognitive Reflection Test: the first answer that pops up skips the check."
+      "steps": [
+        {
+          "at": "Ball five cents",
+          "show": [
+            "ball"
+          ]
+        },
+        {
+          "at": "bat one oh five",
+          "show": [
+            "bat"
+          ],
+          "line": "bat = 5¢ + 100¢ = 105¢"
+        },
+        {
+          "at": "together, one ten",
+          "line": "5¢ + 105¢ = *110¢*"
+        },
+        {
+          "at": "A ten cent ball",
+          "set": {
+            "ball": 10,
+            "bat": 110
+          },
+          "relabel": {
+            "bat": "Bat, if the ball were 10¢"
+          },
+          "line": "10¢ + 110¢ = 120¢, too much"
+        }
+      ],
+      "narration": "Ball five cents, bat one oh five: together, one ten. A ten cent ball makes it one twenty."
+    },
+    {
+      "type": "puzzle",
+      "title": "Daily Brain #003: Answer fast",
+      "level": "hard",
+      "question": "5 machines make 5 widgets in 5 minutes. How long do *100 machines* take to make *100 widgets*?",
+      "choices": [
+        "100 min",
+        "5 min",
+        "20 min"
+      ],
+      "think": 5,
+      "narration": "Hard. Five machines make five widgets in five minutes. How long for a hundred and a hundred?"
+    },
+    {
+      "type": "reveal",
+      "answer": "5 min",
+      "correct": 1,
+      "narration": "Five minutes."
+    },
+    {
+      "type": "proof",
+      "suffix": " min",
+      "bars": [
+        {
+          "id": "one",
+          "label": "1 machine → 1 widget",
+          "value": 5,
+          "tone": "info"
+        },
+        {
+          "id": "all",
+          "label": "100 machines, at once",
+          "value": 5,
+          "tone": "good"
+        }
+      ],
+      "steps": [
+        {
+          "at": "Each machine makes",
+          "show": [
+            "one"
+          ],
+          "line": "1 machine: 1 widget in 5 min"
+        },
+        {
+          "at": "at the same time",
+          "show": [
+            "all"
+          ],
+          "line": "100 in parallel: *5 min*"
+        }
+      ],
+      "narration": "Each machine makes one widget in five minutes. A hundred work at the same time."
     },
     {
       "type": "score",
-      "card": false,
-      "cta": "Did your brain say *10¢* first?",
+      "cta": "What's your score out of 6?",
       "next": "Daily Brain #004 · tomorrow",
-      "narration": "Be honest: did your brain say ten cents first?"
+      "narration": "What's your score out of six? Did ten cents get you?"
     }
   ],
   "publish": {
     "titles": [
-      "The bat and ball question: 10¢ or 5¢?",
-      "Your first answer to this is probably wrong"
+      "3 questions your gut gets wrong. Can you get 6/6?",
+      "10¢ or 5¢? Three fast questions"
     ],
-    "description": "Daily Brain #003. A classic from the Cognitive Reflection Test (Frederick, 2005): a bat and a ball cost $1.10 and the bat costs $1.00 more. How much is the ball?",
-    "comment": "Be honest: did you say 10¢ first?",
+    "description": "Daily Brain #003. Three questions, answer fast: easy (1 pt), medium (2 pts), hard (3 pts). Two of them come from the Cognitive Reflection Test (Frederick, 2005).",
+    "comment": "What's your score out of 6? Did 10¢ get you?",
     "hashtags": [
       "#puzzle",
       "#psychology",
@@ -68,9 +197,9 @@
     ]
   },
   "thumbnail": {
-    "text": "10¢ or *5¢*?",
+    "text": "Your gut says *10¢*",
     "kicker": "Answer fast",
-    "number": "$1.10",
+    "number": "6/6?",
     "tone": "warn",
     "icons": [
       {

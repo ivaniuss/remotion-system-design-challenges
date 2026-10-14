@@ -157,6 +157,14 @@ export function soundEvents(tl: Timeline): SoundEvent[] {
           if (!w.sfx) add(s.start + (s.cues[i] ?? 0), 'pop', 0.7);
         });
         break;
+      case 'proof':
+        s.steps.forEach((st, i) => {
+          const at = s.start + (s.cues[i] ?? 0);
+          if (st.sfx) cue(at, st.sfx);
+          else if (st.show?.length || st.set) add(at, 'whoosh', 0.5);
+          else if (st.line) add(at, 'type', 0.45);
+        });
+        break;
       case 'score': {
         (s.levels ?? []).forEach((_, i) => add(s.start + 0.25 + i * 0.3, 'pop'));
         add(s.start + (s.levels?.length ? 0.55 + s.levels.length * 0.3 : 0.3), 'success', 0.8);

@@ -34,23 +34,54 @@ scenes".
    look, below), write each explanation by hand, and never publish a batch of near-identical
    puzzles. `npm run fingerprint` reports the format of the last Shorts.
 
-## 2. The formats
+## 2. The game and the formats
 
-Each format has its own theme so the channel never looks like one template repeated.
+**Every regular episode is the same game: three rounds, easy → medium → hard, worth 1 + 2 + 3
+= 6 points.** One question is a quiz; three rising rounds with points are a game: a goal ("get
+6/6"), a new open question at each round that keeps people watching, and a score to compare
+in the comments and from one day to the next. The format is the kind of challenge in the
+rounds, and each has its own theme so the channel never looks like one template repeated.
 
-| Format | Theme | Scenes | Length |
+| Format | Theme | Rounds | Length |
 | --- | --- | --- | --- |
-| **3 levels** (`levels`) | `light` | puzzle easy · reveal · puzzle medium · reveal · puzzle hard (`pause`) · reveal · score | 35–45 s |
-| **Spot the mistake** (`spot-the-mistake`) | `dark` | puzzle with a `claim` · reveal with `verdict` · score (`card: false`) | 25–35 s |
-| **Answer fast** (`choices`) — a bias or a trick question | `neon` | puzzle with `choices` · reveal with `correct` · score (`card: false`) | 25–35 s |
-| **Answer tomorrow** (`teaser`) | any | puzzle with `"tomorrow": true` · score; the next video opens with its `reveal` | 15–20 s |
+| **3 levels** (`levels`) | `light` | three sequences; each reveal draws the step between tiles (`ops`: +4, ×2…) | 40–50 s |
+| **Spot the mistake** (`spot-the-mistake`) | `dark` | three claims to judge, **at least one right**; `proof` after medium and hard | 50–60 s |
+| **Answer fast** (`choices`) | `neon` | three trick questions with 3 choices, timers of 3–5 s; `proof` after medium and hard | 50–60 s |
+| **Answer tomorrow** (`teaser`) | `dark` | one hard question, no reveal; the next episode opens with its answer | 15–25 s |
+| **Hard puzzle of the week** | `neon` | one hard puzzle with `pause`, worked out in a `proof` | 30–40 s |
 
-Examples: `videos/brain/brain-001-levels.json`, `brain-002-spot-the-mistake.json`,
-`brain-003-fast-answer.json`.
+Examples: `videos/brain/brain-001-levels.json` (published before `ops` existed),
+`brain-002-spot-the-mistake.json`, `brain-003-fast-answer.json`.
+
+**Show why, don't only say it.** The answer is the moment of the video; the explanation is what
+people remember and share. Medium and hard rounds get a `proof` scene: a bar model on one scale
+(a price that rises 50% and falls 50% ends shorter than it started; the bat is the ball plus a
+$1.00 block) with the working typed out beside it. Sequences draw their rule as arrows over the
+tiles. Text `why` lines are for the easy round.
+
+**Game design rules** (why the game works; criteria, not measured facts):
+- **Traps are the opponent.** Every question has one intuitive wrong answer among its choices
+  (10¢, "1st place", 100 minutes): the challenge is beating your own first answer.
+- **No dominant strategy.** In "spot the mistake" at least one claim per episode is right, so
+  answering "wrong" every time never wins; mix where it falls.
+- **Difficulty rises, points rise.** Easy should be solved by most people (it keeps them in the
+  game), hard by few (it is what they comment about).
+- **The same 6-point scale every day**, so a viewer can compare today's score with yesterday's
+  and with other people's.
+- **Commit before the reveal.** The countdown is the moment to answer; the comment question asks
+  for the score, which is only honest if they answered before seeing it.
+- **A community round** (an idea for the weekly slot): "guess 2/3 of the average" — everyone
+  comments a number 0–100, whoever is closest to 2/3 of the average wins, announced next
+  episode. To win you have to guess what everyone else will say: comments plus a reason to come
+  back.
 
 **Answer tomorrow** is the most direct test of the daily habit: the reveal is in the next
 episode, so a viewer who wants it has to come back. The next video's first scene is a `reveal`
-with yesterday's `question` (and `sequence`/`choices`) written in it, then today's puzzle.
+with yesterday's `question` (and `sequence`/`choices`) written in it, then today's rounds.
+
+**Vary the words.** The structure repeats on purpose (it is the game); the narration must not.
+`npm run next` warns when a sentence is said word for word in 3 or more episodes (the final
+score question excepted).
 
 ## 3. Timing: the think hold
 

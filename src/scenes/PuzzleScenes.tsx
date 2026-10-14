@@ -21,7 +21,7 @@ const LETTERS = ['A', 'B', 'C', 'D'];
 const LEVEL_NAME: Record<PuzzleLevel, string> = {easy: 'Easy', medium: 'Medium', hard: 'Hard'};
 const pts = (n: number) => `${n} ${n === 1 ? 'pt' : 'pts'}`;
 
-type Parts = {question?: string; sequence?: string[]; choices?: string[]; claim?: PuzzleClaim};
+type Parts = {question?: string; sequence?: string[]; choices?: string[]; claim?: PuzzleClaim; ops?: string[]};
 type Solved = {answer: string; correct?: number; verdict?: 'right' | 'wrong'; k: number; t: number}; // k: 0 → 1 as it is revealed; t: scene time
 
 const shadow = (theme: Theme, px = 7) => (theme.shadowOpacity > 0 ? `${px}px ${px}px 0 ${theme.shadow}` : theme.glow ? `0 0 26px ${theme.accent}33` : 'none');
@@ -56,7 +56,40 @@ const LevelBadge: React.FC<{level: PuzzleLevel; theme: Theme; size: number; scal
 
 // The row of tiles of a sequence. The "?" tile is dashed and breathes; when solved it
 // flips to the answer in green.
-const SequenceRow: React.FC<{items: string[]; width: number; theme: Theme; t: number; solved?: Solved; max: number}> = ({items, width, theme, t, solved, max}) => {
+// Arrows over a solved sequence, one per gap, each with its step ("+4", "×2"), drawn one
+// after another once the answer tile has flipped: the rule is seen, not read.
+const OpsArcs: React.FC<{ops: string[]; size: number; gap: number; theme: Theme; t: number}> = ({ops, size, gap, theme, t}) => {
+  const n = ops.length + 1;
+  const w = n * size + (n - 1) * gap;
+  const h = Math.max(70, size * 0.62);
+  const font = Math.max(24, Math.min(40, size * 0.28));
+  const color = theme.name === 'light' ? theme.colors.orange.stroke : theme.accent;
+  return (
+    <svg width={w} height={h} style={{display: 'block', overflow: 'visible'}}>
+      {ops.map((op, i) => {
+        const k = easeOut(clamp01((t - (0.8 + i * 0.32)) / 0.4));
+        if (k <= 0) return null;
+        const x1 = i * (size + gap) + size * 0.62;
+        const x2 = (i + 1) * (size + gap) + size * 0.38;
+        const top = h * 0.32;
+        const d = `M ${x1} ${h - 2} C ${x1} ${top}, ${x2} ${top}, ${x2} ${h - 2}`;
+        const len = (x2 - x1) * 1.6 + h;
+        const mid = (x1 + x2) / 2;
+        return (
+          <g key={i}>
+            <path d={d} fill="none" stroke={color} strokeWidth={5} strokeLinecap="round" strokeDasharray={`${len * k} ${len}`} />
+            {k > 0.9 && <path d={`M ${x2 - 9} ${h - 14} L ${x2} ${h - 1} L ${x2 + 9} ${h - 14}`} fill="none" stroke={color} strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" />}
+            <text x={mid} y={top - 4} textAnchor="middle" fontFamily={FONT.sans} fontWeight={900} fontSize={font} fill={color} opacity={k} transform={`translate(0 ${(1 - k) * 10})`}>
+              {op}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+};
+
+const SequenceRow: React.FC<{items: string[]; width: number; theme: Theme; t: number; solved?: Solved; max: number; ops?: string[]}> = ({items, width, theme, t, solved, max, ops}) => {
   const n = items.length;
   const gap = n > 6 ? 12 : 18;
   const size = Math.min(max, (width - gap * (n - 1)) / n);
@@ -66,6 +99,8 @@ const SequenceRow: React.FC<{items: string[]; width: number; theme: Theme; t: nu
   // The yellow accent of the light look is too pale for a dashed outline: use its darker stroke.
   const hole = theme.name === 'light' ? theme.colors.yellow.stroke : theme.accent;
   return (
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4}}>
+    {solved && ops && ops.length === n - 1 && <OpsArcs ops={ops} size={size} gap={gap} theme={theme} t={solved.t} />}
     <div style={{display: 'flex', gap, justifyContent: 'center'}}>
       {items.map((x, i) => {
         const missing = x.trim() === '?';
@@ -98,6 +133,7 @@ const SequenceRow: React.FC<{items: string[]; width: number; theme: Theme; t: nu
           </div>
         );
       })}
+    </div>
     </div>
   );
 };
@@ -224,7 +260,7 @@ const Board: React.FC<{parts: Parts; width: number; theme: Theme; t: number; ver
         <Rich text={q} accent={theme.accent} accentText={theme.accentText} />
       </div>,
     );
-  if (parts.sequence) blocks.push(<SequenceRow key="s" items={parts.sequence} width={width} theme={theme} t={t} solved={solved} max={tileMax} />);
+  if (parts.sequence) blocks.push(<SequenceRow key="s" items={parts.sequence} width={width} theme={theme} t={t} solved={solved} max={tileMax} ops={parts.ops} />);
   if (parts.choices) blocks.push(<Choices key="c" items={parts.choices} width={width} theme={theme} vertical={vertical} solved={solved} font={bodyFont} />);
   if (parts.claim) blocks.push(<ClaimBubble key="b" claim={parts.claim} width={width * (vertical ? 0.94 : 0.9)} theme={theme} solved={solved} font={bodyFont} />);
   return (
@@ -365,6 +401,7 @@ export const RevealScene: React.FC<SceneProps<'reveal'>> = ({scene, t, frame, th
     sequence: scene.sequence ?? p?.sequence,
     choices: scene.choices ?? p?.choices,
     claim: scene.claim ?? p?.claim,
+    ops: scene.ops,
   };
   const level = p?.level;
   const k = easeOut(clamp01((t - 0.15) / 0.5));

@@ -729,6 +729,29 @@ answer pops big, then 1–3 `why` lines (Items with `at` cues), then "Got it? +N
 puzzle had a level. A reveal that opens the next day's video has no puzzle before it: write the
 puzzle's `question` (and `sequence`/`choices`/`claim`) in the reveal itself.
 
+Sequences: `ops` on the reveal (one per gap, ≤ 6 chars: `["+4", "+6", "+8"]`) draws arrows with
+the step between each pair of tiles once the answer flips in.
+
+**`proof`** — the answer shown, not told: up to 4 horizontal `bars` on one scale
+(`{id, label ≤ 28, value, tone, segments?}`; segments `{value, label?, tone?}` must add up to
+the bar's value and split it into colored blocks — the bat = 5¢ + 100¢), `prefix` / `suffix`
+for every value (`"$"`, `"¢"`, `" min"`), optional `max` (the scale). 1–8 `steps` on cue:
+`show` (bars listed in any `show` start hidden and grow in), `set` (`{"ball": 10}`: the bar grows
+or shrinks to it), `relabel`, `focus` (light these, dim the rest), `line` (≤ 48: a line of
+working typed out beside the bars, `*emphasis*`). A proof with no bars is just the working.
+It keeps the episode title of the puzzle before it.
+
+```json
+{"type": "proof", "prefix": "$", "bars": [
+   {"id": "start", "label": "Start", "value": 100},
+   {"id": "up", "label": "Up 50%", "value": 150, "tone": "good"},
+   {"id": "down", "label": "Then down 50% of $150", "value": 75, "tone": "bad"}],
+ "steps": [{"at": "One hundred", "show": ["start"]},
+   {"at": "up half", "show": ["up"], "line": "100 × 1.5 = 150"},
+   {"at": "Down half", "show": ["down"], "line": "150 × 0.5 = *75*"}],
+ "narration": "One hundred, up half: one fifty. Down half of one fifty: seventy-five."}
+```
+
 **`score`** — `cta` (≤ 60, the comment question), `next` (≤ 48, "Daily Brain #015 ·
 tomorrow"), and a scorecard of the video's puzzle levels with the total (`card: false` hides it
 and shows a trophy).

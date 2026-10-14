@@ -594,11 +594,51 @@ export const RevealScene = z.object({
   // (an "answer tomorrow" reveal opens the next video with yesterday's puzzle).
   ...PuzzleParts,
   answer: z.string().min(1).max(40), // fills the "?" of a sequence; shown big
+  // Sequences: the step between each pair of tiles ("+4", "×2"), drawn as arrows over the row
+  // once the answer is in. One per gap (tiles − 1).
+  ops: z.array(z.string().min(1).max(6)).max(8).optional(),
   correct: z.number().int().min(0).max(3).optional(), // index of the right choice
   verdict: z.enum(['right', 'wrong']).optional(), // what the claim was
   // 1–3 short lines of why, each on its cue.
   why: z.array(Item).max(3).default([]),
   sfx: Sfx,
+});
+
+// ---------- proof: the answer shown, not told (bar models and worked steps)
+// Up to 4 horizontal bars on one scale. A bar can be split into labelled segments (the bat =
+// the ball's price + $1.00). Steps, on cue, show a bar, change its value (it grows or shrinks),
+// relabel it, light some bars and dim the rest, and write one line of working each.
+export const ProofSegment = z.object({
+  value: z.number().min(0),
+  label: z.string().max(18).optional(),
+  tone: Tone.optional(),
+});
+export const ProofBar = z.object({
+  id: Id,
+  label: z.string().min(1).max(28),
+  value: z.number().min(0),
+  tone: Tone.default('info'),
+  segments: z.array(ProofSegment).min(2).max(4).optional(),
+});
+export const ProofStep = z.object({
+  at: Cue,
+  show: z.array(Id).optional(), // bars listed in any `show` start hidden
+  set: z.record(z.string(), z.number().min(0)).optional(), // new values: the bar grows or shrinks
+  relabel: z.record(z.string(), z.string().min(1).max(28)).optional(),
+  focus: z.array(Id).optional(), // light these, dim the rest; [] clears
+  line: z.string().min(1).max(48).optional(), // a line of working, written out; *emphasis*
+  sfx: Sfx,
+});
+export const ProofScene = z.object({
+  type: z.literal('proof'),
+  chapter: Chapter,
+  narration: Narration,
+  title: Title.optional(), // defaults to the episode title of the puzzle before it
+  prefix: z.string().max(4).default(''), // before every value: "$"
+  suffix: z.string().max(6).default(''), // after every value: "¢", " min", "%"
+  max: z.number().positive().optional(), // the scale; default: the largest value it reaches
+  bars: z.array(ProofBar).max(4).default([]),
+  steps: z.array(ProofStep).min(1).max(8),
 });
 
 export const ScoreScene = z.object({
@@ -637,6 +677,7 @@ export const Scene = z.discriminatedUnion('type', [
   SourcesScene,
   PuzzleScene,
   RevealScene,
+  ProofScene,
   ScoreScene,
 ]);
 
@@ -741,4 +782,6 @@ export type Item = z.output<typeof Item>;
 export type PuzzleScene = z.output<typeof PuzzleScene>;
 export type RevealScene = z.output<typeof RevealScene>;
 export type ScoreScene = z.output<typeof ScoreScene>;
+export type ProofScene = z.output<typeof ProofScene>;
+export type ProofBar = z.output<typeof ProofBar>;
 export type PuzzleClaim = z.output<typeof PuzzleClaim>;

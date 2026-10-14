@@ -16,6 +16,7 @@ export function cuePhrases(scene: Scene): (string | undefined)[] {
     case 'shot':
     case 'media':
     case 'map':
+    case 'proof':
       return scene.steps.map((s) => s.at);
     case 'stats':
     case 'timeline':

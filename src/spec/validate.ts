@@ -247,7 +247,7 @@ export function validateSpec(raw: unknown): Validation {
 const AI_NAME = /\b(ai|gpt|chatgpt|claude|gemini|llama|copilot|grok|deepseek|mistral|model|llm|bot)\b/i;
 function checkPuzzles(spec: VideoSpec, errors: string[], warnings: string[]) {
   const scenes = spec.scenes;
-  const PUZZLE_TYPES = ['puzzle', 'reveal', 'score'];
+  const PUZZLE_TYPES = ['puzzle', 'reveal', 'proof', 'score'];
   if (spec.pack !== 'brain' && scenes.some((s) => PUZZLE_TYPES.includes(s.type)))
     warnings.push(`puzzle/reveal/score scenes are made for "pack": "brain" (docs/packs/brain.md).`);
   // Every episode shows its number from the first frame ("Daily Brain #014…"), so viewers know
@@ -281,8 +281,27 @@ function checkPuzzles(spec: VideoSpec, errors: string[], warnings: string[]) {
       if (next && next.type === 'reveal' && sc.choices && next.correct === undefined) warnings.push(`scenes[${j}] (reveal): the puzzle has choices; set "correct" (0 = A) so the right one lights up.`);
       if (next && next.type === 'reveal' && sc.claim && !next.verdict) warnings.push(`scenes[${j}] (reveal): the puzzle has a claim; set "verdict": "right" | "wrong".`);
     }
+    if (sc.type === 'proof') {
+      const ids = new Set(sc.bars.map((b) => b.id));
+      if (ids.size !== sc.bars.length) errors.push(`${where}: bar ids must be unique.`);
+      sc.steps.forEach((st, k) => {
+        const used = [...(st.show ?? []), ...Object.keys(st.set ?? {}), ...Object.keys(st.relabel ?? {}), ...(st.focus ?? [])];
+        for (const id of used) if (!ids.has(id)) errors.push(`${where}.steps[${k}]: unknown bar "${id}". Bars: ${[...ids].join(', ') || 'none'}`);
+      });
+      for (const b of sc.bars) {
+        if (b.segments) {
+          const sum = b.segments.reduce((a, g) => a + g.value, 0);
+          if (Math.abs(sum - b.value) > 1e-6) errors.push(`${where}: the segments of "${b.id}" add up to ${sum}, not its value ${b.value}.`);
+        }
+      }
+      if (!sc.bars.length && !sc.steps.some((st) => st.line)) errors.push(`${where}: a proof needs bars or lines of working.`);
+      if (sc.steps.filter((st) => st.line).length > 5) warnings.push(`${where}: more than 5 lines of working; a Short shows 2–4.`);
+    }
     if (sc.type === 'reveal') {
       checkParts(where, sc);
+      const seq = sc.sequence ?? (scenes.slice(0, i).reverse().find((x) => x.type === 'puzzle') as {sequence?: string[]} | undefined)?.sequence;
+      if (sc.ops && (!seq || sc.ops.length !== seq.length - 1))
+        errors.push(`${where}.ops: one step per gap between tiles (${seq ? seq.length - 1 : 'the puzzle has no sequence'}), got ${sc.ops.length}.`);
       const prev = scenes.slice(0, i).reverse().find((x) => x.type === 'puzzle');
       const p = prev && prev.type === 'puzzle' ? prev : undefined;
       if (!p && !sc.question) errors.push(`${where}: a reveal needs a puzzle scene before it, or its own "question" (an "answer tomorrow" reveal of yesterday's puzzle).`);
@@ -290,7 +309,7 @@ function checkPuzzles(spec: VideoSpec, errors: string[], warnings: string[]) {
       if (sc.correct !== undefined && (!choices || sc.correct >= choices.length))
         errors.push(`${where}.correct: ${sc.correct} is not a choice of the puzzle (${choices ? `0–${choices.length - 1}` : 'it has no choices'}).`);
       if (sc.verdict && !(sc.claim ?? p?.claim)) errors.push(`${where}.verdict: the puzzle has no claim to judge.`);
-      if (!sc.why.length) warnings.push(`${where}: no "why"; one line of why turns a riddle into something the viewer learns.`);
+      if (!sc.why.length && !sc.ops && scenes[i + 1]?.type !== 'proof') warnings.push(`${where}: no "why", "ops" or proof scene after it; showing why turns a riddle into something the viewer learns.`);
     }
   });
 }

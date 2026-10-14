@@ -24,6 +24,13 @@ Talk to the user in Spanish. Narration and on-screen text in English (the channe
 
 ## 2. Write and verify the puzzles (before any JSON)
 
+- A regular episode is **three rounds** (easy 1 pt, medium 2, hard 3) of the slot's kind of
+  challenge; "answer tomorrow" and the weekly hard puzzle are one question. Game rules in
+  `docs/packs/brain.md` §2: one intuitive wrong answer among the choices, at least one RIGHT
+  claim in a spot-the-mistake, difficulty rising.
+- Plan how each medium and hard answer is **shown**: a `proof` scene (bars on one scale + lines
+  of working) or, for sequences, `ops` arrows on the reveal.
+
 - Write the puzzle(s), the answer, the rule, and why no other simple answer fits.
 - **Verify**: solve it by hand (show the arithmetic in `notes`); then a second solver that did
   not write it — a separate agent or a different model — gets only the question and must reach

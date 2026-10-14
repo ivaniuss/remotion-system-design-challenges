@@ -82,6 +82,7 @@ export const MIN_SCENE: Record<Scene['type'], number> = {
   sources: 6,
   puzzle: 2.5,
   reveal: 3,
+  proof: 4,
   score: 3.5,
 };
 
@@ -114,6 +115,10 @@ export function buildTimeline(spec: VideoSpec, speech: Speech, opts: TimelineOpt
       if (prev && prev.type === 'puzzle') out.puzzle = prev;
       // The episode header stays on screen through the answer.
       if (!sc.title && prev && prev.type === 'puzzle' && prev.title) (out as {title?: string}).title = prev.title;
+    }
+    if (sc.type === 'proof' && !sc.title) {
+      const prev = spec.scenes.slice(0, index).reverse().find((x) => x.type === 'puzzle' && x.title);
+      if (prev && prev.type === 'puzzle') (out as {title?: string}).title = prev.title;
     }
     if (sc.type === 'score') {
       out.levels = spec.scenes.flatMap((x) => (x.type === 'puzzle' && x.level ? [x.level] : []));
@@ -163,5 +168,6 @@ export function sceneLabel(s: Scene): string {
   if (s.type === 'puzzle') return plain(s.title ?? s.question).slice(0, 60);
   if (s.type === 'reveal') return s.title ? plain(s.title) : `Answer: ${s.answer}`;
   if (s.type === 'score') return s.title ? plain(s.title) : plain(s.cta);
+  if (s.type === 'proof') return 'Why';
   return s.title ? plain(s.title) : s.type;
 }

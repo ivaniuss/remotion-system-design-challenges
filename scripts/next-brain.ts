@@ -17,8 +17,8 @@ function formatOf(spec: Raw): EpisodeFormat | 'other' {
   if (puzzles.some((s) => s.tomorrow)) return 'answer-tomorrow';
   if (scenes[0]?.type === 'reveal' && puzzles.length) return 'reveal-levels';
   if (puzzles.some((s) => s.claim)) return 'spot-the-mistake';
-  if (puzzles.length >= 2) return 'levels';
   if (puzzles.some((s) => s.choices)) return 'answer-fast';
+  if (puzzles.length >= 2) return 'levels';
   if (puzzles.some((s) => s.pause)) return 'hard';
   return 'other';
 }
@@ -49,6 +49,24 @@ for (const e of episodes) {
   );
 }
 if (!episodes.length) console.log('  (none yet)');
+// Narration that repeats word for word across episodes reads as a template (YouTube's
+// "repetitious content"). The score scene's question is a series ritual and is not counted.
+const sentences = new Map<string, Set<number>>();
+for (const e of episodes) {
+  const spec: Raw = JSON.parse(fs.readFileSync(path.join(DIR, `${e.id}.json`), 'utf8'));
+  for (const sc of spec.scenes ?? []) {
+    if (sc.type === 'score') continue;
+    for (const raw of String(sc.narration ?? '').split(/(?<=[.?!])\s+/)) {
+      const key = raw.toLowerCase().replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim();
+      if (key.split(' ').length < 4) continue;
+      if (!sentences.has(key)) sentences.set(key, new Set());
+      sentences.get(key)!.add(e.n);
+    }
+  }
+}
+for (const [k, eps] of sentences) {
+  if (eps.size >= 3) warnings.push(`"${k}" is said in ${eps.size} episodes (${[...eps].map((n) => String(n).padStart(3, '0')).join(', ')}): vary the wording.`);
+}
 const nums = episodes.map((e) => e.n);
 for (let k = 1; k < (nums[nums.length - 1] ?? 0); k++) if (!nums.includes(k)) warnings.push(`episode ${String(k).padStart(3, '0')} is missing.`);
 if (warnings.length) console.log(`\n${warnings.map((w) => `⚠ ${w}`).join('\n')}`);

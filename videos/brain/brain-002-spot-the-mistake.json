@@ -1,63 +1,213 @@
 {
   "id": "brain-002-spot-the-mistake",
-  "title": "Daily Brain #002: the $96 shirt",
+  "title": "Daily Brain #002: three claims, right or wrong?",
   "lang": "en",
   "pack": "brain",
   "theme": "dark",
   "shape": "daily-puzzle",
   "hook": "challenge",
   "notes": [
-    "Checked by hand: the sale price is 80% of the original, so original = 80 / 0.8 = 100. Check: 100 − 20% = 80.",
-    "The wrong answer: adding 20% back to $80 gives 80 × 1.2 = 96, because 20% of the sale price ($16) is smaller than 20% of the original ($20).",
-    "The claim is labelled 'A common answer', not an AI and not a statistic: it is the usual trap of percentage problems. To run this as 'Beat the AI', paste a real logged model answer and fill claim.source (the validator requires it)."
+    "Checked by hand. Claim 1 is RIGHT: 10% of 50 = 5 and 50% of 10 = 5; in general x% of y = xy/100 = y% of x. It is right on purpose, so viewers cannot win by always answering 'wrong'.",
+    "Claim 2 is WRONG: $80 is 80% of the original, so original = 80 / 0.8 = $100 (check: 100 − 20% = 80). Adding 20% back gives 80 × 1.2 = 96, because 20% of $80 is $16, not $20.",
+    "Claim 3 is WRONG: 100 × 1.5 = 150, then 150 × 0.5 = 75, which is 25% below the start. The drop is taken from a bigger number than the rise.",
+    "Second solver: a different model, given only the three claims, judged them right / wrong / wrong.",
+    "The claims are labelled 'Claim #n', not as anyone's answer: no AI and no statistic is implied."
   ],
   "scenes": [
     {
       "type": "puzzle",
       "title": "Daily Brain #002: Spot the mistake",
-      "question": "A shirt costs *$80* after a *20% discount*. What was the original price?",
+      "level": "easy",
+      "question": "Right or *wrong*?",
       "claim": {
-        "who": "A common answer",
-        "text": "$96. Just add the 20% back."
+        "who": "Claim #1",
+        "text": "10% of 50 is the same as 50% of 10."
+      },
+      "think": 4,
+      "narration": "Three claims. Easy: ten percent of fifty equals fifty percent of ten. Right or wrong?"
+    },
+    {
+      "type": "reveal",
+      "answer": "Right",
+      "verdict": "right",
+      "why": [
+        {
+          "text": "10% of 50 = 5 = 50% of 10",
+          "at": "Both are five"
+        },
+        {
+          "text": "x% of y = y% of x, *always*",
+          "at": "always works"
+        }
+      ],
+      "narration": "Right. Both are five. It always works."
+    },
+    {
+      "type": "puzzle",
+      "title": "Daily Brain #002: Spot the mistake",
+      "level": "medium",
+      "question": "A shirt costs *$80* after a *20% discount*.",
+      "claim": {
+        "who": "Claim #2",
+        "text": "So it was $96 before. Just add the 20% back."
       },
       "think": 6,
-      "narration": "A shirt costs eighty dollars after a twenty percent discount. Someone says the original price was ninety-six. Right or wrong?"
+      "narration": "Medium. Eighty dollars after twenty percent off. Was it ninety-six before?"
     },
     {
       "type": "reveal",
       "answer": "$100",
       "verdict": "wrong",
-      "why": [
+      "narration": "Wrong. One hundred."
+    },
+    {
+      "type": "proof",
+      "prefix": "$",
+      "bars": [
         {
-          "text": "$80 is *80%* of the original",
-          "at": "eighty percent of"
+          "id": "orig",
+          "label": "Original price",
+          "value": 100,
+          "segments": [
+            {
+              "value": 80,
+              "tone": "info"
+            },
+            {
+              "value": 20,
+              "tone": "bad"
+            }
+          ]
         },
         {
-          "text": "80 ÷ 0.8 = *$100*",
-          "at": "divided by"
-        },
-        {
-          "text": "+20% of $80 adds only $16",
-          "at": "only adds sixteen"
+          "id": "back",
+          "label": "$80 + 20% of $80",
+          "value": 96,
+          "tone": "warn",
+          "segments": [
+            {
+              "value": 80,
+              "tone": "info"
+            },
+            {
+              "value": 16,
+              "tone": "warn"
+            }
+          ]
         }
       ],
-      "narration": "Wrong. Eighty dollars is eighty percent of the original price. Eighty divided by zero point eight is one hundred. Adding twenty percent of eighty only adds sixteen."
+      "steps": [
+        {
+          "at": "Twenty percent off",
+          "show": [
+            "orig"
+          ],
+          "line": "100 − 20% = 80"
+        },
+        {
+          "at": "Adding twenty percent back",
+          "show": [
+            "back"
+          ],
+          "line": "80 + 20% of 80 = 96"
+        },
+        {
+          "at": "only sixteen",
+          "focus": [
+            "back"
+          ],
+          "line": "20% of 80 is only *$16*"
+        }
+      ],
+      "narration": "Twenty percent off one hundred is eighty. Adding twenty percent back to eighty adds only sixteen."
+    },
+    {
+      "type": "puzzle",
+      "title": "Daily Brain #002: Spot the mistake",
+      "level": "hard",
+      "question": "A price goes *up 50%*, then *down 50%*.",
+      "claim": {
+        "who": "Claim #3",
+        "text": "It's back where it started."
+      },
+      "pause": true,
+      "think": 2,
+      "narration": "Hard. Up fifty percent, then down fifty percent. Back where it started? Pause if you need to."
+    },
+    {
+      "type": "reveal",
+      "answer": "25% lower",
+      "verdict": "wrong",
+      "narration": "Wrong. Twenty-five percent lower."
+    },
+    {
+      "type": "proof",
+      "prefix": "$",
+      "bars": [
+        {
+          "id": "start",
+          "label": "Start",
+          "value": 100,
+          "tone": "info"
+        },
+        {
+          "id": "up",
+          "label": "Up 50%",
+          "value": 150,
+          "tone": "good"
+        },
+        {
+          "id": "down",
+          "label": "Then down 50% of $150",
+          "value": 75,
+          "tone": "bad"
+        }
+      ],
+      "steps": [
+        {
+          "at": "One hundred",
+          "show": [
+            "start"
+          ]
+        },
+        {
+          "at": "up half",
+          "show": [
+            "up"
+          ],
+          "line": "100 × 1.5 = 150"
+        },
+        {
+          "at": "Down half",
+          "show": [
+            "down"
+          ],
+          "line": "150 × 0.5 = *75*"
+        },
+        {
+          "at": "seventy-five",
+          "focus": [
+            "start",
+            "down"
+          ]
+        }
+      ],
+      "narration": "One hundred, up half: one fifty. Down half of one fifty: seventy-five."
     },
     {
       "type": "score",
-      "card": false,
-      "cta": "Did you spot it before the timer?",
+      "cta": "What's your score out of 6?",
       "next": "Daily Brain #003 · tomorrow",
-      "narration": "Did you spot it before the timer? Tell me in the comments."
+      "narration": "What's your score out of six?"
     }
   ],
   "publish": {
     "titles": [
-      "$80 after 20% off. Was it $96?",
-      "The percentage trap almost everyone falls for"
+      "3 claims about percentages. Which are wrong?",
+      "Up 50%, down 50%: back where you started?"
     ],
-    "description": "Daily Brain #002. A shirt costs $80 after a 20% discount. Is the original price $96? Decide before the timer runs out.",
-    "comment": "Did you spot the mistake before the timer?",
+    "description": "Daily Brain #002. Three claims: easy (1 pt), medium (2 pts), hard (3 pts). Some are right, some are wrong. Decide before the timer and comment your score.",
+    "comment": "What's your score out of 6? Which claim fooled you?",
     "hashtags": [
       "#puzzle",
       "#math",
@@ -66,9 +216,9 @@
     ]
   },
   "thumbnail": {
-    "text": "Was it *$96*?",
+    "text": "Back where it *started*?",
     "kicker": "Spot the mistake",
-    "number": "-20%",
+    "number": "+50% −50%",
     "tone": "bad",
     "icons": [
       {

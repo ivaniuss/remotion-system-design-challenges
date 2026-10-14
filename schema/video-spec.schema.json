@@ -4159,6 +4159,15 @@
                 "minLength": 1,
                 "maxLength": 40
               },
+              "ops": {
+                "maxItems": 8,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 6
+                }
+              },
               "correct": {
                 "type": "integer",
                 "minimum": 0,
@@ -4311,6 +4320,192 @@
               "type",
               "narration",
               "answer"
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "proof"
+              },
+              "chapter": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "narration": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 900
+              },
+              "title": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 60
+              },
+              "prefix": {
+                "default": "",
+                "type": "string",
+                "maxLength": 4
+              },
+              "suffix": {
+                "default": "",
+                "type": "string",
+                "maxLength": 6
+              },
+              "max": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "bars": {
+                "default": [],
+                "maxItems": 4,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                    },
+                    "label": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 28
+                    },
+                    "value": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "tone": {
+                      "default": "info",
+                      "type": "string",
+                      "enum": [
+                        "good",
+                        "bad",
+                        "info",
+                        "warn",
+                        "neutral"
+                      ]
+                    },
+                    "segments": {
+                      "minItems": 2,
+                      "maxItems": 4,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "value": {
+                            "type": "number",
+                            "minimum": 0
+                          },
+                          "label": {
+                            "type": "string",
+                            "maxLength": 18
+                          },
+                          "tone": {
+                            "type": "string",
+                            "enum": [
+                              "good",
+                              "bad",
+                              "info",
+                              "warn",
+                              "neutral"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "value"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "label",
+                    "value"
+                  ]
+                }
+              },
+              "steps": {
+                "minItems": 1,
+                "maxItems": 8,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "at": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
+                    },
+                    "show": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                      }
+                    },
+                    "set": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "number",
+                        "minimum": 0
+                      }
+                    },
+                    "relabel": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 28
+                      }
+                    },
+                    "focus": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9][a-z0-9_-]*$"
+                      }
+                    },
+                    "line": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 48
+                    },
+                    "sfx": {
+                      "type": "string",
+                      "enum": [
+                        "cash",
+                        "clock",
+                        "notify",
+                        "alarm",
+                        "riser",
+                        "type",
+                        "pop",
+                        "whoosh",
+                        "error",
+                        "success",
+                        "impact",
+                        "spike",
+                        "tick"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "type",
+              "narration",
+              "steps"
             ]
           },
           {

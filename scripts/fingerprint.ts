@@ -15,7 +15,7 @@ type Raw = Record<string, any>;
 const SCENE_LETTER: Record<string, string> = {
   title: 'T', callout: 'C', board: 'B', flow: 'F', code: 'K', list: 'L',
   compare: 'X', summary: 'S', chart: 'H', figure: 'G', sequence: 'Q', shot: 'P',
-  puzzle: 'Z', reveal: 'R', score: 'O',
+  puzzle: 'Z', reveal: 'R', score: 'O', proof: 'Y',
 };
 const SHAPES = ['progressive', 'post-mortem', 'request-journey', 'a-vs-b', 'numbers-first', 'code-first', 'news-report', 'daily-puzzle'];
 const HOOKS = ['interview-question', 'incident', 'surprising-number', 'broken-thing', 'headline', 'challenge'];
@@ -68,8 +68,8 @@ function shortPattern(spec: Raw, visuals: string[]): string {
   if (puzzles.length) {
     if (puzzles.some((s: Raw) => s.tomorrow)) return 'teaser';
     if (puzzles.some((s: Raw) => s.claim)) return 'spot-the-mistake';
-    if (puzzles.length >= 2) return 'levels';
     if (puzzles.some((s: Raw) => s.choices)) return 'choices';
+    if (puzzles.length >= 2) return 'levels';
   }
   if (types.includes('sequence')) return 'timeline';
   if (types.includes('code')) return 'code';

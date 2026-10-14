@@ -100,6 +100,11 @@ function onScreen(s: TimedScene, label: (id: string) => string): string[] {
         `answer: **${s.answer}**${s.correct !== undefined ? ` (choice ${'ABCD'[s.correct]})` : ''}${s.verdict ? ` · the claim was ${s.verdict}` : ''}`,
         ...s.why.map((w, i) => `${at(i)} ${plain(w.text)}`),
       ];
+    case 'proof':
+      return [
+        ...s.bars.map((b) => `bar "${b.label}": ${s.prefix}${b.value}${s.suffix}${b.segments ? ` = ${b.segments.map((g) => `${g.label ?? ''} ${s.prefix}${g.value}${s.suffix}`.trim()).join(' + ')}` : ''}`),
+        ...s.steps.map((st, i) => `${at(i)} “${st.at ?? '…'}” → ${[st.show?.length ? `shows ${st.show.join(', ')}` : '', st.set ? Object.entries(st.set).map(([k, v]) => `${k} → ${s.prefix}${v}${s.suffix}`).join(', ') : '', st.focus ? `focus ${st.focus.join(', ') || 'off'}` : '', st.line ? `writes "${plain(st.line)}"` : ''].filter(Boolean).join('; ') || '—'}`),
+      ];
     case 'score':
       return [...(s.levels?.length && s.card ? [`scorecard: ${s.levels.join(', ')}`] : []), `CTA: ${plain(s.cta)}`, ...(s.next ? [`next: ${s.next}`] : [])];
     case 'sources':

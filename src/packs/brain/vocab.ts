@@ -41,12 +41,12 @@ export const DEFAULT_STATE: Partial<Record<Name, string>> = {};
 export const EPISODE_FORMATS = ['levels', 'spot-the-mistake', 'answer-fast', 'answer-tomorrow', 'reveal-levels', 'hard'] as const;
 export type EpisodeFormat = (typeof EPISODE_FORMATS)[number];
 export const EPISODE_CYCLE: {format: EpisodeFormat; theme: 'light' | 'dark' | 'neon'; label: string; how: string}[] = [
-  {format: 'levels', theme: 'light', label: '3 levels', how: 'Three puzzles easy → medium → hard (pause), each followed by its reveal, then a score scene with the scorecard.'},
-  {format: 'spot-the-mistake', theme: 'dark', label: 'Spot the mistake', how: 'One puzzle with a claim to judge (an AI claim only from a real log with claim.source), a reveal with verdict, a score scene with card: false.'},
-  {format: 'answer-fast', theme: 'neon', label: 'Answer fast', how: 'One trick question with 2–4 choices (a bias, a classic trap), a reveal with correct and the bias named in why, a score scene with card: false.'},
+  {format: 'levels', theme: 'light', label: '3 levels', how: 'Three sequences easy → medium → hard (pause), each followed by its reveal with "ops" arrows (+4, ×2…), then the scorecard.'},
+  {format: 'spot-the-mistake', theme: 'dark', label: 'Spot the mistake', how: 'Three claims to judge, easy → medium → hard (at least one is RIGHT, so guessing "wrong" never wins), each with a reveal (verdict) and a proof scene for medium and hard, then the scorecard. An AI claim only from a real log with claim.source.'},
+  {format: 'answer-fast', theme: 'neon', label: 'Answer fast', how: 'Three trick questions with 3 choices each (the intuitive wrong answer is always one of them), short timers (3–5 s), easy → medium → hard, each with a reveal (correct) and a proof scene for medium and hard, then the scorecard.'},
   {format: 'answer-tomorrow', theme: 'dark', label: 'Answer tomorrow', how: 'One puzzle with "tomorrow": true and no reveal, the narration says the answer comes in the next episode, then a score scene (card: false) asking for guesses.'},
   {format: 'reveal-levels', theme: 'light', label: "Yesterday's answer + 3 levels", how: "Opens with a reveal of the previous episode's puzzle (copy its question/sequence/choices into the reveal), then the 3-levels structure."},
-  {format: 'spot-the-mistake', theme: 'dark', label: 'Spot the mistake', how: 'As slot 2, on another kind of trap (percentages, units, logic, a misleading chart).'},
-  {format: 'hard', theme: 'neon', label: 'Hard puzzle of the week', how: 'One hard puzzle with "pause": true and "think": 2, a reveal with up to 3 lines of why, a score scene with the 3-point scorecard.'},
+  {format: 'spot-the-mistake', theme: 'dark', label: 'Spot the mistake', how: 'As slot 2, three claims on another kind of trap (units, probability, logic, a misleading chart).'},
+  {format: 'hard', theme: 'neon', label: 'Hard puzzle of the week', how: 'One hard puzzle with "pause": true and "think": 2, a reveal and a proof scene that works it out step by step, a score scene with the 3-point scorecard.'},
 ];
 export const cycleSlot = (episode: number) => EPISODE_CYCLE[(((episode - 1) % EPISODE_CYCLE.length) + EPISODE_CYCLE.length) % EPISODE_CYCLE.length];
