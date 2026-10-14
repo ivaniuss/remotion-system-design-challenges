@@ -302,7 +302,7 @@ const Bubble: React.FC<{items: React.ReactNode[]; groups: Group[]; gi: number; t
           alignContent: 'center',
           fontFamily: FONT.sans,
           fontWeight: 900,
-          fontSize: Math.round(frame.font.caption * 0.86),
+          fontSize: Math.round(frame.font.caption * 0.8),
           lineHeight: 1.16,
           textAlign: 'center',
         }}

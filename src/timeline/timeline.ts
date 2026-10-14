@@ -149,7 +149,7 @@ export function buildTimeline(spec: VideoSpec, speech: Speech, opts: TimelineOpt
       Object.entries(spec.media ?? {}).map(([id, m]) => [id, {...m, src: opts.media?.[id]?.src ?? null, kind: opts.media?.[id]?.kind ?? null}]),
     ),
     news: spec.news ?? null,
-    host: spec.host ?? null,
+    host: spec.host === false ? null : (spec.host ?? (spec.pack === 'brain' ? {character: 'pato'} : null)),
     scenes,
   };
   return {timeline, warnings};

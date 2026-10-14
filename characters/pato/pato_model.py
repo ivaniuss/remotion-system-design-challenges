@@ -81,7 +81,8 @@ def build(seed=7):
         brillo=_mat("Brillo", (1, 1, 1), rough=0.2),
         rubor=_mat("Rubor", (1.0, 0.45, 0.30), rough=0.8, sss=0.2),
         pelo=_mat("Pelo", (0.10, 0.05, 0.022), rough=0.55, sheen=0.25),
-        mecha=_mat("Mechas", (0.90, 0.68, 0.40), rough=0.55, sheen=0.25),
+        # a second, slightly warmer brown mixed in at random: depth, not highlights
+        mecha=_mat("Pelo2", (0.16, 0.08, 0.032), rough=0.5, sheen=0.25),
         pata=_mat("Patas", (1.00, 0.45, 0.10), rough=0.5),
     )
     # the eye highlights show even where no light hits them
@@ -224,15 +225,14 @@ def build(seed=7):
         elif a < 70:  phi = 84 + (a - 30) * 0.6
         elif a < 120: phi = 112
         else:         phi = 118
-        rubio = -120 < th < -35 or th < -150
-        plan.append((th, phi, random.uniform(0.11, 0.15), M["mecha"] if rubio else M["pelo"]))
+        plan.append((th, phi, random.uniform(0.11, 0.15), M["mecha"] if random.random() < 0.3 else M["pelo"]))
     for th in range(-153, 181, 22):
-        plan.append((th, 60 + random.uniform(0, 12), 0.13, M["mecha"] if -110 < th < -20 else M["pelo"]))
+        plan.append((th, 60 + random.uniform(0, 12), 0.13, M["mecha"] if random.random() < 0.3 else M["pelo"]))
     for th in range(-35, 40, 10):
-        plan.append((th, 74 + random.uniform(-2, 2), 0.12, M["mecha"] if th < -20 else M["pelo"]))
+        plan.append((th, 74 + random.uniform(-2, 2), 0.12, M["mecha"] if random.random() < 0.3 else M["pelo"]))
     for i, (th, phi, w, m) in enumerate(plan):
         mechon(f"Mechon_{i:02d}", th, phi, w, m)
-    strand("Remolino", [surf(0, 10, 1.05), surf(-20, 5, 1.25), surf(-60, 20, 1.40)], [1, 0.8, 0.1], 0.07, M["mecha"])
+    strand("Remolino", [surf(0, 10, 1.05), surf(-20, 5, 1.25), surf(-60, 20, 1.40)], [1, 0.8, 0.1], 0.07, M["pelo"])
 
     # ------------------------------------------------ rig
     arm_d = bpy.data.armatures.new("Rig")

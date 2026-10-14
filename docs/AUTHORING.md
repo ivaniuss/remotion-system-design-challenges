@@ -766,7 +766,8 @@ and shows a trophy).
 ### `host` — an animated presenter in a corner
 
 `"host": {"character": "pato"}` at the top of the spec puts the duck presenter in a corner
-of the video, like the old Office assistant. Optional `"side": "left" | "right"` (default:
+of the video, like the old Office assistant. **Every `brain` video has it by default**;
+`"host": false` turns it off, and any other pack turns it on with the line above. Optional `"side": "left" | "right"` (default:
 left in 9:16, because the right edge of a Short has the like/comment buttons; right in 16:9).
 
 - **It acts out the video by itself** (`src/host/track.ts`): `puzzle` → points at the question
@@ -775,9 +776,10 @@ left in 9:16, because the right edge of a Short has the like/comment buttons; ri
   then talks; `proof` → points at the working; `score` → celebrates and waves; any other
   scene → talks while the voice talks; silence → `idle` (breathing, blinking).
 - **Lip sync** comes from the word timings: the beak opens and closes inside each word.
-- **Room for it:** in 9:16 the content area ends at y 1250 and the captions become the host's
-  speech bubble (bottom-left, above the band the Shorts UI covers); in 16:9 the content area
-  is 1430 px wide and the host stands bottom-right. Check the stills: a scene that was tight
+- **Room for it:** in 9:16 the content area is x 60–930, y 350–1250 and the captions become
+  the host's speech bubble (bottom-left, above the band the Shorts UI covers; nothing goes
+  under the like/comment/share column on the right edge); in 16:9 the content area is
+  1430 px wide and the host stands bottom-right. Check the stills: a scene that was tight
   before (a long `list`, a big `board`) may need fewer lines with a host.
 - **Per scene:** `"host": ["talk"]` uses that clip for the whole scene; `"host": ["point",
   "think"]` uses the first while the voice talks and the second in the silence after it.

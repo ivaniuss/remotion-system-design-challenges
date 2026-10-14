@@ -5313,23 +5313,31 @@
       ]
     },
     "host": {
-      "type": "object",
-      "properties": {
-        "character": {
-          "default": "pato",
-          "type": "string",
-          "enum": [
-            "pato"
-          ]
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "character": {
+              "default": "pato",
+              "type": "string",
+              "enum": [
+                "pato"
+              ]
+            },
+            "side": {
+              "type": "string",
+              "enum": [
+                "left",
+                "right"
+              ]
+            }
+          }
         },
-        "side": {
-          "type": "string",
-          "enum": [
-            "left",
-            "right"
-          ]
+        {
+          "type": "boolean",
+          "const": false
         }
-      }
+      ]
     }
   },
   "required": [

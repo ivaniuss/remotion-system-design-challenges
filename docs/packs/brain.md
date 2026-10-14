@@ -115,11 +115,11 @@ score question excepted).
 
 ## 5. The host
 
-Episodes can have the duck presenter (`"host": {"character": "pato"}`; reference:
-`docs/AUTHORING.md` → "host"). It plays the game with the viewer: points at the question,
+Every episode has the duck presenter by default (no field needed; `"host": false` turns it
+off; reference: `docs/AUTHORING.md` → "host"). It plays the game with the viewer: points at the question,
 thinks during the countdown (looks suspicious in spot-the-mistake rounds), celebrates or is
 surprised at the reveal and waves at the score. In 9:16 the captions become its speech
-bubble. It is the channel's face, so keep it on every episode once you start using it.
+bubble. It is the channel's face: keep it on every episode.
 
 ## 5b. Icons
 

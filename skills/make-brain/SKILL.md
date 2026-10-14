@@ -44,8 +44,8 @@ Talk to the user in Spanish. Narration and on-screen text in English (the channe
 `videos/brain/<id>.json` with `"pack": "brain"`, the format's theme, `"shape": "daily-puzzle"`,
 `"hook": "challenge"`, `notes` (verification + sources), `publish` (titles, description,
 `comment` = the CTA question, hashtags), `thumbnail` (2–6 words, a `number` sticker, brain
-icons) and `"host": {"character": "pato"}` (the duck presenter; it acts out each scene by
-itself, see `docs/AUTHORING.md` → "host"). Copy the closest example in `videos/brain/`.
+icons). The duck presenter is on by default in this pack (it acts out each scene by itself;
+`docs/AUTHORING.md` → "host"): look at it in the stills, nothing to write. Copy the closest example in `videos/brain/`.
 
 ## 4. Check and deliver
 

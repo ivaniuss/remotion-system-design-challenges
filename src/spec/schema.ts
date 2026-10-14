@@ -780,7 +780,8 @@ export const VideoSpec = z.object({
   // assistant: it talks with the voice (lip sync from the word timings), points at the
   // puzzle, thinks during the countdown, reacts to the answer and waves at the end.
   // In 9:16 the captions become its speech bubble. See docs/AUTHORING.md → "Host".
-  host: Host.optional(),
+  // On by default in the `brain` pack (the duck); `false` turns it off.
+  host: z.union([Host, z.literal(false)]).optional(),
 });
 
 export type VideoSpec = z.output<typeof VideoSpec>;

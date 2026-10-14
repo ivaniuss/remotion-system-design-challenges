@@ -46,17 +46,20 @@ const HORIZONTAL: Frame = {
   font: {h1: 104, h2: 58, body: 38, small: 28, caption: 46},
 };
 
-// With a host, the content area makes room for it. 9:16: the host stands bottom-left (the
-// right edge of a Short has the like/comment buttons) and the captions become its speech
-// bubble, above the band the Shorts UI covers. 16:9: bottom-right, the content narrower.
+// With a host, the content area makes room for it. 9:16: the host stands bottom-left and
+// the captions become its speech bubble, above the band the Shorts UI covers; content and
+// bubble stop at x 930, clear of the like/comment/share column that TikTok, Shorts and
+// Reels draw down the right edge. 16:9: bottom-right, the content narrower.
 function withHost(f: Frame, side?: 'left' | 'right'): Frame {
   if (f.format === 'vertical') {
     const size = 460;
     const left = side !== 'right';
     const x = left ? 10 : f.width - 10 - size;
     const y = 1572 - Math.round(size * 0.905); // feet just above the covered band
-    const bubble = left ? {x: x + size - 60, y: 1290, w: f.width - (x + size - 60) - 36, h: 250} : {x: 36, y: 1290, w: x + 60 - 36, h: 250};
-    return {...f, content: {...f.content, h: 900}, captions: bubble, host: {x, y, size, mirror: left, bubble}};
+    const rail = 930; // right edge of the area the platform buttons leave free
+    const bubble = left ? {x: x + size - 60, y: 1290, w: rail - (x + size - 60), h: 250} : {x: 60, y: 1290, w: x + 60 - 60, h: 250};
+    const content = {x: 60, y: f.content.y, w: rail - 60, h: 900};
+    return {...f, content, captions: bubble, host: {x, y, size, mirror: left, bubble}};
   }
   const size = 440;
   const right = side !== 'left';
