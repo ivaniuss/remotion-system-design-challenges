@@ -147,10 +147,11 @@ const NewsWipe: React.FC<{local: number; frame: Frame}> = ({local, frame}) => {
   return <div style={{position: 'absolute', left: x, top: -frame.height * 0.2, width: W * 0.45, height: frame.height * 1.4, background: NEWS.red, transform: 'skewX(-14deg)', opacity: 0.92}} />;
 };
 
-const Header: React.FC<{title: string; t: number; frame: Frame; theme: Theme}> = ({title, t, frame, theme}) => {
+const Header: React.FC<{title: string; t: number; frame: Frame; theme: Theme; first?: boolean}> = ({title, t, frame, theme, first}) => {
   const h = frame.header;
-  const e = enter(t, 0.05, 0.4, 20);
-  const bar = easeOut(clamp01((t - 0.2) / 0.5));
+  // The first scene is the hook: complete on frame 0 (a puzzle's episode number included).
+  const e = first ? {opacity: 1, dy: 0} : enter(t, 0.05, 0.4, 20);
+  const bar = first ? 1 : easeOut(clamp01((t - 0.2) / 0.5));
   const vertical = frame.format === 'vertical';
   const size = vertical ? (title.length > 30 ? 52 : 62) : 56;
   return (
@@ -373,7 +374,7 @@ export const VideoFrame: React.FC<{tl: Timeline; t: number; frame: Frame; words?
       {danger.flash > 0 && <div style={{position: 'absolute', inset: 0, background: theme.colors.red.stroke, opacity: danger.flash}} />}
       <div style={{position: 'absolute', inset: 0, opacity: inK * outK, transform: film ? undefined : isNews ? `translate(${shake.x}px, ${shake.y}px)` : `translate(${shake.x}px, ${(1 - inK) * 30 + shake.y}px)`}}>
         <SceneBody scene={scene} t={local} frame={frame} theme={theme} lang={tl.lang} cta={tl.cta} media={tl.media} fps={tl.fps} />
-        {title && (isNews ? <NewsHeader title={title} t={local} frame={frame} /> : <Header title={title} t={local} frame={frame} theme={theme} />)}
+        {title && (isNews ? <NewsHeader title={title} t={local} frame={frame} /> : <Header title={title} t={local} frame={frame} theme={theme} first={scene.index === 0} />)}
       </div>
       {isNews && <Progress tl={tl} t={t} frame={frame} theme={theme} />}
       {isNews && <NewsBug brand={tl.news?.brand ?? 'NEWS'} date={tl.news?.date} frame={frame} />}

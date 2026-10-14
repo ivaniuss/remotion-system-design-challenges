@@ -250,6 +250,12 @@ function checkPuzzles(spec: VideoSpec, errors: string[], warnings: string[]) {
   const PUZZLE_TYPES = ['puzzle', 'reveal', 'score'];
   if (spec.pack !== 'brain' && scenes.some((s) => PUZZLE_TYPES.includes(s.type)))
     warnings.push(`puzzle/reveal/score scenes are made for "pack": "brain" (docs/packs/brain.md).`);
+  // Every episode shows its number from the first frame ("Daily Brain #014…"), so viewers know
+  // it is a series and which one they are on.
+  const ep = /^brain-(\d{3})-/.exec(spec.id);
+  const firstPuzzle = scenes.find((s) => s.type === 'puzzle');
+  if (spec.pack === 'brain' && ep && firstPuzzle && firstPuzzle.type === 'puzzle' && !(firstPuzzle.title ?? '').includes(`#${ep[1]}`))
+    warnings.push(`the first puzzle's title should carry the episode number, e.g. "Daily Brain #${ep[1]}" or "Daily Brain #${ep[1]}: <format>" (it is the header on frame 0).`);
   const checkParts = (where: string, p: {sequence?: string[]; claim?: {who: string; source?: string}}) => {
     if (p.sequence) {
       const q = p.sequence.filter((x) => x.trim() === '?').length;

@@ -15,9 +15,13 @@
   "scenes": [
     {
       "type": "puzzle",
-      "title": "Answer fast",
+      "title": "Daily Brain #003: Answer fast",
       "question": "A bat and a ball cost *$1.10*. The bat costs *$1.00 more* than the ball. How much is the ball?",
-      "choices": ["10¢", "5¢", "1¢"],
+      "choices": [
+        "10¢",
+        "5¢",
+        "1¢"
+      ],
       "think": 5,
       "narration": "Answer fast. A bat and a ball cost one dollar ten. The bat costs one dollar more than the ball. How much is the ball?"
     },
@@ -26,9 +30,18 @@
       "answer": "5¢",
       "correct": 1,
       "why": [
-        {"text": "5¢ + $1.05 = *$1.10*", "at": "five cents and"},
-        {"text": "10¢ → bat $1.10 → total *$1.20*", "at": "With ten cents"},
-        {"text": "Fast answers skip the check", "at": "skips the check"}
+        {
+          "text": "5¢ + $1.05 = *$1.10*",
+          "at": "five cents and"
+        },
+        {
+          "text": "10¢ → bat $1.10 → total *$1.20*",
+          "at": "With ten cents"
+        },
+        {
+          "text": "Fast answers skip the check",
+          "at": "skips the check"
+        }
       ],
       "narration": "Five cents. A ball of five cents and a bat of one oh five make one ten. With ten cents, the bat is one ten and the total one twenty. It's from the Cognitive Reflection Test: the first answer that pops up skips the check."
     },
@@ -41,16 +54,31 @@
     }
   ],
   "publish": {
-    "titles": ["The bat and ball question: 10¢ or 5¢?", "Your first answer to this is probably wrong"],
+    "titles": [
+      "The bat and ball question: 10¢ or 5¢?",
+      "Your first answer to this is probably wrong"
+    ],
     "description": "Daily Brain #003. A classic from the Cognitive Reflection Test (Frederick, 2005): a bat and a ball cost $1.10 and the bat costs $1.00 more. How much is the ball?",
     "comment": "Be honest: did you say 10¢ first?",
-    "hashtags": ["#puzzle", "#psychology", "#brainteaser", "#dailybrain"]
+    "hashtags": [
+      "#puzzle",
+      "#psychology",
+      "#brainteaser",
+      "#dailybrain"
+    ]
   },
   "thumbnail": {
     "text": "10¢ or *5¢*?",
     "kicker": "Answer fast",
     "number": "$1.10",
     "tone": "warn",
-    "icons": [{"icon": "brain"}, {"icon": "idea"}]
+    "icons": [
+      {
+        "icon": "brain"
+      },
+      {
+        "icon": "idea"
+      }
+    ]
   }
 }

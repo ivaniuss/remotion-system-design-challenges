@@ -67,6 +67,10 @@ with yesterday's `question` (and `sequence`/`choices`) written in it, then today
 
 ## 4. Writing
 
+- **The episode number is on screen from frame 0**: the first puzzle's `title` is
+  "Daily Brain #014" or "Daily Brain #014: Spot the mistake" (the reveal and score scenes keep
+  it). It tells viewers this is a series and which episode they are on; the validator warns
+  when it is missing.
 - **Question on screen = what the voice asks**, shorter if needed. Numbers in tiles, money and
   units with symbols ("$1.10", "10¢").
 - **Reveal**: the answer first ("Forty-two."), then 1–3 `why` lines on cue. The why is the

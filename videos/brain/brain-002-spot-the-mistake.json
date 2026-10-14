@@ -14,9 +14,12 @@
   "scenes": [
     {
       "type": "puzzle",
-      "title": "Spot the mistake",
+      "title": "Daily Brain #002: Spot the mistake",
       "question": "A shirt costs *$80* after a *20% discount*. What was the original price?",
-      "claim": {"who": "A common answer", "text": "$96. Just add the 20% back."},
+      "claim": {
+        "who": "A common answer",
+        "text": "$96. Just add the 20% back."
+      },
       "think": 6,
       "narration": "A shirt costs eighty dollars after a twenty percent discount. Someone says the original price was ninety-six. Right or wrong?"
     },
@@ -25,9 +28,18 @@
       "answer": "$100",
       "verdict": "wrong",
       "why": [
-        {"text": "$80 is *80%* of the original", "at": "eighty percent of"},
-        {"text": "80 ÷ 0.8 = *$100*", "at": "divided by"},
-        {"text": "+20% of $80 adds only $16", "at": "only adds sixteen"}
+        {
+          "text": "$80 is *80%* of the original",
+          "at": "eighty percent of"
+        },
+        {
+          "text": "80 ÷ 0.8 = *$100*",
+          "at": "divided by"
+        },
+        {
+          "text": "+20% of $80 adds only $16",
+          "at": "only adds sixteen"
+        }
       ],
       "narration": "Wrong. Eighty dollars is eighty percent of the original price. Eighty divided by zero point eight is one hundred. Adding twenty percent of eighty only adds sixteen."
     },
@@ -40,16 +52,29 @@
     }
   ],
   "publish": {
-    "titles": ["$80 after 20% off. Was it $96?", "The percentage trap almost everyone falls for"],
+    "titles": [
+      "$80 after 20% off. Was it $96?",
+      "The percentage trap almost everyone falls for"
+    ],
     "description": "Daily Brain #002. A shirt costs $80 after a 20% discount. Is the original price $96? Decide before the timer runs out.",
     "comment": "Did you spot the mistake before the timer?",
-    "hashtags": ["#puzzle", "#math", "#percentages", "#dailybrain"]
+    "hashtags": [
+      "#puzzle",
+      "#math",
+      "#percentages",
+      "#dailybrain"
+    ]
   },
   "thumbnail": {
     "text": "Was it *$96*?",
     "kicker": "Spot the mistake",
     "number": "-20%",
     "tone": "bad",
-    "icons": [{"icon": "puzzle", "status": "error"}]
+    "icons": [
+      {
+        "icon": "puzzle",
+        "status": "error"
+      }
+    ]
   }
 }
