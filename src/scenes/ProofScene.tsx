@@ -95,14 +95,20 @@ const Bar: React.FC<{
   const settled = Math.abs(state.value - state.target) < 1e-6;
   const text = `${prefix}${fmt(settled ? state.target : Math.round(state.value), settled)}${suffix}`;
   const textW = text.length * font * 0.62;
-  const outside = fw + textW + 18 <= width;
+  // Decided on the value the bar is heading to, so the label does not jump while it grows.
+  const outside = (width * state.target) / max + textW + 18 <= width;
   // Segments only while the bar is at the value they add up to.
   const segs = spec.segments && settled && Math.abs(state.target - spec.segments.reduce((a, s) => a + s.value, 0)) < 1e-6 ? spec.segments : null;
   const CYCLE = ['blue', 'orange', 'green', 'purple'] as const;
   return (
     <div style={{opacity: state.dim ? 0.32 * e.opacity : e.opacity, transform: `translateY(${e.dy}px)`, display: 'flex', flexDirection: 'column', gap: 8}}>
-      <div style={{fontWeight: 800, fontSize: font * 0.72, color: theme.textSoft, letterSpacing: 0.5}}>
-        <Rich text={state.label} accent={theme.accent} accentText={theme.accentText} />
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 16}}>
+        <div style={{fontWeight: 800, fontSize: font * 0.72, color: theme.textSoft, letterSpacing: 0.5}}>
+          <Rich text={state.label} accent={theme.accent} accentText={theme.accentText} />
+        </div>
+        {/* A bar too long for its value beside it carries the value above its right end, never
+            on top of the bar (where it would collide with the segment labels). */}
+        {!outside && <div style={{fontWeight: 900, fontSize: font, color: theme.text, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap', lineHeight: 1}}>{text}</div>}
       </div>
       <div style={{position: 'relative', width, height}}>
         <div style={{position: 'absolute', inset: 0, borderRadius: 14, background: theme.dots, opacity: 0.45}} />
@@ -123,23 +129,11 @@ const Bar: React.FC<{
         ) : (
           <div style={{position: 'absolute', left: 0, top: 0, height, width: fw, borderRadius: 14, background: fillOf(sw), border: fw > 8 ? `4px solid ${sw.stroke}` : 'none', boxSizing: 'border-box'}} />
         )}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            height,
-            display: 'flex',
-            alignItems: 'center',
-            ...(outside ? {left: fw + 14} : {right: width - fw + 14}),
-            fontWeight: 900,
-            fontSize: font,
-            color: outside ? theme.text : inkOn(sw),
-            fontVariantNumeric: 'tabular-nums',
-            whiteSpace: 'nowrap',
-          }}
-        >
-          {fw > 4 || outside ? text : ''}
-        </div>
+        {outside && (
+          <div style={{position: 'absolute', top: 0, height, left: fw + 14, display: 'flex', alignItems: 'center', fontWeight: 900, fontSize: font, color: theme.text, fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap'}}>
+            {text}
+          </div>
+        )}
       </div>
     </div>
   );

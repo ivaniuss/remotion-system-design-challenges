@@ -27,8 +27,14 @@ const spec = loadSpec(specFile);
 const config = loadConfig(process.cwd(), spec.pack);
 const publicPrefix = `generated/${spec.id}`;
 const outDir = path.join('public', publicPrefix);
-fs.rmSync(outDir, {recursive: true, force: true});
+// Start clean, but keep the voiced scenes: scripts/tts_edge.py reuses a scene whose text, voice
+// and rate did not change (fewer requests to the voice service, and a re-run after a 429
+// picks up where it stopped).
 fs.mkdirSync(outDir, {recursive: true});
+for (const f of fs.readdirSync(outDir)) {
+  if (/^scene-\d+\.(mp3|words\.json|mp3\.key)$/.test(f)) continue;
+  fs.rmSync(path.join(outDir, f), {recursive: true, force: true});
+}
 
 // 1. Voice
 const audioArg = opt('--audio');

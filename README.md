@@ -75,7 +75,7 @@ report, `skills/make-news/SKILL.md`), `make-film` (a documentary short,
 
 ```bash
 npm install
-pip install edge-tts            # optional: free, natural neural voices (en/es/pt)
+pip install -U "edge-tts>=7.3.1"  # optional: free, natural neural voices (en/es/pt); 7.3+ fixes the Oct 2026 403s
 
 npm run preview -- videos/tech/async-report-504.json              # review in the browser (no render)
 npm run make -- videos/tech/async-report-504.json --format both   # render 9:16 + 16:9 MP4s with voice
