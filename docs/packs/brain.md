@@ -94,7 +94,35 @@ scenes draw themselves.
 - [ ] `npm run validate` clean; `npm run stills` sheets looked at (both formats).
 - [ ] `publish.comment` is the question; `thumbnail` set (2–6 words, the number sticker).
 
-## 7. Long videos (later)
+## 7. The 30-day experiment: calendar and tuning
+
+**Weekly rotation** (so every format gets a fair number of episodes to compare on day 30):
+
+| Day | Format |
+| --- | --- |
+| Monday | 3 levels |
+| Tuesday | Spot the mistake |
+| Wednesday | Answer fast |
+| Thursday | Answer tomorrow (no reveal) |
+| Friday | Opens with Thursday's reveal, then a 3-levels puzzle |
+| Saturday | Spot the mistake |
+| Sunday | Hard puzzle of the week (`pause`) |
+
+**The timings and the comment ask are starting hypotheses, not measured best practice.** No
+reliable public data says how long a puzzle Short should hold or where to ask for comments.
+The defaults: the puzzle is on screen while the voice reads it (3–4 s) and then holds `think`
+seconds (easy 3, medium 5, hard `pause`); the comment question comes in the final `score`
+scene and in `publish.comment` (pin it). After two weeks, check in YouTube Studio:
+
+- **Retention curve**: a drop at the countdown or right at the reveal of the easy puzzle →
+  raise `think` to 4–5 s.
+- **Comments per 1,000 views** low → add a "Comment your answer ↓" tag during the countdown
+  (asking before the reveal, when viewers most want to commit to an answer).
+- **Comments like "too fast"** → same as the first point.
+- **3 levels too long** (drop between the second and third puzzle) → alternate weeks of 3
+  puzzles (~40 s) and 1 puzzle (~20 s).
+
+## 8. Long videos (later)
 
 Monthly compilations in 16:9 ("Daily Brain: October collection", 20–30 min): the same specs
 re-rendered horizontally (the engine does both formats), longer think holds (10–20 s), a running
