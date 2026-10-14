@@ -11,6 +11,10 @@ import * as brain from '../packs/brain/vocab';
 // To add a pack: src/packs/<name>/{vocab.ts,icons.tsx}, register it here and in
 // src/components/icons.tsx, and write docs/packs/<name>.md.
 export const PACKS = ['tech', 'science', 'news', 'brain'] as const;
+
+// Animated presenters (src/host/; sprites made in Blender from characters/<name>/).
+export {HOST_CLIPS} from '../host/types';
+export const HOST_CHARACTERS = ['pato'] as const;
 export type Pack = (typeof PACKS)[number];
 
 const BY_PACK = {tech, science, news, brain} as const;

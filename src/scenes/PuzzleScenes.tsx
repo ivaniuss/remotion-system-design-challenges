@@ -330,7 +330,7 @@ const Tag: React.FC<{text: string; theme: Theme; size: number; k: number; tone?:
 );
 
 // What sits next to (16:9) or under (9:16) the puzzle while the viewer thinks.
-const ThinkPanel: React.FC<{scene: SceneProps<'puzzle'>['scene']; t: number; theme: Theme; vertical: boolean; first: boolean}> = ({scene, t, theme, vertical, first}) => {
+const ThinkPanel: React.FC<{scene: SceneProps<'puzzle'>['scene']; t: number; theme: Theme; vertical: boolean; first: boolean; compact?: boolean}> = ({scene, t, theme, vertical, first, compact}) => {
   const win = thinkWindow(scene);
   const tag = vertical ? 40 : 38;
   const items: React.ReactNode[] = [];
@@ -344,7 +344,7 @@ const ThinkPanel: React.FC<{scene: SceneProps<'puzzle'>['scene']; t: number; the
     const e = first ? {opacity: 1, dy: 0} : enter(t, 0.3, 0.4, 20);
     items.push(
       <div key="c" style={{opacity: e.opacity, transform: `translateY(${e.dy}px)`}}>
-        <Countdown left={left} total={total} size={vertical ? 260 : 300} theme={theme} live={t >= win.start} />
+        <Countdown left={left} total={total} size={vertical ? (compact ? 200 : 260) : compact ? 250 : 300} theme={theme} live={t >= win.start} />
       </div>,
     );
   }
@@ -359,9 +359,12 @@ const ThinkPanel: React.FC<{scene: SceneProps<'puzzle'>['scene']; t: number; the
 const Layout: React.FC<{frame: Frame; children: React.ReactNode; side?: React.ReactNode; top?: React.ReactNode}> = ({frame, children, side, top}) => {
   const c = frame.content;
   const vertical = frame.format === 'vertical';
+  // A shorter content area (a host stands below it) tightens the gaps; `safe center` keeps
+  // anything that still overflows from sliding up under the header.
+  const tight = vertical && c.h < 1000;
   if (vertical || !side)
     return (
-      <div style={{position: 'absolute', left: c.x, top: c.y, width: c.w, height: c.h, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: vertical ? 44 : 30, fontFamily: FONT.sans}}>
+      <div style={{position: 'absolute', left: c.x, top: c.y, width: c.w, height: c.h, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'safe center', gap: vertical ? (tight ? 28 : 44) : 30, fontFamily: FONT.sans}}>
         {top}
         {children}
         {side}
@@ -386,7 +389,7 @@ export const PuzzleScene: React.FC<SceneProps<'puzzle'>> = ({scene, t, frame, th
   const width = vertical ? c.w - 40 : hasSide ? c.w - 470 - 70 : c.w - 200;
   const badge = scene.level ? <LevelBadge level={scene.level} theme={theme} size={vertical ? 34 : 32} scale={first ? 1 : pop(t, 0.05)} /> : null;
   return (
-    <Layout frame={frame} top={badge} side={hasSide ? <ThinkPanel scene={scene} t={t} theme={theme} vertical={vertical} first={first} /> : undefined}>
+    <Layout frame={frame} top={badge} side={hasSide ? <ThinkPanel scene={scene} t={t} theme={theme} vertical={vertical} first={first} compact={!!frame.host} /> : undefined}>
       <Board parts={scene} width={width} theme={theme} t={t} vertical={vertical} first={first} maxH={c.h} />
     </Layout>
   );

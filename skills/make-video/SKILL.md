@@ -199,6 +199,11 @@ Follow `docs/AUTHORING.md` and the pack guide exactly. The parts that matter mos
   that tell the story at a glance (A → B), and the sticker with the number. `stills`, `make`
   and `npm run thumbnail` write `out/<id>/<theme>.thumbnail.png` (1280×720) and
   `out/<id>/<theme>.cover.png` (1080×1920). Look at both before delivering.
+- **Host** (optional): `"host": {"character": "pato"}` adds the duck presenter in a corner;
+  it talks with the voice, points, thinks and reacts by itself, and in 9:16 the captions
+  become its speech bubble (`docs/AUTHORING.md` → "host"). It takes room from the content
+  area, so look at the stills for scenes that got tight. A scene can pick its clips with
+  `"host": ["talk"]` or `["point", "think"]`.
 
 ### Tech pack (`docs/packs/tech.md`)
 - **The hook is a real question about the system.** In the `progressive` shape it is an open

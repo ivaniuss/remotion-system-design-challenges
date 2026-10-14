@@ -11,7 +11,7 @@ export const Video: React.FC<Timeline & {format: Format}> = ({format, ...tl}) =>
   const frameNo = useCurrentFrame();
   const {fps} = useVideoConfig();
   const captions = format === 'vertical' ? tl.captions.vertical : tl.captions.horizontal;
-  const frame = frameFor(format, captions);
+  const frame = frameFor(format, captions, tl.host);
   const words = useMemo(() => globalWords(tl), [tl]);
   const sounds = useMemo(() => (tl.sfx === false ? [] : soundEvents(tl)), [tl]);
   const music = tl.music;

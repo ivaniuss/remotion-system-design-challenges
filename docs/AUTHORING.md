@@ -763,6 +763,33 @@ and shows a trophy).
  "narration": "Forty-two. The gaps grow by two, so next is plus twelve."}
 ```
 
+### `host` — an animated presenter in a corner
+
+`"host": {"character": "pato"}` at the top of the spec puts the duck presenter in a corner
+of the video, like the old Office assistant. Optional `"side": "left" | "right"` (default:
+left in 9:16, because the right edge of a Short has the like/comment buttons; right in 16:9).
+
+- **It acts out the video by itself** (`src/host/track.ts`): `puzzle` → points at the question
+  while it is read, then `think` during the countdown (`suspicious` when the round judges a
+  `claim`); `reveal` → `celebrate` (or `surprised` when the claim's `verdict` is `wrong`),
+  then talks; `proof` → points at the working; `score` → celebrates and waves; any other
+  scene → talks while the voice talks; silence → `idle` (breathing, blinking).
+- **Lip sync** comes from the word timings: the beak opens and closes inside each word.
+- **Room for it:** in 9:16 the content area ends at y 1250 and the captions become the host's
+  speech bubble (bottom-left, above the band the Shorts UI covers); in 16:9 the content area
+  is 1430 px wide and the host stands bottom-right. Check the stills: a scene that was tight
+  before (a long `list`, a big `board`) may need fewer lines with a host.
+- **Per scene:** `"host": ["talk"]` uses that clip for the whole scene; `"host": ["point",
+  "think"]` uses the first while the voice talks and the second in the silence after it.
+  Clips: `idle`, `talk`, `point`, `think`, `suspicious`, `surprised`, `celebrate`, `wave`.
+- The sprites are rendered in Blender from `characters/pato/` (model, rig, clips): see its
+  README to change the character or add a clip.
+
+```json
+{"id": "brain-014-hard-week", "pack": "brain", "theme": "neon", "host": {"character": "pato"},
+ "scenes": [{"type": "puzzle", "host": ["talk", "think"], "…": "…"}]}
+```
+
 ### `publish` and `chapter` — what to paste into YouTube
 Every `make` / `preview` also writes `out/<id>/youtube.md`: title options, and a
 description ready to copy with the chapters timed from the real voice.

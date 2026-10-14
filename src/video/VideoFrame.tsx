@@ -21,6 +21,7 @@ import {BoardLayer} from '../scenes/BoardLayer';
 import {isBoard} from '../board/board';
 import {clamp01, easeInOut, easeOut, enter} from './anim';
 import {dangerAt, dangerMoments} from './effects';
+import {Host} from '../host/Host';
 
 // The whole picture at absolute time t. Pure (no hooks), so the SSR check and the
 // Remotion composition render exactly the same thing.
@@ -230,6 +231,7 @@ const Captions: React.FC<{words: Word[]; t: number; frame: Frame; theme: Theme}>
     );
   }
   const band = theme.name === 'news';
+  if (frame.host?.bubble) return <Bubble items={items} groups={groups} gi={gi} t={t} frame={frame} theme={theme} />;
   return (
     <div
       style={{
@@ -250,6 +252,72 @@ const Captions: React.FC<{words: Word[]; t: number; frame: Frame; theme: Theme}>
       }}
     >
       {band ? <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center', background: NEWS.band, borderRadius: 14, padding: '6px 10px'}}>{items}</div> : items}
+    </div>
+  );
+};
+
+// With a host (9:16), the captions are its speech bubble: a card with a tail pointing at the
+// host's beak. It pops in when the voice starts after a silence and stays up across the
+// groups of one sentence run.
+const Bubble: React.FC<{items: React.ReactNode[]; groups: Group[]; gi: number; t: number; frame: Frame; theme: Theme}> = ({items, groups, gi, t, frame, theme}) => {
+  const box = frame.captions;
+  const host = frame.host!;
+  let run = gi;
+  while (run > 0 && groups[run].start - groups[run - 1].end < 0.7) run--;
+  const k = easeOut(clamp01((t - groups[run].start + 0.08) / 0.18));
+  const left = host.mirror; // host on the left: tail on the bubble's left side
+  const tailY = host.y + host.size * 0.47 - box.y; // the host's beak height
+  const tail = 34;
+  const border = theme.accent;
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: box.x,
+        top: box.y,
+        width: box.w,
+        height: box.h,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        opacity: k,
+        transform: `scale(${0.88 + 0.12 * k})`,
+        transformOrigin: `${left ? 0 : 100}% ${(tailY / box.h) * 100}%`,
+      }}
+    >
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxHeight: '100%',
+          boxSizing: 'border-box',
+          background: theme.surface,
+          border: `4px solid ${border}`,
+          borderRadius: 32,
+          padding: '18px 22px',
+          boxShadow: theme.glow ? `0 0 28px ${border}55` : `8px 8px 0 ${theme.shadow}`,
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          alignContent: 'center',
+          fontFamily: FONT.sans,
+          fontWeight: 900,
+          fontSize: Math.round(frame.font.caption * 0.86),
+          lineHeight: 1.16,
+          textAlign: 'center',
+        }}
+      >
+        <svg width={tail + 6} height={tail * 1.4} style={{position: 'absolute', top: Math.max(10, Math.min(box.h - tail * 1.4 - 10, tailY - tail * 0.7)), ...(left ? {left: -tail - 2} : {right: -tail - 2}), overflow: 'visible'}}>
+          <path
+            d={left ? `M ${tail + 6} 4 L 0 ${tail * 0.75} L ${tail + 6} ${tail * 1.3}` : `M 0 4 L ${tail + 6} ${tail * 0.75} L 0 ${tail * 1.3}`}
+            fill={theme.surface}
+            stroke={border}
+            strokeWidth={4}
+            strokeLinejoin="round"
+          />
+        </svg>
+        {items}
+      </div>
     </div>
   );
 };
@@ -383,6 +451,7 @@ export const VideoFrame: React.FC<{tl: Timeline; t: number; frame: Frame; words?
       {isNews && <NewsBug brand={tl.news?.brand ?? 'NEWS'} date={tl.news?.date} frame={frame} />}
       {ticker && <NewsTicker items={ticker} brand={tl.news?.brand ?? 'NEWS'} t={t} frame={frame} />}
       {isNews && scene.index > 0 && <NewsWipe local={local} frame={frame} />}
+      {tl.host && frame.host && <Host tl={tl} t={t} frame={frame} words={words ?? globalWords(tl)} />}
       {showCaptions && (film ? <Subtitles words={words ?? globalWords(tl)} t={t} frame={frame} /> : <Captions words={words ?? globalWords(tl)} t={t} frame={frame} theme={theme} />)}
     </div>
   );

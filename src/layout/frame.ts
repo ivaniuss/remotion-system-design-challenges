@@ -13,6 +13,10 @@ export type Frame = {
   header: Box; // scene title
   content: Box; // main area
   captions: Box;
+  // The host (an animated presenter in a corner), when the video has one: its square sprite
+  // box, whether it is mirrored to face the content, and the speech bubble that holds the
+  // captions next to it (9:16).
+  host?: {x: number; y: number; size: number; mirror: boolean; bubble?: Box};
   // Base font sizes; scenes scale from these.
   font: {h1: number; h2: number; body: number; small: number; caption: number};
 };
@@ -42,10 +46,32 @@ const HORIZONTAL: Frame = {
   font: {h1: 104, h2: 58, body: 38, small: 28, caption: 46},
 };
 
+// With a host, the content area makes room for it. 9:16: the host stands bottom-left (the
+// right edge of a Short has the like/comment buttons) and the captions become its speech
+// bubble, above the band the Shorts UI covers. 16:9: bottom-right, the content narrower.
+function withHost(f: Frame, side?: 'left' | 'right'): Frame {
+  if (f.format === 'vertical') {
+    const size = 460;
+    const left = side !== 'right';
+    const x = left ? 10 : f.width - 10 - size;
+    const y = 1572 - Math.round(size * 0.905); // feet just above the covered band
+    const bubble = left ? {x: x + size - 60, y: 1290, w: f.width - (x + size - 60) - 36, h: 250} : {x: 36, y: 1290, w: x + 60 - 36, h: 250};
+    return {...f, content: {...f.content, h: 900}, captions: bubble, host: {x, y, size, mirror: left, bubble}};
+  }
+  const size = 440;
+  const right = side !== 'left';
+  const x = right ? f.width - size + 10 : -10;
+  const y = f.height - 18 - Math.round(size * 0.905);
+  const content = right ? {...f.content, w: 1430} : {...f.content, x: f.content.x + 270, w: 1430};
+  const captions = right ? {...f.captions, x: 120, w: 1400} : {...f.captions, x: 400, w: 1400};
+  return {...f, content, captions, host: {x, y, size, mirror: !right}};
+}
+
 // When captions are off, the content area grows into their space.
-export function frameFor(format: Format, captions: boolean): Frame {
-  const f = format === 'vertical' ? VERTICAL : HORIZONTAL;
-  if (captions) return f;
+export function frameFor(format: Format, captions: boolean, host?: {side?: 'left' | 'right'} | null): Frame {
+  const base = format === 'vertical' ? VERTICAL : HORIZONTAL;
+  const f = host ? withHost(base, host.side) : base;
+  if (captions || (host && format === 'vertical')) return f;
   const grow = format === 'vertical' ? 80 : 130;
   return {...f, content: {...f.content, h: f.content.h + grow}};
 }

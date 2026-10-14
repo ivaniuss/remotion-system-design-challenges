@@ -5,3 +5,7 @@ public/generated
 *.log
 .env
 src/generated
+characters/*/frames
+characters/*/renders
+characters/*/*.blend
+characters/*/__pycache__

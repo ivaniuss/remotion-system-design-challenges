@@ -1,4 +1,4 @@
-import type {BoardSpec, MediaItem, PuzzleScene, Scene, ThumbnailSpec, VideoSpec} from '../spec/schema';
+import type {BoardSpec, HostSpec, MediaItem, PuzzleScene, Scene, ThumbnailSpec, VideoSpec} from '../spec/schema';
 import type {PuzzleLevel, ThemeName} from '../spec/vocab';
 import {cuePhrases, resolveCues} from './cues';
 import {estimateWords, round, Word} from './words';
@@ -41,6 +41,7 @@ export type Timeline = {
   thumbnail?: ThumbnailSpec | null; // the designed still (optional in older timelines)
   media?: Record<string, ResolvedMedia>; // footage and photos (news), resolved by `make`
   news?: NewsChrome | null; // the broadcast look's bug and ticker
+  host?: HostSpec | null; // the animated presenter in a corner (src/host/)
   scenes: TimedScene[];
 };
 
@@ -148,6 +149,7 @@ export function buildTimeline(spec: VideoSpec, speech: Speech, opts: TimelineOpt
       Object.entries(spec.media ?? {}).map(([id, m]) => [id, {...m, src: opts.media?.[id]?.src ?? null, kind: opts.media?.[id]?.kind ?? null}]),
     ),
     news: spec.news ?? null,
+    host: spec.host ?? null,
     scenes,
   };
   return {timeline, warnings};

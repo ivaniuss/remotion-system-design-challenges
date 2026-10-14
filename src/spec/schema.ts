@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {CAMERA_MOVES, CODE_LANGUAGES, COLORS, CROWD_DENSITY, FIGURES, HOOKS, ICONS, LANGS, PACKS, PUZZLE_LEVELS, SFX, SHAPES, STATUSES, THEME_NAMES, TONES, WORLDS} from './vocab';
+import {CAMERA_MOVES, CODE_LANGUAGES, COLORS, CROWD_DENSITY, FIGURES, HOOKS, HOST_CHARACTERS, HOST_CLIPS, ICONS, LANGS, PACKS, PUZZLE_LEVELS, SFX, SHAPES, STATUSES, THEME_NAMES, TONES, WORLDS} from './vocab';
 
 // The video spec is the ONLY thing an LLM writes. Everything visual (layout, camera,
 // timing, animation) is derived from it by the engine, so the spec stays small and
@@ -22,6 +22,10 @@ const Narration = z.string().min(1).max(900);
 // Starts a YouTube chapter at this scene (e.g. "The queue"). See out/<id>/youtube.md.
 const Chapter = z.string().min(1).max(60).optional();
 const Title = z.string().min(1).max(60);
+// The host's clips for this scene, instead of the automatic choice (src/host/track.ts):
+// ["talk"] for the whole scene, or ["point", "think"]: the first while the voice talks,
+// the second in the silence after it. Only used when the video has a `host`.
+const HostPick = z.array(z.enum(HOST_CLIPS)).min(1).max(2).optional();
 
 // Text fields accept *emphasis* with asterisks, rendered in the accent color.
 export const Item = z.object({
@@ -45,6 +49,7 @@ export const TitleScene = z.object({
   type: z.literal('title'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   tag: z.string().max(32).optional(),
   heading: z.string().min(1).max(90),
   subheading: z.string().max(120).optional(),
@@ -58,6 +63,7 @@ export const CalloutScene = z.object({
   type: z.literal('callout'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   text: z.string().min(1).max(14),
   caption: z.string().max(80).optional(),
@@ -73,6 +79,7 @@ export const ListScene = z.object({
   type: z.literal('list'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   numbered: z.boolean().default(true),
   items: z.array(Item).min(1).max(6),
@@ -88,6 +95,7 @@ export const CompareScene = z.object({
   type: z.literal('compare'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   left: Panel,
   right: Panel,
@@ -104,6 +112,7 @@ export const CodeScene = z.object({
   type: z.literal('code'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   filename: z.string().max(40).optional(),
   language: z.enum(CODE_LANGUAGES).default('ts'),
@@ -194,6 +203,7 @@ export const FlowScene = z.object({
   type: z.literal('flow'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   nodes: z.array(FlowNode).min(1).max(9),
   edges: z.array(FlowEdge).max(14).default([]),
@@ -221,6 +231,7 @@ export const BoardScene = z.object({
   type: z.literal('board'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   steps: z.array(BoardStep).max(14).default([]),
 });
@@ -229,6 +240,7 @@ export const SummaryScene = z.object({
   type: z.literal('summary'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   points: z.array(Item).min(1).max(5),
   cta: z.string().max(48).optional(),
@@ -272,6 +284,7 @@ export const ChartScene = z.object({
   type: z.literal('chart'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   // true = the shape is illustrative, not measured data: numeric ticks are hidden and
   // a small "esquema ilustrativo" tag is shown. Use it unless the numbers have a source.
@@ -304,6 +317,7 @@ export const FigureScene = z.object({
   type: z.literal('figure'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   figure: z.enum(FIGURES),
   // Optional objects of the figure switched on for this scene (body: "pan").
@@ -354,6 +368,7 @@ export const SequenceScene = z.object({
   type: z.literal('sequence'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   actors: z.array(SeqActor).min(2).max(5),
   steps: z.array(SeqStep).min(1).max(12),
@@ -380,6 +395,7 @@ export const ShotScene = z.object({
   type: z.literal('shot'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   // What the shot shows, small in the corner ("Cell body"). Not a header.
   title: Title.optional(),
   world: z.enum(WORLDS),
@@ -422,6 +438,7 @@ export const HeadlineScene = z.object({
   type: z.literal('headline'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   kicker: z.string().max(32).optional(), // the red tab: "Cyberattack · France"
   banner: z.string().max(16).optional(), // a flashing flag: "Breaking", "Update", "Live"
   heading: z.string().min(1).max(90),
@@ -443,6 +460,7 @@ export const MediaScene = z.object({
   type: z.literal('media'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(), // only for the script and chapters; not drawn
   media: MediaRef,
   move: z.enum(['in', 'out', 'left', 'right', 'still']).default('in'),
@@ -472,6 +490,7 @@ export const MapScene = z.object({
   type: z.literal('map'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   view: Bbox, // where the camera ends (or starts, when a step zooms)
   from: Bbox.optional(), // a wider view the scene opens on, then flies to `view`
@@ -494,6 +513,7 @@ export const StatsScene = z.object({
   type: z.literal('stats'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   items: z.array(StatItem).min(1).max(6),
   footnote: z.string().max(80).optional(), // "Provisional figures, 13 Oct"
@@ -513,6 +533,7 @@ export const QuoteScene = z.object({
   type: z.literal('quote'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   quotes: z.array(QuoteItem).min(1).max(2),
 });
@@ -529,6 +550,7 @@ export const DatesScene = z.object({
   type: z.literal('timeline'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   items: z.array(DateItem).min(2).max(6),
 });
@@ -538,6 +560,7 @@ export const SourcesScene = z.object({
   type: z.literal('sources'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   items: z.array(z.object({name: z.string().min(1).max(40), detail: z.string().max(80).optional()})).min(1).max(12),
   asOf: z.string().max(40).optional(), // "Facts as of 13 Oct 2026"
@@ -572,6 +595,7 @@ export const PuzzleScene = z.object({
   type: z.literal('puzzle'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(), // the episode: "Daily Brain #014"
   level: z.enum(PUZZLE_LEVELS).optional(), // badge: Easy · 1 pt / Medium · 2 pts / Hard · 3 pts
   ...PuzzleParts,
@@ -589,6 +613,7 @@ export const RevealScene = z.object({
   type: z.literal('reveal'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   // The puzzle shown solved is the previous `puzzle` scene. The fields below override it
   // (an "answer tomorrow" reveal opens the next video with yesterday's puzzle).
@@ -633,6 +658,7 @@ export const ProofScene = z.object({
   type: z.literal('proof'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(), // defaults to the episode title of the puzzle before it
   prefix: z.string().max(4).default(''), // before every value: "$"
   suffix: z.string().max(6).default(''), // after every value: "¢", " min", "%"
@@ -645,6 +671,7 @@ export const ScoreScene = z.object({
   type: z.literal('score'),
   chapter: Chapter,
   narration: Narration,
+  host: HostPick,
   title: Title.optional(),
   // The question that asks for a comment ("Comment your score out of 6").
   cta: z.string().min(1).max(60),
@@ -714,6 +741,12 @@ export const Thumbnail = z.object({
   media: Id.optional(), // a photo of the `media` library behind the text (news)
 });
 
+export const Host = z.object({
+  character: z.enum(HOST_CHARACTERS).default('pato'),
+  // Which corner. Default: left in 9:16 (the right edge has the Shorts buttons), right in 16:9.
+  side: z.enum(['left', 'right']).optional(),
+});
+
 export const VideoSpec = z.object({
   id: Id,
   title: z.string().min(1).max(100),
@@ -743,6 +776,11 @@ export const VideoSpec = z.object({
     .optional(),
   publish: Publish.optional(),
   thumbnail: Thumbnail.optional(),
+  // An animated character that presents the video from a corner, like the old Office
+  // assistant: it talks with the voice (lip sync from the word timings), points at the
+  // puzzle, thinks during the countdown, reacts to the answer and waves at the end.
+  // In 9:16 the captions become its speech bubble. See docs/AUTHORING.md → "Host".
+  host: Host.optional(),
 });
 
 export type VideoSpec = z.output<typeof VideoSpec>;
@@ -785,3 +823,4 @@ export type ScoreScene = z.output<typeof ScoreScene>;
 export type ProofScene = z.output<typeof ProofScene>;
 export type ProofBar = z.output<typeof ProofBar>;
 export type PuzzleClaim = z.output<typeof PuzzleClaim>;
+export type HostSpec = z.output<typeof Host>;

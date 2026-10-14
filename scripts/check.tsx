@@ -36,7 +36,7 @@ for (const file of files) {
   const spec = loadSpec(file);
   const {timeline} = buildTimeline(spec, estimateSpeech(spec), {handle: '@handle'});
   for (const format of ['vertical', 'horizontal'] as Format[]) {
-    const frame = frameFor(format, format === 'vertical');
+    const frame = frameFor(format, format === 'vertical', timeline.host);
     const tl = {...timeline, captions: {vertical: true, horizontal: true}};
     for (const s of tl.scenes) {
       if (s.type !== 'flow') continue;

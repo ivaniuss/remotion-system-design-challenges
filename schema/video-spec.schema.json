@@ -270,6 +270,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "tag": {
                 "type": "string",
                 "maxLength": 32
@@ -517,6 +535,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -663,6 +699,24 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 900
+              },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
               },
               "title": {
                 "type": "string",
@@ -813,6 +867,24 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 900
+              },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
               },
               "title": {
                 "type": "string",
@@ -1128,6 +1200,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -1231,6 +1321,24 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 900
+              },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
               },
               "title": {
                 "type": "string",
@@ -1690,6 +1798,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -1996,6 +2122,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -2145,6 +2289,24 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 900
+              },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
               },
               "title": {
                 "type": "string",
@@ -2413,6 +2575,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -2575,6 +2755,24 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 900
+              },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
               },
               "title": {
                 "type": "string",
@@ -2872,6 +3070,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -2999,6 +3215,24 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 900
+              },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
               },
               "kicker": {
                 "type": "string",
@@ -3179,6 +3413,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -3301,6 +3553,24 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 900
+              },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
               },
               "title": {
                 "type": "string",
@@ -3579,6 +3849,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -3754,6 +4042,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -3842,6 +4148,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -3929,6 +4253,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -3983,6 +4325,24 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 900
+              },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
               },
               "title": {
                 "type": "string",
@@ -4100,6 +4460,24 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 900
+              },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
               },
               "title": {
                 "type": "string",
@@ -4339,6 +4717,24 @@
                 "minLength": 1,
                 "maxLength": 900
               },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -4524,6 +4920,24 @@
                 "type": "string",
                 "minLength": 1,
                 "maxLength": 900
+              },
+              "host": {
+                "minItems": 1,
+                "maxItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "idle",
+                    "talk",
+                    "point",
+                    "think",
+                    "suspicious",
+                    "surprised",
+                    "celebrate",
+                    "wave"
+                  ]
+                }
               },
               "title": {
                 "type": "string",
@@ -4897,6 +5311,25 @@
       "required": [
         "text"
       ]
+    },
+    "host": {
+      "type": "object",
+      "properties": {
+        "character": {
+          "default": "pato",
+          "type": "string",
+          "enum": [
+            "pato"
+          ]
+        },
+        "side": {
+          "type": "string",
+          "enum": [
+            "left",
+            "right"
+          ]
+        }
+      }
     }
   },
   "required": [
