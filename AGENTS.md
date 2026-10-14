@@ -53,6 +53,13 @@ follow **`skills/make-news/SKILL.md`**: research with sources first, a fact-chec
 separate agent, `"pack": "news"`, `"theme": "news"`, real photos and clips in a `media`
 library with credits (guide: `docs/packs/news.md`).
 
+## Daily puzzles (Daily Brain)
+
+When asked for a puzzle, brain teaser, "reto" or a Daily Brain episode, follow
+**`skills/make-brain/SKILL.md`**: verify every answer by hand and with a second solver, never
+write an AI's answer yourself (a real log with `claim.source`), no brain-training claims,
+`"pack": "brain"`, the `puzzle` / `reveal` / `score` scenes (guide: `docs/packs/brain.md`).
+
 ## Rules the user cares about (details in the guide)
 
 - **Videos are in English by default** (the channel's audience), even though the user

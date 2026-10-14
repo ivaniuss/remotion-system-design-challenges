@@ -38,11 +38,14 @@ export function resolveThumbnail(tl: Timeline): Resolved {
 type Unit = {text: string; em: boolean; tail: string};
 function units(text: string): Unit[] {
   const out: Unit[] = [];
+  let spaceBefore = false; // the previous segment ended with a space ("Was it *$96*")
   for (const seg of parseRich(text)) {
     let rest = seg.text;
+    const space = spaceBefore;
+    spaceBefore = /\s$/.test(seg.text);
     // Punctuation glued to the previous unit (no space before it).
     const glued = /^[^\s\p{L}\p{N}]+/u.exec(rest);
-    if (glued && out.length && !/^\s/.test(rest)) {
+    if (glued && out.length && !space && !/^\s/.test(rest)) {
       out[out.length - 1].tail += glued[0];
       rest = rest.slice(glued[0].length);
     }

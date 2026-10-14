@@ -1,5 +1,5 @@
-import type {BoardSpec, MediaItem, Scene, ThumbnailSpec, VideoSpec} from '../spec/schema';
-import type {ThemeName} from '../spec/vocab';
+import type {BoardSpec, MediaItem, PuzzleScene, Scene, ThumbnailSpec, VideoSpec} from '../spec/schema';
+import type {PuzzleLevel, ThemeName} from '../spec/vocab';
 import {cuePhrases, resolveCues} from './cues';
 import {estimateWords, round, Word} from './words';
 
@@ -12,6 +12,8 @@ export type TimedScene = Scene & {
   duration: number; // seconds
   words: Word[]; // scene-local times
   cues: number[]; // scene-local seconds, one per entry of cuePhrases(scene)
+  puzzle?: PuzzleScene; // reveal: the puzzle it solves (the previous puzzle scene)
+  levels?: PuzzleLevel[]; // score: the levels of the video's puzzles, in order
 };
 
 export type AudioClip = {src: string; start: number};
@@ -78,7 +80,13 @@ export const MIN_SCENE: Record<Scene['type'], number> = {
   quote: 4,
   timeline: 4,
   sources: 6,
+  puzzle: 2.5,
+  reveal: 3,
+  score: 3.5,
 };
+
+// Silent seconds a scene holds after its voice: the thinking time of a puzzle.
+export const holdAfter = (sc: Scene): number => (sc.type === 'puzzle' ? sc.think : 0);
 
 // Silent timing: each scene lasts as long as its estimated narration.
 export function estimateSpeech(spec: VideoSpec, wordsPerSecond = 3.0): Speech {
@@ -86,7 +94,7 @@ export function estimateSpeech(spec: VideoSpec, wordsPerSecond = 3.0): Speech {
   const scenes: SceneSpeech[] = spec.scenes.map((sc) => {
     const words = estimateWords(sc.narration, wordsPerSecond, 0.25);
     const end = words.length ? words[words.length - 1].end : 0;
-    const duration = round(Math.max(MIN_SCENE[sc.type], end + 0.6));
+    const duration = round(Math.max(MIN_SCENE[sc.type], end + 0.6) + holdAfter(sc));
     const out = {start: round(t), duration, words};
     t += duration;
     return out;
@@ -100,7 +108,19 @@ export function buildTimeline(spec: VideoSpec, speech: Speech, opts: TimelineOpt
     const sp = speech.scenes[index];
     const {times, missing} = resolveCues(cuePhrases(sc), sp.words, sp.duration);
     for (const m of missing) warnings.push(`scene ${index + 1}: cue "${m}" not found in the spoken words; spread evenly.`);
-    return {...sc, index, start: sp.start, duration: sp.duration, words: sp.words, cues: times};
+    const out: TimedScene = {...sc, index, start: sp.start, duration: sp.duration, words: sp.words, cues: times};
+    if (sc.type === 'reveal') {
+      const prev = spec.scenes.slice(0, index).reverse().find((x) => x.type === 'puzzle');
+      if (prev && prev.type === 'puzzle') out.puzzle = prev;
+      // The episode header stays on screen through the answer.
+      if (!sc.title && prev && prev.type === 'puzzle' && prev.title) (out as {title?: string}).title = prev.title;
+    }
+    if (sc.type === 'score') {
+      out.levels = spec.scenes.flatMap((x) => (x.type === 'puzzle' && x.level ? [x.level] : []));
+      const prev = spec.scenes.slice(0, index).reverse().find((x) => x.type === 'puzzle' && x.title);
+      if (!sc.title && prev && prev.type === 'puzzle') (out as {title?: string}).title = prev.title;
+    }
+    return out;
   });
   const last = scenes[scenes.length - 1];
   const timeline: Timeline = {
@@ -140,5 +160,8 @@ export function sceneLabel(s: Scene): string {
   const plain = (x: string) => x.replace(/\*/g, '');
   if (s.type === 'title' || s.type === 'headline') return plain(s.heading);
   if (s.type === 'callout') return s.title ? plain(s.title) : s.text;
+  if (s.type === 'puzzle') return plain(s.title ?? s.question).slice(0, 60);
+  if (s.type === 'reveal') return s.title ? plain(s.title) : `Answer: ${s.answer}`;
+  if (s.type === 'score') return s.title ? plain(s.title) : plain(s.cta);
   return s.title ? plain(s.title) : s.type;
 }

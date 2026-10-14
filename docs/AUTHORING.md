@@ -183,6 +183,7 @@ guide before writing the draft.
 | `tech` (default) | software, backend, system design, programming | `docs/packs/tech.md` | `videos/tech/` |
 | `science` | the brain, biology, health, learning, languages, habits | `docs/packs/science.md` | `videos/science/` |
 | `news` | current events: cyberattacks, economy, institutions, weather and climate | `docs/packs/news.md` | `videos/news/` |
+| `brain` | Daily Brain: daily puzzles, brain teasers, spot the mistake, cognitive biases | `docs/packs/brain.md` | `videos/brain/` |
 
 A video uses one pack: only that pack's icons (plus the common ones) are accepted, so
 topics never mix by accident. Choose by the topic, not by the words ("memory leaks"
@@ -703,6 +704,41 @@ across in 16:9); the current one is lit.
 credit automatically.
 
 The thumbnail of a news video can put a photo behind the words: `"thumbnail": {"media": "m1", …}`.
+
+### Puzzle scenes (pack `brain`; guide: `docs/packs/brain.md`)
+
+A daily-puzzle Short is built from three scene types. The puzzle is the hook: the first scene
+is complete on frame 0.
+
+**`puzzle`** — asks. `title` (the episode, "Daily Brain #014"; reveal and score keep it on
+screen), `level` (`easy` · `medium` · `hard` → a badge "Easy · 1 pt"), `question` (≤ 160,
+`*emphasis*`), and any of:
+- `sequence`: 2–9 tiles (≤ 8 chars each, numbers may be written as numbers); exactly one `"?"`.
+- `choices`: 2–4 answers, labelled A–D.
+- `claim`: `{who ≤ 40, text ≤ 120, source?}` — an answer for the viewer to judge, drawn as a
+  speech bubble. An AI's answer must be a real log: model + date in `who`, the log in `source`
+  (the validator refuses it otherwise).
+
+`think` (0–20 s, default 5): **silent** seconds held after the voice with a countdown ring and a
+tick per second. `pause: true`: no countdown, a "Pause the video" tag (hard puzzles; `think` 2).
+`tomorrow: true`: an "Answer: tomorrow" tag; no reveal in this video.
+
+**`reveal`** — the previous puzzle, solved: the `"?"` tile flips to `answer`, the `correct`
+choice (0 = A) turns green, the claim gets a ✓/✕ stamp from `verdict` (`right` · `wrong`); the
+answer pops big, then 1–3 `why` lines (Items with `at` cues), then "Got it? +N pts" when the
+puzzle had a level. A reveal that opens the next day's video has no puzzle before it: write the
+puzzle's `question` (and `sequence`/`choices`/`claim`) in the reveal itself.
+
+**`score`** — `cta` (≤ 60, the comment question), `next` (≤ 48, "Daily Brain #015 ·
+tomorrow"), and a scorecard of the video's puzzle levels with the total (`card: false` hides it
+and shows a trophy).
+
+```json
+{"type": "puzzle", "title": "Daily Brain #001", "level": "medium", "question": "What comes *next*?",
+ "sequence": ["2", "6", "12", "20", "30", "?"], "think": 5, "narration": "Medium, for two points. Same question."},
+{"type": "reveal", "answer": "42", "why": [{"text": "Gaps: +4, +6, +8, +10…", "at": "The gaps grow"}],
+ "narration": "Forty-two. The gaps grow by two, so next is plus twelve."}
+```
 
 ### `publish` and `chapter` — what to paste into YouTube
 Every `make` / `preview` also writes `out/<id>/youtube.md`: title options, and a

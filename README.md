@@ -12,6 +12,7 @@ Topics come in **packs**, each with its own icons, guide and folder, on the same
 | `tech` (default) | system design, backend, programming | `docs/packs/tech.md` | `videos/tech/` |
 | `science` | the brain, biology, health, learning, languages | `docs/packs/science.md` | `videos/science/` |
 | `news` | current events as a broadcast report: real footage, maps, figures, quotes, sources | `docs/packs/news.md` | `videos/news/` |
+| `brain` | Daily Brain: daily puzzle Shorts with a countdown, a reveal and a scorecard (`/make-brain`) | `docs/packs/brain.md` | `videos/brain/` |
 
 A spec says `"pack": "science"` and may only use that pack's icons (plus the common
 ones), so topics never mix. Everything else (commands, voice, sound, render) is shared.
@@ -66,8 +67,9 @@ The skill lives in `skills/make-video/SKILL.md`:
   and the guide.
 
 Other skills in `skills/`: `make-news` (a current event as a sourced broadcast
-report, `skills/make-news/SKILL.md`) and `make-film` (a documentary short,
-`skills/make-film/SKILL.md`). Same project, same commands.
+report, `skills/make-news/SKILL.md`), `make-film` (a documentary short,
+`skills/make-film/SKILL.md`) and `make-brain` (a Daily Brain puzzle Short,
+`skills/make-brain/SKILL.md`). Same project, same commands.
 
 **In a terminal:**
 
@@ -261,6 +263,7 @@ scripts/          preview, make, stills, validate, check, fingerprint, export-sc
 skills/make-video the /make-video skill (idea → draft → spec → video)
                   skills/make-news the /make-news skill (news → sourced draft → spec → broadcast report)
                   skills/make-film the /make-film skill (idea → shot scenes → documentary short)
+                  skills/make-brain the /make-brain skill (verified puzzles → puzzle Short)
 docs/             AUTHORING.md (rules for every video + spec reference), SHAPES.md (story
                   shapes, hooks, variety guard), REVIEWER.md (the review rubric),
                   DRAFT-TEMPLATE.md, packs/<pack>.md

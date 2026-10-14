@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {execFileSync, spawnSync} from 'node:child_process';
 import type {VideoSpec} from '../../src/spec/schema';
-import {estimateSpeech, MIN_SCENE, SceneSpeech, Speech} from '../../src/timeline/timeline';
+import {estimateSpeech, holdAfter, MIN_SCENE, SceneSpeech, Speech} from '../../src/timeline/timeline';
 import {alignToTranscript, round, splitWords, Word} from '../../src/timeline/words';
 
 // Speech providers. Each returns scene start/duration, word timings and audio clips.
@@ -54,7 +54,7 @@ export function edgeSpeech(spec: VideoSpec, outDir: string, publicPrefix: string
     if (!spoken.length) warnings.push(`scene ${i + 1}: edge-tts returned no word timings; captions use estimates.`);
     const voiceLen = audioDuration(job.out) ?? (spoken.length ? spoken[spoken.length - 1].end + 0.3 : 2);
     const words = scriptWords(sc.narration, spoken).map((w) => ({w: w.w, start: round(w.start + LEAD_IN), end: round(w.end + LEAD_IN)}));
-    const duration = round(Math.max(MIN_SCENE[sc.type], LEAD_IN + voiceLen + TAIL));
+    const duration = round(Math.max(MIN_SCENE[sc.type], LEAD_IN + voiceLen + TAIL) + holdAfter(sc));
     scenes.push({start: round(t), duration, words});
     audio.push({src: `${publicPrefix}/${path.basename(job.out)}`, start: round(t + LEAD_IN)});
     t += duration;

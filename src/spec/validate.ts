@@ -60,6 +60,11 @@ export function normalizeSpec(raw: unknown): unknown {
     if ('icon' in sc) sc.icon = normIcon(sc.icon);
     if ('items' in sc) sc.items = normItems(sc.items);
     if ('points' in sc) sc.points = normItems(sc.points);
+    if ('why' in sc) sc.why = normItems(sc.why);
+    // Puzzle tiles and answers may be written as numbers: [2, 6, 12, "?"], "answer": 42.
+    if (Array.isArray(sc.sequence)) sc.sequence = sc.sequence.map((x) => (typeof x === 'number' ? String(x) : x));
+    if (Array.isArray(sc.choices)) sc.choices = sc.choices.map((x) => (typeof x === 'number' ? String(x) : x));
+    if (typeof sc.answer === 'number') sc.answer = String(sc.answer);
     for (const side of ['left', 'right']) {
       if (isObj(sc[side])) sc[side] = {...(sc[side] as object), items: normItems((sc[side] as Record<string, unknown>).items)};
     }
@@ -224,6 +229,8 @@ export function validateSpec(raw: unknown): Validation {
     }
   });
 
+  checkPuzzles(spec, errors, warnings);
+
   // Science is told with illustrations and curves; boxes and arrows make it look like a
   // software diagram (docs/packs/science.md).
   if (spec.pack === 'science') {
@@ -234,6 +241,52 @@ export function validateSpec(raw: unknown): Validation {
   }
 
   return {spec: errors.length ? null : spec, errors, warnings};
+}
+
+// Daily puzzles (docs/packs/brain.md): the answer must be checkable and honest.
+const AI_NAME = /\b(ai|gpt|chatgpt|claude|gemini|llama|copilot|grok|deepseek|mistral|model|llm|bot)\b/i;
+function checkPuzzles(spec: VideoSpec, errors: string[], warnings: string[]) {
+  const scenes = spec.scenes;
+  const PUZZLE_TYPES = ['puzzle', 'reveal', 'score'];
+  if (spec.pack !== 'brain' && scenes.some((s) => PUZZLE_TYPES.includes(s.type)))
+    warnings.push(`puzzle/reveal/score scenes are made for "pack": "brain" (docs/packs/brain.md).`);
+  const checkParts = (where: string, p: {sequence?: string[]; claim?: {who: string; source?: string}}) => {
+    if (p.sequence) {
+      const q = p.sequence.filter((x) => x.trim() === '?').length;
+      if (q !== 1) errors.push(`${where}.sequence: mark exactly one missing tile with "?" (found ${q}).`);
+    }
+    if (p.claim && AI_NAME.test(p.claim.who) && !p.claim.source)
+      errors.push(`${where}.claim: an AI's answer must be a real, logged output. Name the model and date in "who" and say where the log is kept in "source"; never write the AI's mistake yourself.`);
+  };
+  scenes.forEach((sc, i) => {
+    const where = `scenes[${i}] (${sc.type})`;
+    if (sc.type === 'puzzle') {
+      checkParts(where, sc);
+      if (sc.pause && sc.think === 0) warnings.push(`${where}: "pause" shows its tag during the hold; give it "think": 2.`);
+      if (sc.pause && sc.think > 4) warnings.push(`${where}: a "pause the video" hold of ${sc.think} s; 2–3 s is enough (the viewer pauses).`);
+      if (!sc.pause && sc.think > 0 && sc.think < 3) warnings.push(`${where}: a ${sc.think} s countdown is too short to read the puzzle; 3–8 s, or "pause": true for hard ones.`);
+      if (sc.think > 10) warnings.push(`${where}: a ${sc.think} s countdown is long for a Short; use "pause": true instead and let the viewer stop the video.`);
+      let j = i + 1;
+      while (j < scenes.length && scenes[j].type !== 'puzzle' && scenes[j].type !== 'reveal') j++;
+      const next = scenes[j];
+      if ((!next || next.type !== 'reveal') && !sc.tomorrow)
+        warnings.push(`${where}: no reveal after this puzzle. For an "answer tomorrow" episode set "tomorrow": true and say it in the narration.`);
+      if (next && next.type === 'reveal' && sc.tomorrow) warnings.push(`${where}: "tomorrow": true but the next scene reveals the answer.`);
+      if (next && next.type === 'reveal' && sc.choices && next.correct === undefined) warnings.push(`scenes[${j}] (reveal): the puzzle has choices; set "correct" (0 = A) so the right one lights up.`);
+      if (next && next.type === 'reveal' && sc.claim && !next.verdict) warnings.push(`scenes[${j}] (reveal): the puzzle has a claim; set "verdict": "right" | "wrong".`);
+    }
+    if (sc.type === 'reveal') {
+      checkParts(where, sc);
+      const prev = scenes.slice(0, i).reverse().find((x) => x.type === 'puzzle');
+      const p = prev && prev.type === 'puzzle' ? prev : undefined;
+      if (!p && !sc.question) errors.push(`${where}: a reveal needs a puzzle scene before it, or its own "question" (an "answer tomorrow" reveal of yesterday's puzzle).`);
+      const choices = sc.choices ?? p?.choices;
+      if (sc.correct !== undefined && (!choices || sc.correct >= choices.length))
+        errors.push(`${where}.correct: ${sc.correct} is not a choice of the puzzle (${choices ? `0–${choices.length - 1}` : 'it has no choices'}).`);
+      if (sc.verdict && !(sc.claim ?? p?.claim)) errors.push(`${where}.verdict: the puzzle has no claim to judge.`);
+      if (!sc.why.length) warnings.push(`${where}: no "why"; one line of why turns a riddle into something the viewer learns.`);
+    }
+  });
 }
 
 function checkCues(scene: Scene, words: string[], where: string, warnings: string[]) {

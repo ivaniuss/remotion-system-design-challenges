@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {CAMERA_MOVES, CODE_LANGUAGES, COLORS, CROWD_DENSITY, FIGURES, HOOKS, ICONS, LANGS, PACKS, SFX, SHAPES, STATUSES, THEME_NAMES, TONES, WORLDS} from './vocab';
+import {CAMERA_MOVES, CODE_LANGUAGES, COLORS, CROWD_DENSITY, FIGURES, HOOKS, ICONS, LANGS, PACKS, PUZZLE_LEVELS, SFX, SHAPES, STATUSES, THEME_NAMES, TONES, WORLDS} from './vocab';
 
 // The video spec is the ONLY thing an LLM writes. Everything visual (layout, camera,
 // timing, animation) is derived from it by the engine, so the spec stays small and
@@ -543,6 +543,78 @@ export const SourcesScene = z.object({
   asOf: z.string().max(40).optional(), // "Facts as of 13 Oct 2026"
 });
 
+// ---------- puzzles: the daily challenge (pack "brain", docs/packs/brain.md)
+// A `puzzle` scene asks; the voice reads it, then the video holds `think` silent seconds
+// with a countdown (or a "pause now" tag) so the viewer can answer. The next `reveal`
+// scene shows the same puzzle solved; a `score` scene adds up the points.
+
+// What someone answered, shown as a speech bubble the viewer judges ("spot the mistake").
+// An AI's answer must be a real, logged output: name the model and the date in `who` and
+// say where it is kept in `source` (the validator asks for it).
+export const PuzzleClaim = z.object({
+  who: z.string().min(1).max(40), // "A common answer", "ChatGPT (GPT-5), 12 Oct 2026"
+  text: z.string().min(1).max(120),
+  source: z.string().max(160).optional(),
+});
+
+// The parts of a puzzle (all optional; a puzzle needs a question).
+const PuzzleParts = {
+  // On-screen question; *emphasis* gets the accent highlight.
+  question: z.string().min(1).max(160).optional(),
+  // A row of tiles; exactly one "?" marks the missing one ("2", "6", "12", "?").
+  sequence: z.array(z.string().min(1).max(8)).min(2).max(9).optional(),
+  // 2–4 answers, labelled A–D.
+  choices: z.array(z.string().min(1).max(48)).min(2).max(4).optional(),
+  claim: PuzzleClaim.optional(),
+};
+
+export const PuzzleScene = z.object({
+  type: z.literal('puzzle'),
+  chapter: Chapter,
+  narration: Narration,
+  title: Title.optional(), // the episode: "Daily Brain #014"
+  level: z.enum(PUZZLE_LEVELS).optional(), // badge: Easy · 1 pt / Medium · 2 pts / Hard · 3 pts
+  ...PuzzleParts,
+  question: z.string().min(1).max(160),
+  // Silent seconds after the narration, with a countdown, to think. 0 = no hold.
+  think: z.number().min(0).max(20).default(5),
+  // Hard puzzles: no countdown, a "Pause the video" tag during the (short) hold.
+  pause: z.boolean().default(false),
+  // An "answer tomorrow" episode: no reveal in this video; a tag says so after the hold.
+  tomorrow: z.boolean().default(false),
+  sfx: Sfx,
+});
+
+export const RevealScene = z.object({
+  type: z.literal('reveal'),
+  chapter: Chapter,
+  narration: Narration,
+  title: Title.optional(),
+  // The puzzle shown solved is the previous `puzzle` scene. The fields below override it
+  // (an "answer tomorrow" reveal opens the next video with yesterday's puzzle).
+  ...PuzzleParts,
+  answer: z.string().min(1).max(40), // fills the "?" of a sequence; shown big
+  correct: z.number().int().min(0).max(3).optional(), // index of the right choice
+  verdict: z.enum(['right', 'wrong']).optional(), // what the claim was
+  // 1–3 short lines of why, each on its cue.
+  why: z.array(Item).max(3).default([]),
+  sfx: Sfx,
+});
+
+export const ScoreScene = z.object({
+  type: z.literal('score'),
+  chapter: Chapter,
+  narration: Narration,
+  title: Title.optional(),
+  // The question that asks for a comment ("Comment your score out of 6").
+  cta: z.string().min(1).max(60),
+  // What comes next and when ("Daily Brain #015 · tomorrow").
+  next: z.string().max(48).optional(),
+  // The scorecard rows come from the levels of the video's puzzles; false hides it.
+  card: z.boolean().default(true),
+  sfx: Sfx,
+});
+
 export const Scene = z.discriminatedUnion('type', [
   TitleScene,
   CalloutScene,
@@ -563,6 +635,9 @@ export const Scene = z.discriminatedUnion('type', [
   QuoteScene,
   DatesScene,
   SourcesScene,
+  PuzzleScene,
+  RevealScene,
+  ScoreScene,
 ]);
 
 // What to paste into YouTube: written by `make`/`preview` to out/<id>/youtube.md,
@@ -663,3 +738,7 @@ export type CrowdSpec = z.output<typeof Crowd>;
 export type MeterSpec = z.output<typeof Meter>;
 export type ClockSpec = z.output<typeof Clock>;
 export type Item = z.output<typeof Item>;
+export type PuzzleScene = z.output<typeof PuzzleScene>;
+export type RevealScene = z.output<typeof RevealScene>;
+export type ScoreScene = z.output<typeof ScoreScene>;
+export type PuzzleClaim = z.output<typeof PuzzleClaim>;

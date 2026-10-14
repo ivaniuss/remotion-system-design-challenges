@@ -1,0 +1,56 @@
+{
+  "id": "brain-003-fast-answer",
+  "title": "Daily Brain #003: the bat and the ball",
+  "lang": "en",
+  "pack": "brain",
+  "theme": "neon",
+  "shape": "daily-puzzle",
+  "hook": "challenge",
+  "notes": [
+    "Checked by hand: ball x, bat x + 1.00, total 2x + 1.00 = 1.10, so x = 0.05. Ball 5¢, bat $1.05.",
+    "With a 10¢ ball the bat is $1.10 and the total $1.20.",
+    "Source: Frederick, S. (2005). Cognitive Reflection and Decision Making. Journal of Economic Perspectives, 19(4), 25–42. The bat-and-ball item is the first question of the Cognitive Reflection Test; 10 cents is the intuitive wrong answer it was designed around.",
+    "Do not claim the test measures intelligence or that practising it makes you smarter; it shows that a fast answer can skip the check."
+  ],
+  "scenes": [
+    {
+      "type": "puzzle",
+      "title": "Answer fast",
+      "question": "A bat and a ball cost *$1.10*. The bat costs *$1.00 more* than the ball. How much is the ball?",
+      "choices": ["10¢", "5¢", "1¢"],
+      "think": 5,
+      "narration": "Answer fast. A bat and a ball cost one dollar ten. The bat costs one dollar more than the ball. How much is the ball?"
+    },
+    {
+      "type": "reveal",
+      "answer": "5¢",
+      "correct": 1,
+      "why": [
+        {"text": "5¢ + $1.05 = *$1.10*", "at": "five cents and"},
+        {"text": "10¢ → bat $1.10 → total *$1.20*", "at": "With ten cents"},
+        {"text": "Fast answers skip the check", "at": "skips the check"}
+      ],
+      "narration": "Five cents. A ball of five cents and a bat of one oh five make one ten. With ten cents, the bat is one ten and the total one twenty. It's from the Cognitive Reflection Test: the first answer that pops up skips the check."
+    },
+    {
+      "type": "score",
+      "card": false,
+      "cta": "Did your brain say *10¢* first?",
+      "next": "Daily Brain #004 · tomorrow",
+      "narration": "Be honest: did your brain say ten cents first?"
+    }
+  ],
+  "publish": {
+    "titles": ["The bat and ball question: 10¢ or 5¢?", "Your first answer to this is probably wrong"],
+    "description": "Daily Brain #003. A classic from the Cognitive Reflection Test (Frederick, 2005): a bat and a ball cost $1.10 and the bat costs $1.00 more. How much is the ball?",
+    "comment": "Be honest: did you say 10¢ first?",
+    "hashtags": ["#puzzle", "#psychology", "#brainteaser", "#dailybrain"]
+  },
+  "thumbnail": {
+    "text": "10¢ or *5¢*?",
+    "kicker": "Answer fast",
+    "number": "$1.10",
+    "tone": "warn",
+    "icons": [{"icon": "brain"}, {"icon": "idea"}]
+  }
+}

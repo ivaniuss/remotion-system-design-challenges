@@ -32,6 +32,8 @@ export function cuePhrases(scene: Scene): (string | undefined)[] {
       return scene.points.map((p) => p.at);
     case 'title':
       return (scene.beats ?? []).map((b) => b.at);
+    case 'reveal':
+      return scene.why.map((w) => w.at);
     default:
       return [];
   }

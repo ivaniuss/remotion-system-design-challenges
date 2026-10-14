@@ -14,6 +14,7 @@ import {SequenceScene} from '../scenes/SequenceScene';
 import {ShotScene} from '../scenes/ShotScene';
 import {DatesScene, HeadlineScene, MediaScene, QuoteScene, SourcesScene, StatsScene} from '../scenes/NewsScenes';
 import {MapScene} from '../scenes/MapScene';
+import {PuzzleScene, RevealScene, ScoreScene} from '../scenes/PuzzleScenes';
 import type {ResolvedMedia} from '../timeline/timeline';
 import {BoardLayer} from '../scenes/BoardLayer';
 import {isBoard} from '../board/board';
@@ -62,6 +63,12 @@ const SceneBody: React.FC<{scene: TimedScene; t: number; frame: Frame; theme: Th
       return <DatesScene scene={p.scene} {...common} />;
     case 'sources':
       return <SourcesScene scene={p.scene} {...common} />;
+    case 'puzzle':
+      return <PuzzleScene scene={p.scene} {...common} />;
+    case 'reveal':
+      return <RevealScene scene={p.scene} {...common} />;
+    case 'score':
+      return <ScoreScene scene={p.scene} {...common} />;
     case 'board':
       return null; // drawn by the persistent BoardLayer
   }

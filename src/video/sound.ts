@@ -5,6 +5,7 @@ import type {SfxName} from '../spec/vocab';
 import {WORLD_DRAW} from '../worlds';
 import {worldFrame} from '../worlds/render';
 import {frameFor} from '../layout/frame';
+import {thinkWindow} from '../scenes/puzzleTime';
 
 // Sound effects derived from the same events that drive the animation, so every pop,
 // whoosh and buzz lands exactly on its visual. Files live in public/sfx/
@@ -49,7 +50,8 @@ export function soundEvents(tl: Timeline): SoundEvent[] {
     } else if (s.index === 0) add(0.05, 'impact', 0.7);
     else if (s.type !== 'callout') add(s.start, 'whoosh', 0.7);
 
-    if (s.type === 'title' || s.type === 'callout' || s.type === 'headline') cue(s.start + 0.15, s.sfx);
+    if (s.type === 'title' || s.type === 'callout' || s.type === 'headline' || s.type === 'puzzle' || s.type === 'reveal' || s.type === 'score') cue(s.start + 0.15, s.sfx);
+    if (s.type === 'reveal') s.why.forEach((w, i) => cue(s.start + (s.cues[i] ?? 0), w.sfx));
     if (s.type === 'headline')
       (s.beats ?? []).forEach((b, i) => {
         add(s.start + (s.cues[i] ?? 0), 'pop');
@@ -142,6 +144,24 @@ export function soundEvents(tl: Timeline): SoundEvent[] {
           if (!it.sfx) add(s.start + (s.cues[i] ?? 0), 'pop');
         });
         break;
+      case 'puzzle': {
+        // A soft tick each second of the countdown, a pop when a pause / tomorrow tag lands.
+        const win = thinkWindow(s);
+        if (win && !s.pause) for (let k = win.start; k < win.end - 0.05; k += 1) add(s.start + k, 'tick', win.end - k <= 3.05 ? 2.4 : 1.6);
+        else if (win) add(s.start + win.start, 'pop');
+        break;
+      }
+      case 'reveal':
+        add(s.start + 0.25, s.verdict === 'wrong' ? 'error' : 'success', 0.9);
+        s.why.forEach((w, i) => {
+          if (!w.sfx) add(s.start + (s.cues[i] ?? 0), 'pop', 0.7);
+        });
+        break;
+      case 'score': {
+        (s.levels ?? []).forEach((_, i) => add(s.start + 0.25 + i * 0.3, 'pop'));
+        add(s.start + (s.levels?.length ? 0.55 + s.levels.length * 0.3 : 0.3), 'success', 0.8);
+        break;
+      }
       case 'list':
       case 'compare':
       case 'summary': {

@@ -86,6 +86,22 @@ function onScreen(s: TimedScene, label: (id: string) => string): string[] {
       return s.quotes.map((q, i) => `${at(i)} “${plain(q.text)}” — ${q.who}${q.role ? `, ${q.role}` : ''}${q.tag ? ` [${q.tag}]` : ''}`);
     case 'timeline':
       return s.items.map((it, i) => `${at(i)} ${it.when}: ${plain(it.text)}`);
+    case 'puzzle':
+      return [
+        `${s.level ? `[${s.level}] ` : ''}**${plain(s.question)}**`,
+        ...(s.sequence ? [`sequence: ${s.sequence.join(', ')}`] : []),
+        ...(s.choices ? s.choices.map((c, i) => `${'ABCD'[i]}) ${plain(c)}`) : []),
+        ...(s.claim ? [`claim — ${s.claim.who}: “${plain(s.claim.text)}”${s.claim.source ? ` (source: ${s.claim.source})` : ''}`] : []),
+        s.think > 0 ? `${s.think} s silent ${s.pause ? '"pause the video" hold' : 'countdown'}` : 'no hold',
+        ...(s.tomorrow ? ['tag: answer tomorrow'] : []),
+      ];
+    case 'reveal':
+      return [
+        `answer: **${s.answer}**${s.correct !== undefined ? ` (choice ${'ABCD'[s.correct]})` : ''}${s.verdict ? ` · the claim was ${s.verdict}` : ''}`,
+        ...s.why.map((w, i) => `${at(i)} ${plain(w.text)}`),
+      ];
+    case 'score':
+      return [...(s.levels?.length && s.card ? [`scorecard: ${s.levels.join(', ')}`] : []), `CTA: ${plain(s.cta)}`, ...(s.next ? [`next: ${s.next}`] : [])];
     case 'sources':
       return [...s.items.map((x) => `${x.name}${x.detail ? ` — ${x.detail}` : ''}`), ...(s.asOf ? [s.asOf] : [])];
     case 'sequence': {

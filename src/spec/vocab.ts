@@ -4,24 +4,27 @@ import * as common from '../packs/common/vocab';
 import * as tech from '../packs/tech/vocab';
 import * as science from '../packs/science/vocab';
 import * as news from '../packs/news/vocab';
+import * as brain from '../packs/brain/vocab';
 
 // Icon packs. A video declares its pack ("pack": "tech" | "science"; default tech) and may
 // only use that pack's icons plus the common ones, so topics never mix by accident.
 // To add a pack: src/packs/<name>/{vocab.ts,icons.tsx}, register it here and in
 // src/components/icons.tsx, and write docs/packs/<name>.md.
-export const PACKS = ['tech', 'science', 'news'] as const;
+export const PACKS = ['tech', 'science', 'news', 'brain'] as const;
 export type Pack = (typeof PACKS)[number];
 
-const BY_PACK = {tech, science, news} as const;
+const BY_PACK = {tech, science, news, brain} as const;
 
-export const ICONS = [...common.ICONS, ...tech.ICONS, ...science.ICONS, ...news.ICONS] as const;
-export type IconName = common.Name | tech.Name | science.Name | news.Name;
+export const ICONS = [...common.ICONS, ...tech.ICONS, ...science.ICONS, ...news.ICONS, ...brain.ICONS] as const;
+export type IconName = common.Name | tech.Name | science.Name | news.Name | brain.Name;
 
 // Icons a video of this pack may use (common first).
 export const PACK_ICONS: Record<Pack, readonly IconName[]> = {
   tech: [...common.ICONS, ...tech.ICONS],
   science: [...common.ICONS, ...science.ICONS],
   news: [...common.ICONS, ...news.ICONS],
+  // brain borrows a few science drawings (brain, eye, idea, target): see packs/brain/vocab.ts.
+  brain: [...common.ICONS, ...brain.ICONS, ...brain.BORROW],
 };
 
 // Common words an LLM may use instead of the canonical icon name, per pack.
@@ -67,13 +70,13 @@ export const COLORS = ['blue', 'green', 'orange', 'purple', 'red', 'yellow', 'te
 export type ColorName = (typeof COLORS)[number];
 
 // Default card color per icon so the author rarely needs to choose one.
-export const ICON_COLOR: Record<IconName, ColorName> = {...common.COLOR, ...tech.COLOR, ...science.COLOR, ...news.COLOR};
+export const ICON_COLOR: Record<IconName, ColorName> = {...common.COLOR, ...tech.COLOR, ...science.COLOR, ...news.COLOR, ...brain.COLOR};
 
 // Generic node status -> the illustration's own animated state, per icon.
 export const ICON_STATES: Record<string, Partial<Record<IconName, string>>> = Object.fromEntries(
-  ['idle', 'busy', 'ok', 'error', 'warn'].map((st) => [st, {...common.STATES[st], ...tech.STATES[st], ...science.STATES[st], ...news.STATES[st]}]),
+  ['idle', 'busy', 'ok', 'error', 'warn'].map((st) => [st, {...common.STATES[st], ...tech.STATES[st], ...science.STATES[st], ...news.STATES[st], ...brain.STATES[st]}]),
 );
-export const ICON_DEFAULT_STATE: Partial<Record<IconName, string>> = {...common.DEFAULT_STATE, ...tech.DEFAULT_STATE, ...science.DEFAULT_STATE, ...news.DEFAULT_STATE};
+export const ICON_DEFAULT_STATE: Partial<Record<IconName, string>> = {...common.DEFAULT_STATE, ...tech.DEFAULT_STATE, ...science.DEFAULT_STATE, ...news.DEFAULT_STATE, ...brain.DEFAULT_STATE};
 
 export const TONES = ['good', 'bad', 'info', 'warn', 'neutral'] as const;
 export type Tone = (typeof TONES)[number];
@@ -113,12 +116,19 @@ export type ThemeName = (typeof THEME_NAMES)[number];
 // The story shape of a video (docs/SHAPES.md) and the kind of hook it opens with.
 // Both are optional in the spec: they are recorded so `npm run fingerprint` can keep a
 // channel from repeating itself, and so the reviewer knows which skeleton to expect.
-export const SHAPES = ['progressive', 'post-mortem', 'request-journey', 'a-vs-b', 'numbers-first', 'code-first', 'news-report'] as const;
+export const SHAPES = ['progressive', 'post-mortem', 'request-journey', 'a-vs-b', 'numbers-first', 'code-first', 'news-report', 'daily-puzzle'] as const;
 export type Shape = (typeof SHAPES)[number];
-export const HOOKS = ['interview-question', 'incident', 'surprising-number', 'broken-thing', 'headline'] as const;
+export const HOOKS = ['interview-question', 'incident', 'surprising-number', 'broken-thing', 'headline', 'challenge'] as const;
 export type Hook = (typeof HOOKS)[number];
 
 // How crowded a `crowd` is. The dots are a picture of load, not a count: the real
 // number goes in the label ("×3.5B").
 export const CROWD_DENSITY = ['few', 'many', 'flood'] as const;
 export type CrowdDensity = (typeof CROWD_DENSITY)[number];
+
+// Daily puzzles (pack "brain", docs/packs/brain.md): the level of a `puzzle` scene and the
+// points it is worth on the viewer's scorecard (the `score` scene adds them up).
+export const PUZZLE_LEVELS = ['easy', 'medium', 'hard'] as const;
+export type PuzzleLevel = (typeof PUZZLE_LEVELS)[number];
+export const LEVEL_POINTS: Record<PuzzleLevel, number> = {easy: 1, medium: 2, hard: 3};
+export const LEVEL_TONE: Record<PuzzleLevel, Tone> = {easy: 'good', medium: 'warn', hard: 'bad'};

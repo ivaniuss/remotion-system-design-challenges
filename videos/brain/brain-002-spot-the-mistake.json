@@ -1,0 +1,55 @@
+{
+  "id": "brain-002-spot-the-mistake",
+  "title": "Daily Brain #002: the $96 shirt",
+  "lang": "en",
+  "pack": "brain",
+  "theme": "dark",
+  "shape": "daily-puzzle",
+  "hook": "challenge",
+  "notes": [
+    "Checked by hand: the sale price is 80% of the original, so original = 80 / 0.8 = 100. Check: 100 − 20% = 80.",
+    "The wrong answer: adding 20% back to $80 gives 80 × 1.2 = 96, because 20% of the sale price ($16) is smaller than 20% of the original ($20).",
+    "The claim is labelled 'A common answer', not an AI and not a statistic: it is the usual trap of percentage problems. To run this as 'Beat the AI', paste a real logged model answer and fill claim.source (the validator requires it)."
+  ],
+  "scenes": [
+    {
+      "type": "puzzle",
+      "title": "Spot the mistake",
+      "question": "A shirt costs *$80* after a *20% discount*. What was the original price?",
+      "claim": {"who": "A common answer", "text": "$96. Just add the 20% back."},
+      "think": 6,
+      "narration": "A shirt costs eighty dollars after a twenty percent discount. Someone says the original price was ninety-six. Right or wrong?"
+    },
+    {
+      "type": "reveal",
+      "answer": "$100",
+      "verdict": "wrong",
+      "why": [
+        {"text": "$80 is *80%* of the original", "at": "eighty percent of"},
+        {"text": "80 ÷ 0.8 = *$100*", "at": "divided by"},
+        {"text": "+20% of $80 adds only $16", "at": "only adds sixteen"}
+      ],
+      "narration": "Wrong. Eighty dollars is eighty percent of the original price. Eighty divided by zero point eight is one hundred. Adding twenty percent of eighty only adds sixteen."
+    },
+    {
+      "type": "score",
+      "card": false,
+      "cta": "Did you spot it before the timer?",
+      "next": "Daily Brain #003 · tomorrow",
+      "narration": "Did you spot it before the timer? Tell me in the comments."
+    }
+  ],
+  "publish": {
+    "titles": ["$80 after 20% off. Was it $96?", "The percentage trap almost everyone falls for"],
+    "description": "Daily Brain #002. A shirt costs $80 after a 20% discount. Is the original price $96? Decide before the timer runs out.",
+    "comment": "Did you spot the mistake before the timer?",
+    "hashtags": ["#puzzle", "#math", "#percentages", "#dailybrain"]
+  },
+  "thumbnail": {
+    "text": "Was it *$96*?",
+    "kicker": "Spot the mistake",
+    "number": "-20%",
+    "tone": "bad",
+    "icons": [{"icon": "puzzle", "status": "error"}]
+  }
+}

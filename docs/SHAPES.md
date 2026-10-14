@@ -174,6 +174,7 @@ question, never in hype ("nobody tells you this", "almost everyone gets this wro
 | `incident` | Something that really happened, in one sentence, then why | "At 9:00 the sale opened. By 9:01 the site was down. Why?" |
 | `surprising-number` | A number that sounds wrong, then the question | "10,000 fans refreshing is 3,300 requests a second. Can one server take that?" |
 | `broken-thing` | A small thing that should work and does not | "You pressed Buy. Nothing happened for eight seconds. Where did they go?" |
+| `challenge` | The puzzle itself, on screen from frame 0 (pack `brain`) | "Three puzzles, up to six points. Easy one first: what comes next?" |
 
 The `title` still needs 3–5 `beats` drawn in sync with the voice (an alert → an error → "?" for an
 incident; a number → a server → "?" for a surprising number).
@@ -193,6 +194,11 @@ channel", no outro. Do not cut every Short from one skeleton. Pick a pattern:
 | `crowd` | title · board (crowd + meter) · board · callout · summary | "what happens when millions arrive" |
 
 A series of three Shorts uses three different patterns.
+
+Daily puzzles (pack `brain`, shape `daily-puzzle`) have their own patterns, read from the
+scenes by the fingerprint: `levels` (three puzzles easy → hard), `spot-the-mistake` (a claim to
+judge), `choices` (an answer-fast question), `teaser` (answer tomorrow). Two episodes in a row
+use different patterns and themes (`docs/packs/brain.md` §2).
 
 ## 7. Fingerprint
 

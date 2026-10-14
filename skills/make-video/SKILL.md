@@ -20,6 +20,8 @@ Decide, without asking unless it is truly ambiguous:
 - **Pack** (by the topic, not the words): `tech` for software, backend, system design
   and programming; `science` for the brain, biology, health, learning, languages and
   habits. The user may say it ("/make-video ciencia: …"). If it fits neither, ask.
+  Puzzles, brain teasers and Daily Brain episodes go to `skills/make-brain/SKILL.md`
+  (pack `brain`); current news to `skills/make-news/SKILL.md`.
 - **Language** of narration: **English by default** — the channel's audience is
   English-speaking, even though the user writes to you in Spanish. Narration, on-screen
   text, titles, descriptions and Shorts are all English. Use another language (`es`,

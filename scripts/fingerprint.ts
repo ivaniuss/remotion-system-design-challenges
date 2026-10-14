@@ -15,12 +15,13 @@ type Raw = Record<string, any>;
 const SCENE_LETTER: Record<string, string> = {
   title: 'T', callout: 'C', board: 'B', flow: 'F', code: 'K', list: 'L',
   compare: 'X', summary: 'S', chart: 'H', figure: 'G', sequence: 'Q', shot: 'P',
+  puzzle: 'Z', reveal: 'R', score: 'O',
 };
-const SHAPES = ['progressive', 'post-mortem', 'request-journey', 'a-vs-b', 'numbers-first', 'code-first', 'news-report'];
-const HOOKS = ['interview-question', 'incident', 'surprising-number', 'broken-thing', 'headline'];
+const SHAPES = ['progressive', 'post-mortem', 'request-journey', 'a-vs-b', 'numbers-first', 'code-first', 'news-report', 'daily-puzzle'];
+const HOOKS = ['interview-question', 'incident', 'surprising-number', 'broken-thing', 'headline', 'challenge'];
 const THEMES = ['light', 'dark', 'neon', 'film'];
 const VISUALS = ['crowd', 'meter', 'clock', 'sequence', 'code', 'chart', 'compare', 'flow'];
-const SHORT_PATTERNS = ['classic', 'contrast', 'decision', 'timeline', 'code', 'crowd'];
+const SHORT_PATTERNS = ['classic', 'contrast', 'decision', 'timeline', 'code', 'crowd', 'levels', 'spot-the-mistake', 'choices', 'teaser'];
 const SHORT_WORDS = 230; // about 75 s of speech: above this it is a long video
 
 interface Print {
@@ -62,6 +63,14 @@ function visualsOf(spec: Raw): string[] {
 
 function shortPattern(spec: Raw, visuals: string[]): string {
   const types = (spec.scenes ?? []).map((s: Raw) => s.type);
+  // Daily puzzles (docs/packs/brain.md): the format of the episode.
+  const puzzles = (spec.scenes ?? []).filter((s: Raw) => s.type === 'puzzle');
+  if (puzzles.length) {
+    if (puzzles.some((s: Raw) => s.tomorrow)) return 'teaser';
+    if (puzzles.some((s: Raw) => s.claim)) return 'spot-the-mistake';
+    if (puzzles.length >= 2) return 'levels';
+    if (puzzles.some((s: Raw) => s.choices)) return 'choices';
+  }
   if (types.includes('sequence')) return 'timeline';
   if (types.includes('code')) return 'code';
   if (types.includes('compare')) return 'contrast';
