@@ -15,10 +15,12 @@ Talk to the user in Spanish. Narration and on-screen text in English (the channe
 
 ## 1. Pick the episode
 
-- Number: the next free `brain-NNN` in `videos/brain/`. Run `npm run fingerprint` and pick a
-  **format** different from the last episode (`docs/packs/brain.md` §2): 3 levels (`light`),
-  spot the mistake (`dark`), answer fast (`neon`), answer tomorrow.
-- If the previous episode was an "answer tomorrow", this one opens with its `reveal`.
+- Run `npm run next`. It lists the episodes in `videos/brain/` and prints the next number, its
+  format and theme from the episode cycle (`docs/packs/brain.md` §7: the format follows from the
+  number, not the date) and how to build it. Make that one unless the user asks for another.
+- If it flags an episode whose format does not match its slot, tell the user before writing.
+- Slot 5 ("yesterday's answer + 3 levels") opens with a `reveal` of the previous episode's
+  puzzle: copy its question / sequence / choices into the reveal.
 
 ## 2. Write and verify the puzzles (before any JSON)
 

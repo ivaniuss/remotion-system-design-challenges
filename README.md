@@ -69,7 +69,7 @@ The skill lives in `skills/make-video/SKILL.md`:
 Other skills in `skills/`: `make-news` (a current event as a sourced broadcast
 report, `skills/make-news/SKILL.md`), `make-film` (a documentary short,
 `skills/make-film/SKILL.md`) and `make-brain` (a Daily Brain puzzle Short,
-`skills/make-brain/SKILL.md`). Same project, same commands.
+`skills/make-brain/SKILL.md`; `npm run next` says which episode comes next). Same project, same commands.
 
 **In a terminal:**
 

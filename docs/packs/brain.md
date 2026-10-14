@@ -94,19 +94,33 @@ scenes draw themselves.
 - [ ] `npm run validate` clean; `npm run stills` sheets looked at (both formats).
 - [ ] `publish.comment` is the question; `thumbnail` set (2–6 words, the number sticker).
 
-## 7. The 30-day experiment: calendar and tuning
+## 7. The 30-day experiment: episode cycle and tuning
 
-**Weekly rotation** (so every format gets a fair number of episodes to compare on day 30):
+**The episode cycle.** The format of an episode follows from its **number**, not from the date,
+so generating three at once or skipping a day never breaks the rotation. Episode *n* takes
+slot (*n* − 1) mod 7 (`EPISODE_CYCLE` in `src/packs/brain/vocab.ts`):
 
-| Day | Format |
-| --- | --- |
-| Monday | 3 levels |
-| Tuesday | Spot the mistake |
-| Wednesday | Answer fast |
-| Thursday | Answer tomorrow (no reveal) |
-| Friday | Opens with Thursday's reveal, then a 3-levels puzzle |
-| Saturday | Spot the mistake |
-| Sunday | Hard puzzle of the week (`pause`) |
+| Slot | Episodes | Format | Theme |
+| --- | --- | --- | --- |
+| 1 | 001, 008, 015, 022, 029 | 3 levels | `light` |
+| 2 | 002, 009, 016, 023, 030 | Spot the mistake | `dark` |
+| 3 | 003, 010, 017, 024 | Answer fast | `neon` |
+| 4 | 004, 011, 018, 025 | Answer tomorrow (no reveal) | `dark` |
+| 5 | 005, 012, 019, 026 | Yesterday's answer + 3 levels | `light` |
+| 6 | 006, 013, 020, 027 | Spot the mistake (another kind of trap) | `dark` |
+| 7 | 007, 014, 021, 028 | Hard puzzle of the week (`pause`) | `neon` |
+
+Over 30 episodes every format gets enough episodes to compare, and no two episodes in a row
+share a format or a theme.
+
+```bash
+npm run next     # episodes written so far, their format, rendered or not, and what comes next
+```
+
+It reads `videos/brain/brain-NNN-*.json` (what is written) and `out/<id>/` (what is rendered on
+this computer), flags an episode whose format does not match its slot, and prints the next
+number, format, theme and how to build it. Whether an episode is **published** and its numbers
+live in the "Mind Reps tracker" dashboard in claude.ai (link in the project notes).
 
 **The timings and the comment ask are starting hypotheses, not measured best practice.** No
 reliable public data says how long a puzzle Short should hold or where to ask for comments.

@@ -13,7 +13,8 @@
     "dev": "remotion studio",
     "check": "tsx scripts/check.tsx",
     "schema": "tsx scripts/export-schema.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "next": "tsx scripts/next-brain.ts"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.534",

@@ -80,6 +80,16 @@ export function youtubeMarkdown(spec: VideoSpec, tl: Timeline, voiced: boolean):
   out.push('');
   out.push(fr ? '## Descripción (copia todo el bloque)' : '## Description (copy the whole block)', '');
   out.push('```', ...desc, '```', '');
+  if (comment) {
+    out.push(fr ? '## Comentario fijado (publícalo tú y fíjalo)' : '## Pinned comment (post it from the channel and pin it)', '');
+    out.push('```', comment, '```', '');
+    out.push(
+      fr
+        ? '_Tras 24 h puedes fijar en su lugar el mejor comentario de un espectador (docs/packs/brain.md)._'
+        : "_After 24 h you can pin the best viewer comment instead (a correct answer with a good why)._",
+      '',
+    );
+  }
   if (short) out.push(fr ? '_Short: sin capítulos (YouTube no los muestra en Shorts). Súbelo en vertical; menos de 3 min cuenta como Short._' : '_Short: no chapters (YouTube does not show them on Shorts). Upload the vertical version; under 3 min counts as a Short._', '');
   else if (chs.length < 3) out.push(fr ? '_Menos de 3 capítulos de 10 s: YouTube no los mostraría, así que no se incluyen._' : '_Fewer than 3 chapters of 10 s or more: YouTube would ignore them, so they are left out._', '');
   if (!p) out.push(fr ? '_Añade `"publish"` al spec para títulos y descripción a medida._' : '_Add `"publish"` to the spec for custom titles and description._', '');
