@@ -15,7 +15,7 @@ import type {Timeline} from '../timeline/timeline';
 export type ThumbVariant = 'wide' | 'tall';
 export type ThumbProps = Timeline & {variant: ThumbVariant};
 
-type Resolved = Omit<ThumbnailSpec, 'theme'> & {theme: Theme};
+type Resolved = Omit<ThumbnailSpec, 'theme'> & {theme: Theme; episode?: string};
 
 // Without a `thumbnail` block, build one from the first title scene.
 export function resolveThumbnail(tl: Timeline): Resolved {
@@ -23,7 +23,15 @@ export function resolveThumbnail(tl: Timeline): Resolved {
   const title = tl.scenes.find((s) => s.type === 'title');
   const headline = tl.scenes.find((s) => s.type === 'headline');
   const tag = title && title.type === 'title' ? title.tag : headline && headline.type === 'headline' ? headline.kicker : undefined;
-  if (tl.thumbnail) return {...tl.thumbnail, kicker: tl.thumbnail.kicker ?? tag, theme};
+  // A series episode ("Mind Reps #014: …" in the first puzzle's title) always shows its
+  // number on the cover, next to the kicker, unless the kicker already carries it.
+  const puzzle = tl.scenes.find((s) => s.type === 'puzzle' && s.title);
+  const series = puzzle && puzzle.type === 'puzzle' ? /^(.*?#\d+)/.exec(puzzle.title ?? '')?.[1] : undefined;
+  if (tl.thumbnail) {
+    const kicker = tl.thumbnail.kicker ?? tag;
+    const episode = series && !(kicker ?? '').includes('#') ? series : undefined;
+    return {...tl.thumbnail, kicker, episode, theme};
+  }
   if (headline && headline.type === 'headline') return {text: headline.heading, kicker: tag, tone: 'bad', media: headline.media, theme};
   const heading = title && title.type === 'title' ? title.heading : tl.title;
   const beatIcons = title && title.type === 'title' ? (title.beats ?? []).flatMap((b) => (b.icon ? [b.icon] : [])) : [];
@@ -95,12 +103,12 @@ const BigText: React.FC<{text: string; size: number; theme: Theme; align: 'left'
   );
 };
 
-const Kicker: React.FC<{text: string; theme: Theme; size: number}> = ({text, theme, size}) => (
+const Kicker: React.FC<{text: string; theme: Theme; size: number; soft?: boolean}> = ({text, theme, size, soft}) => (
   <div
     style={{
       display: 'inline-block',
-      background: theme.accent,
-      color: theme.accentText,
+      background: soft ? theme.surface : theme.accent,
+      color: soft ? theme.text : theme.accentText,
       fontFamily: FONT.sans,
       fontWeight: 800,
       fontSize: size,
@@ -259,8 +267,8 @@ export const Thumbnail: React.FC<ThumbProps> = (tl) => {
   const photo = th.media ? tl.media?.[th.media] : undefined;
   // Text box: the left side in 16:9 (all the width without a picture); the top in 9:16.
   const tb = wide
-    ? {x: 64, y: th.kicker ? 150 : 90, w: hasArt ? 660 : 1150, h: th.kicker ? 500 : 560}
-    : {x: 70, y: th.kicker ? 400 : 300, w: 940, h: hasArt ? 560 : 900};
+    ? {x: 64, y: th.kicker || th.episode ? 150 : 90, w: hasArt ? 660 : 1150, h: th.kicker || th.episode ? 500 : 560}
+    : {x: 70, y: th.kicker || th.episode ? 400 : 300, w: 940, h: hasArt ? 560 : 900};
   const size = wide ? fitText(th.text, tb.w, tb.h, hasArt ? 128 : 150, 56, 4) : fitText(th.text, tb.w, tb.h, 168, 80, 5);
   // Picture box: right side in 16:9; middle in 9:16 (clear of the Shorts buttons at the bottom).
   // A figure (a tall drawing) gets more height in 9:16 than a row of icon cards.
@@ -293,9 +301,10 @@ export const Thumbnail: React.FC<ThumbProps> = (tl) => {
           background: `radial-gradient(circle, ${theme.accent}${theme.name === 'light' ? '40' : '55'} 0%, ${theme.accent}00 68%)`,
         }}
       />}
-      {th.kicker && (
-        <div style={{position: 'absolute', left: wide ? tb.x : 0, width: wide ? undefined : W, top: wide ? 64 : 250, textAlign: 'center'}}>
-          <Kicker text={th.kicker} theme={theme} size={wide ? 30 : 42} />
+      {(th.kicker || th.episode) && (
+        <div style={{position: 'absolute', left: wide ? tb.x : 0, width: wide ? undefined : W, top: wide ? 64 : 250, display: 'flex', flexWrap: 'wrap', gap: wide ? 16 : 20, justifyContent: wide ? 'flex-start' : 'center'}}>
+          {th.episode && <Kicker text={th.episode} theme={theme} size={wide ? 28 : 36} />}
+          {th.kicker && <Kicker text={th.kicker} theme={theme} size={th.episode ? (wide ? 28 : 36) : wide ? 30 : 42} soft={!!th.episode} />}
         </div>
       )}
       <div style={{position: 'absolute', left: tb.x, top: tb.y, width: tb.w, height: tb.h, display: 'flex', alignItems: wide ? 'center' : 'flex-start', justifyContent: wide ? 'flex-start' : 'center'}}>

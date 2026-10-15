@@ -634,6 +634,10 @@ and `npm run thumbnail -- <spec>` (a few seconds, only the two pictures) write t
 - Look at both files before delivering: the text must be readable at a small size and must not
   touch the picture.
 
+A series episode (the first puzzle's title starts "Mind Reps #014") always shows its number
+on the cover and the thumbnail: a "MIND REPS #014" tag next to the `kicker`, unless the
+kicker already has a `#`. Write the format in the kicker ("Spot the mistake"), not the number.
+
 ### `shot` — a documentary shot (theme `film`)
 ```json
 {"type": "shot", "world": "synapse", "title": "Synapse", "scale": "≈ 1 µm", "camera": "push",
