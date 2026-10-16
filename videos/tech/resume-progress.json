@@ -1,0 +1,1533 @@
+{
+  "id": "resume-progress",
+  "title": "Design \"continue where you left off\"",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "dark",
+  "shape": "progressive",
+  "hook": "broken-thing",
+  "publish": {
+    "titles": [
+      "System Design: \"Continue Where You Left Off\" (Save User Progress)",
+      "Resume Progress Across Devices: From localStorage to a Million Users",
+      "System Design Interview: Save a User's Place When They Close the Tab"
+    ],
+    "description": "Forty minutes into a lesson, the tab closes, and you're back on the home page. We design \"continue where you left off\" the way a real project grows: the URL and local storage for one laptop, progress on the server for many devices, two kinds of session, 20,000 writes per second at the peak, and what to do when two devices disagree. Every piece comes with the problem that asked for it and what it costs.",
+    "learn": [
+      "Why the URL and local storage are the right first answer, and their limits",
+      "When to save: why not on unload, and why visibilitychange is the last reliable moment",
+      "Moving progress to the server, and the two kinds of session (who you are vs where you were)",
+      "Write-heavy math: 200k students saving every 10 s is 20k writes per second",
+      "Scaling out a stateless backend, then fixing the database primary: save smarter, partition by student",
+      "Out-of-order saves from two devices, and the conditional update that keeps the newest"
+    ],
+    "extra": [
+      "Browsers don't reliably fire unload or beforeunload, especially on mobile; MDN calls visibilitychange (hidden) the last event that's reliably observable by the page. Send the final save with navigator.sendBeacon (always a POST) or fetch with keepalive.",
+      "localStorage survives closing the tab, holds about 5 MiB per origin, is synchronous and stores strings only. Private mode, clearing site data and Safari's 7-day cap on script-writable storage can wipe it.",
+      "Return-to-page after login must accept only paths on your own site (OWASP: Unvalidated Redirects and Forwards).",
+      "The numbers are our own example: 1M students, 20% watching at 8 pm, one save every 10 s = 20k writes/s; one app open per hour = ~55 reads/s."
+    ],
+    "comment": "What would you have done differently? And which system should I design next?",
+    "hashtags": [
+      "systemdesign",
+      "backend",
+      "webdev"
+    ]
+  },
+  "thumbnail": {
+    "text": "Close the tab. *Keep your place.*",
+    "kicker": "System design",
+    "number": "40:12",
+    "tone": "info",
+    "icons": [
+      {
+        "icon": "client"
+      },
+      {
+        "icon": "mobile"
+      }
+    ]
+  },
+  "board": {
+    "nodes": [
+      {
+        "id": "local",
+        "label": "Local storage",
+        "sub": "in the browser",
+        "icon": "storage",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "frontend",
+        "label": "Frontend",
+        "sub": "laptop browser",
+        "icon": "client",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "phone",
+        "label": "Phone",
+        "sub": "its own browser",
+        "icon": "mobile",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "login",
+        "label": "Login",
+        "sub": "auth session",
+        "icon": "lock",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "lb",
+        "label": "Load balancer",
+        "sub": "spreads requests",
+        "icon": "gateway",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "sub": "REST API",
+        "icon": "api",
+        "row": 2,
+        "col": 1
+      },
+      {
+        "id": "copies",
+        "label": "More copies",
+        "sub": "same backend",
+        "icon": "instances",
+        "row": 2,
+        "col": 2
+      },
+      {
+        "id": "db",
+        "label": "Database",
+        "sub": "courses · users",
+        "icon": "db",
+        "row": 3,
+        "col": 0
+      },
+      {
+        "id": "progress",
+        "label": "Progress",
+        "sub": "lesson · second · quiz",
+        "icon": "db",
+        "row": 3,
+        "col": 1
+      },
+      {
+        "id": "store",
+        "label": "Progress store",
+        "sub": "split by student",
+        "icon": "db",
+        "row": 3,
+        "col": 2
+      }
+    ],
+    "edges": [
+      {
+        "from": "frontend",
+        "to": "local"
+      },
+      {
+        "from": "frontend",
+        "to": "api"
+      },
+      {
+        "from": "phone",
+        "to": "api"
+      },
+      {
+        "from": "frontend",
+        "to": "login"
+      },
+      {
+        "from": "frontend",
+        "to": "lb"
+      },
+      {
+        "from": "phone",
+        "to": "lb"
+      },
+      {
+        "from": "lb",
+        "to": "api"
+      },
+      {
+        "from": "lb",
+        "to": "copies"
+      },
+      {
+        "from": "api",
+        "to": "db"
+      },
+      {
+        "from": "api",
+        "to": "progress"
+      },
+      {
+        "from": "copies",
+        "to": "progress"
+      },
+      {
+        "from": "api",
+        "to": "store"
+      },
+      {
+        "from": "copies",
+        "to": "store"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design interview",
+      "heading": "Design *continue where you left off*",
+      "subheading": "From one laptop to a million students",
+      "chapter": "The question",
+      "narration": "Forty minutes into a lesson, halfway through a quiz, the tab closes. You reopen it: home page, empty quiz. How would you design continue where you left off? Start simple, improve it only when needed.",
+      "beats": [
+        {
+          "text": "Lesson 7 · 40:12",
+          "icon": "client",
+          "at": "Forty minutes into"
+        },
+        {
+          "text": "Tab closed",
+          "icon": "file",
+          "at": "the tab closes"
+        },
+        {
+          "text": "Home page",
+          "icon": "client",
+          "at": "empty quiz"
+        },
+        {
+          "text": "?",
+          "at": "How would you design"
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "2,000 students",
+      "caption": "an online course platform · one laptop each",
+      "tone": "info",
+      "icon": "users",
+      "countUp": true,
+      "sfx": "impact",
+      "chapter": "Start simple",
+      "narration": "Start small. An online course platform with two thousand students. Videos, readings and quizzes, and each student studies on their own laptop."
+    },
+    {
+      "type": "list",
+      "title": "Before designing",
+      "numbered": false,
+      "narration": "Before designing: what must it do, and how well? Reopen the app, and you land on the same lesson, at the same second. A half-finished quiz keeps its answers. You lose at most thirty seconds of progress. And resuming adds no visible delay.",
+      "items": [
+        {
+          "text": "Same lesson, *same second*",
+          "icon": "client",
+          "at": "the same lesson"
+        },
+        {
+          "text": "Quiz answers *survive*",
+          "icon": "file",
+          "at": "half-finished quiz keeps"
+        },
+        {
+          "text": "Lose ≤ *30 s* of progress",
+          "icon": "chart",
+          "at": "at most thirty seconds"
+        },
+        {
+          "text": "Resume adds < *100 ms*",
+          "icon": "chart",
+          "at": "no visible delay"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "What you already have",
+      "narration": "Your platform already has the usual pieces. The frontend, the app in the browser. The backend, with its REST API: the backend is everything on your server, the API is its door. And a database with courses and users.",
+      "steps": [
+        {
+          "at": "app in the browser",
+          "show": [
+            "frontend"
+          ]
+        },
+        {
+          "at": "its REST API",
+          "show": [
+            "api"
+          ]
+        },
+        {
+          "at": "API is its door",
+          "focus": [
+            "api"
+          ],
+          "note": {
+            "text": "Backend = your server · *API* = its door",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "a database with",
+          "focus": [],
+          "show": [
+            "db"
+          ],
+          "note": {
+            "text": "Courses and users",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The URL is state",
+      "narration": "First idea, and it's free: put where you are in the URL. Lesson seven, minute forty. Refresh, go back or share the link, and you land in the same place. But close the tab and open the site fresh? Home page again.",
+      "steps": [
+        {
+          "at": "put where you are",
+          "focus": [
+            "frontend"
+          ],
+          "note": {
+            "text": "URL: */lesson/7?t=2412*",
+            "tone": "info",
+            "near": "frontend"
+          }
+        },
+        {
+          "at": "minute forty",
+          "focus": [],
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "label": "GET /lesson/7",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "share the link",
+          "status": {
+            "frontend": "ok"
+          },
+          "note": {
+            "text": "Refresh · back · share → *same place*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "open the site fresh",
+          "status": {
+            "frontend": "warn"
+          },
+          "note": {
+            "text": "Fresh open → *home page*",
+            "tone": "bad"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Local storage",
+      "narration": "So the browser remembers it. Local storage is a small key value store inside the browser, and it survives closing the tab. Save the last URL and the quiz draft there. On open, the frontend reads it and jumps straight back. No server change at all.",
+      "steps": [
+        {
+          "at": "Local storage is",
+          "show": [
+            "local"
+          ],
+          "note": {
+            "text": "Key-value store *in the browser*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "survives closing the tab",
+          "note": {
+            "text": "Survives *closing the tab*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "Save the last URL",
+          "packet": {
+            "from": "frontend",
+            "to": "local",
+            "label": "URL + quiz",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "the frontend reads",
+          "packet": {
+            "from": "local",
+            "to": "frontend",
+            "label": "lesson 7 · 40:12",
+            "color": "green"
+          }
+        },
+        {
+          "at": "jumps straight back",
+          "status": {
+            "frontend": "ok"
+          }
+        },
+        {
+          "at": "No server change",
+          "note": {
+            "text": "*No server change*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "title": "When to save",
+      "filename": "resume.ts",
+      "language": "ts",
+      "code": "const save = () => localStorage.setItem(\n  \"resume:\" + userId,\n  JSON.stringify({ url: location.href,\n    t: video.currentTime, quiz: answers }));\n\nquiz.oninput = debounce(save, 1000);\nsetInterval(save, 5000); // video position\n// not \"unload\": often never fires on phones\ndocument.addEventListener(\n  \"visibilitychange\", () => {\n    if (document.hidden) save();\n  });",
+      "narration": "When do you save? Not when the page closes: on phones, that event often never fires. Save as they go: quiz answers a second after the last change, the video position every few seconds. And save when the page gets hidden: that's the last moment you can count on.",
+      "steps": [
+        {
+          "at": "When do you save",
+          "lines": [
+            1,
+            2,
+            3,
+            4
+          ],
+          "note": "save(): the URL, the second, the quiz"
+        },
+        {
+          "at": "often never fires",
+          "lines": [
+            8
+          ],
+          "note": "Not unload: on phones it often never fires"
+        },
+        {
+          "at": "quiz answers a second",
+          "lines": [
+            6
+          ],
+          "note": "Quiz: 1 s after the last change"
+        },
+        {
+          "at": "every few seconds",
+          "lines": [
+            7
+          ],
+          "note": "Video position: every 5 s"
+        },
+        {
+          "at": "page gets hidden",
+          "lines": [
+            9,
+            10,
+            11,
+            12
+          ],
+          "note": "Hidden = the last moment you can count on"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Is anything else needed?",
+      "narration": "For one laptop, is anything else needed? No. No new servers, no new tables, and resuming is instant. The cost: it lives in one browser. Private mode or clearing data wipes it. On a shared computer, key it by user and clear it on logout.",
+      "steps": [
+        {
+          "at": "is anything else needed",
+          "camera": []
+        },
+        {
+          "at": "resuming is instant",
+          "status": {
+            "frontend": "ok",
+            "local": "ok"
+          },
+          "note": {
+            "text": "Ships today: *no server change*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "lives in one browser",
+          "focus": [
+            "local"
+          ],
+          "note": {
+            "text": "Cost: *one browser only*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "clearing data wipes",
+          "status": {
+            "local": "warn"
+          },
+          "note": {
+            "text": "Private mode · clear data → *gone*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "key it by user",
+          "focus": [],
+          "note": {
+            "text": "Shared PC: *key by user, clear on logout*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "2 devices",
+      "caption": "laptop at night · phone on the bus",
+      "tone": "warn",
+      "icon": "mobile",
+      "sfx": "impact",
+      "chapter": "A second device",
+      "narration": "Now, what if they study on the laptop at night, and continue on the phone on the bus? Does this design hold?"
+    },
+    {
+      "type": "board",
+      "title": "What breaks",
+      "narration": "The phone has its own browser, and its own local storage. Empty. Your progress is stuck on a laptop at home. The code isn't the problem. Local storage belongs to a device, and progress belongs to a person.",
+      "steps": [
+        {
+          "at": "The phone has",
+          "show": [
+            "phone"
+          ],
+          "focus": [
+            "phone"
+          ]
+        },
+        {
+          "at": "its own local storage",
+          "note": {
+            "text": "Its local storage: *empty*",
+            "tone": "warn",
+            "near": "phone"
+          }
+        },
+        {
+          "at": "stuck on a laptop",
+          "focus": [
+            "phone",
+            "local"
+          ],
+          "status": {
+            "phone": "error"
+          },
+          "sfx": "riser",
+          "note": {
+            "text": "Progress *stuck on the laptop*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "belongs to a device",
+          "focus": [],
+          "note": {
+            "text": "Storage = *a device* · progress = *a person*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Progress on the server",
+      "narration": "So progress moves to where the person is: your server. A progress table, one row per student and course: the lesson, the second, the quiz answers, and when it was saved. On open, any device asks the API for it.",
+      "steps": [
+        {
+          "at": "where the person is",
+          "status": {
+            "phone": "idle",
+            "local": "idle"
+          },
+          "focus": [
+            "api"
+          ]
+        },
+        {
+          "at": "A progress table",
+          "show": [
+            "progress"
+          ],
+          "focus": [
+            "progress"
+          ],
+          "note": {
+            "text": "One row per *student + course*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "the quiz answers",
+          "note": {
+            "text": "lesson · second · *quiz* · saved_at",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "any device asks",
+          "focus": [],
+          "packet": {
+            "from": "phone",
+            "to": "progress",
+            "via": [
+              "api"
+            ],
+            "label": "GET /progress",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "API for it",
+          "packet": {
+            "from": "progress",
+            "to": "phone",
+            "via": [
+              "api"
+            ],
+            "label": "lesson 7 · 40:12",
+            "color": "green"
+          },
+          "status": {
+            "phone": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Saving over the network",
+      "narration": "While they watch, the frontend saves the position every ten seconds. When the page gets hidden, it sends one last save as a beacon: a small request the browser keeps sending even as the page goes away.",
+      "steps": [
+        {
+          "at": "While they watch",
+          "packet": {
+            "from": "frontend",
+            "to": "progress",
+            "via": [
+              "api"
+            ],
+            "label": "PUT /progress",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "every ten seconds",
+          "clock": {
+            "frontend": {
+              "label": "every 10 s",
+              "over": 3,
+              "end": "save"
+            }
+          },
+          "packet": {
+            "from": "frontend",
+            "to": "progress",
+            "via": [
+              "api"
+            ],
+            "label": "PUT /progress",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "one last save",
+          "packet": {
+            "from": "frontend",
+            "to": "progress",
+            "via": [
+              "api"
+            ],
+            "label": "beacon",
+            "color": "purple"
+          },
+          "note": {
+            "text": "On hidden: *sendBeacon* · *fetch keepalive*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "page goes away",
+          "note": {
+            "text": "Sent by the browser, *not the page*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "What it costs",
+      "narration": "The cost: a write every ten seconds per active student. At two thousand students, that's at most two hundred a second: one database is plenty. The server takes the student from the login, never from the request. If the network fails, keep the local copy and send it later.",
+      "steps": [
+        {
+          "at": "a write every",
+          "focus": [
+            "progress"
+          ],
+          "meter": {
+            "progress": {
+              "value": 0.15,
+              "label": "≤ 200 writes/s"
+            }
+          }
+        },
+        {
+          "at": "at most two hundred",
+          "note": {
+            "text": "2,000 ÷ 10 s = *≤ 200 writes/s* → one DB",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "takes the student",
+          "focus": [],
+          "show": [
+            "login"
+          ],
+          "note": {
+            "text": "Student *from the login*, not the request",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "the network fails",
+          "packet": {
+            "from": "frontend",
+            "to": "api",
+            "label": "PUT ✕",
+            "color": "red"
+          },
+          "status": {
+            "frontend": "warn"
+          },
+          "note": {
+            "text": "Network fails → *keep it locally*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "keep the local copy",
+          "packet": {
+            "from": "frontend",
+            "to": "local",
+            "label": "keep copy",
+            "color": "yellow"
+          },
+          "note": {
+            "text": "Local = *fast copy + offline buffer*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "send it later",
+          "packet": {
+            "from": "frontend",
+            "to": "progress",
+            "via": [
+              "api"
+            ],
+            "label": "retry",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The login expires",
+      "chapter": "The login expires",
+      "narration": "And if they just stop using the app for two hours? The login session expires, on purpose, for security. They log back in, and the login page sends everyone home. Progress is saved; the redirect forgot it.",
+      "steps": [
+        {
+          "at": "for two hours",
+          "meter": {
+            "progress": "off"
+          },
+          "focus": [
+            "login",
+            "frontend"
+          ],
+          "clock": {
+            "login": {
+              "label": "2 h idle",
+              "over": 4,
+              "end": "expired"
+            }
+          },
+          "sfx": "clock"
+        },
+        {
+          "at": "for security",
+          "note": {
+            "text": "Expiry is *on purpose*: security",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "log back in",
+          "packet": {
+            "from": "frontend",
+            "to": "login",
+            "label": "log in",
+            "color": "blue"
+          }
+        },
+        {
+          "at": "sends everyone home",
+          "packet": {
+            "from": "login",
+            "to": "frontend",
+            "label": "/home",
+            "color": "red"
+          },
+          "status": {
+            "frontend": "warn"
+          },
+          "note": {
+            "text": "Back to *home*, not lesson 7",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "the redirect forgot",
+          "focus": [
+            "progress",
+            "login"
+          ],
+          "status": {
+            "progress": "ok"
+          },
+          "note": {
+            "text": "Progress *saved* · redirect *forgot it*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Two kinds of session",
+      "narration": "The word session hides two things. Like a hotel: your key card expires, your stored luggage doesn't. Who you are should expire. Where you were should not. After login, send them back to the page they asked for. Only paths on your own site, or attackers can abuse it.",
+      "steps": [
+        {
+          "at": "hides two things",
+          "camera": [
+            "login",
+            "progress",
+            "frontend"
+          ]
+        },
+        {
+          "at": "your key card expires",
+          "note": {
+            "text": "Analogy: key card *expires* · luggage *stays*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "Who you are",
+          "focus": [
+            "login"
+          ],
+          "note": {
+            "text": "Who you are → *expires*",
+            "tone": "warn",
+            "near": "login"
+          }
+        },
+        {
+          "at": "Where you were",
+          "focus": [
+            "progress"
+          ],
+          "note": {
+            "text": "Where you were → *stays*",
+            "tone": "good",
+            "near": "progress"
+          }
+        },
+        {
+          "at": "send them back",
+          "focus": [],
+          "packet": {
+            "from": "login",
+            "to": "frontend",
+            "label": "/lesson/7",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          }
+        },
+        {
+          "at": "Only paths on",
+          "note": {
+            "text": "Return path: *your own site only*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "1M students",
+      "caption": "say 200k watching at once at 8 pm",
+      "tone": "warn",
+      "icon": "users",
+      "countUp": true,
+      "sfx": "impact",
+      "chapter": "A million students",
+      "narration": "The platform grows. One million students, and at eight in the evening, say two hundred thousand are watching at once. Does it hold?"
+    },
+    {
+      "type": "board",
+      "title": "Do the math",
+      "narration": "Do the math first. Two hundred thousand students, a save every ten seconds: twenty thousand writes per second. Reads only happen when someone opens the app: a few dozen per second. This system is almost all writes.",
+      "steps": [
+        {
+          "at": "Do the math",
+          "camera": [],
+          "status": {
+            "progress": "idle",
+            "frontend": "idle",
+            "phone": "idle"
+          },
+          "meter": {
+            "progress": "off"
+          }
+        },
+        {
+          "at": "a save every",
+          "crowd": {
+            "from": "frontend",
+            "to": "api",
+            "density": "flood",
+            "label": "×20k/s"
+          },
+          "status": {
+            "api": "busy"
+          }
+        },
+        {
+          "at": "twenty thousand writes",
+          "note": {
+            "text": "200k ÷ 10 s = *20k writes/s*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "a few dozen",
+          "note": {
+            "text": "Reads: *~55/s*, one key lookup each",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "almost all writes",
+          "note": {
+            "text": "Almost *all writes*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Scale out first",
+      "narration": "The standard first step: a load balancer, which spreads requests over several copies of your backend. That works because the backend is stateless: it keeps nothing between requests. Progress lives in the database, not in a server's memory, so any copy can take any save.",
+      "steps": [
+        {
+          "at": "a load balancer",
+          "show": [
+            "lb"
+          ],
+          "hide": [
+            "frontend->api",
+            "phone->api"
+          ],
+          "crowd": {
+            "from": "frontend",
+            "to": "lb",
+            "density": "many",
+            "label": "×20k/s"
+          }
+        },
+        {
+          "at": "several copies",
+          "show": [
+            "copies"
+          ],
+          "packet": {
+            "from": "lb",
+            "to": "copies",
+            "label": "save",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "backend is stateless",
+          "focus": [
+            "api",
+            "copies"
+          ],
+          "note": {
+            "text": "*Stateless*: keeps nothing between requests",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "Progress lives in",
+          "focus": [],
+          "packet": {
+            "from": "copies",
+            "to": "progress",
+            "label": "save",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "any copy can",
+          "status": {
+            "api": "ok",
+            "copies": "ok"
+          },
+          "note": {
+            "text": "Any copy, *any save*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Where it moved",
+      "narration": "But every copy writes to the same database. Its primary, the one copy that accepts writes, takes every save. The load grows with every student, and you can't just copy it. A read cache or replicas won't help: this is writes.",
+      "steps": [
+        {
+          "at": "the same database",
+          "focus": [
+            "progress",
+            "api",
+            "copies"
+          ],
+          "crowd": {
+            "from": "api",
+            "to": "progress",
+            "density": "flood",
+            "label": "20k writes/s"
+          }
+        },
+        {
+          "at": "accepts writes",
+          "meter": {
+            "progress": {
+              "value": 0.95,
+              "label": "writes"
+            }
+          },
+          "note": {
+            "text": "Primary = *the one server that accepts writes*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "grows with every student",
+          "status": {
+            "progress": "warn"
+          },
+          "sfx": "riser",
+          "note": {
+            "text": "Servers scale. *One primary doesn't.*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "A read cache",
+          "note": {
+            "text": "Read cache, replicas → *reads only*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Save smarter",
+      "narration": "The cheap fix first. Your requirement allows losing thirty seconds, so use that budget. Save every thirty seconds, plus on pause, on lesson change and when the page is hidden. About a third of the writes. The cost: if the browser crashes, they lose up to thirty seconds.",
+      "steps": [
+        {
+          "at": "allows losing thirty",
+          "focus": [
+            "progress"
+          ],
+          "meter": {
+            "progress": {
+              "value": 0.95,
+              "label": "writes"
+            }
+          },
+          "note": {
+            "text": "Budget: lose ≤ *30 s*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "Save every thirty",
+          "focus": [],
+          "clock": {
+            "frontend": {
+              "label": "every 30 s",
+              "over": 3,
+              "end": "save"
+            }
+          }
+        },
+        {
+          "at": "plus on pause",
+          "note": {
+            "text": "+ on pause · lesson change · hidden",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "About a third",
+          "meter": {
+            "progress": {
+              "value": 0.4,
+              "label": "writes"
+            }
+          },
+          "status": {
+            "progress": "warn"
+          },
+          "note": {
+            "text": "20k → *~7k writes/s*",
+            "tone": "good"
+          },
+          "crowd": {
+            "from": "api",
+            "to": "progress",
+            "density": "many",
+            "label": "~7k writes/s"
+          }
+        },
+        {
+          "at": "if the browser crashes",
+          "note": {
+            "text": "Cost: up to *30 s* lost on a crash",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "A store built for writes",
+      "narration": "If saves outgrow one primary, move progress to a database built for small writes by key: DynamoDB, Cassandra, or Redis with persistence on. Or split Postgres by student. Either way, each save touches one partition, and no single student is a hot spot.",
+      "steps": [
+        {
+          "at": "outgrow one primary",
+          "focus": [
+            "progress"
+          ]
+        },
+        {
+          "at": "built for small writes",
+          "meter": {
+            "progress": "off"
+          },
+          "hide": [
+            "progress"
+          ],
+          "show": [
+            "store"
+          ],
+          "focus": [
+            "store"
+          ]
+        },
+        {
+          "at": "or Redis with",
+          "note": {
+            "text": "DynamoDB · Cassandra · *Redis with persistence*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "split Postgres by",
+          "note": {
+            "text": "Or *Postgres split by student*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "touches one partition",
+          "focus": [],
+          "packet": {
+            "from": "copies",
+            "to": "store",
+            "label": "student 42",
+            "color": "yellow"
+          },
+          "note": {
+            "text": "Partition key: *student*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "a hot spot",
+          "status": {
+            "store": "ok"
+          },
+          "camera": []
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "What it costs",
+      "narration": "The cost: one more database to run and back up. And questions across students, like how many finished lesson three, get hard there. Send those as events to your analytics, and keep the main database for courses, users and payments.",
+      "steps": [
+        {
+          "at": "one more database",
+          "focus": [
+            "store"
+          ],
+          "note": {
+            "text": "+1 database to *run and back up*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "questions across students",
+          "note": {
+            "text": "\"Who finished lesson 3?\" → *hard here*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "events to your analytics",
+          "note": {
+            "text": "Cross-student questions → *analytics*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "keep the main database",
+          "focus": [
+            "db"
+          ],
+          "status": {
+            "db": "ok"
+          },
+          "note": {
+            "text": "Main DB: *courses · users · payments*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "text": "Which wins?",
+      "caption": "the phone and the laptop both save progress",
+      "tone": "warn",
+      "icon": "mobile",
+      "sfx": "impact",
+      "chapter": "Two devices disagree",
+      "narration": "One last question. The phone and the laptop both save progress. Which one wins?"
+    },
+    {
+      "type": "sequence",
+      "title": "Out of order",
+      "narration": "On the bus, the phone has no signal, so its saves wait. At home, the laptop moves you on to lesson four. Then the phone reconnects and sends lesson three, from an hour ago. The last save to arrive wins, so lesson three wins. You go back an hour.",
+      "actors": [
+        {
+          "id": "phone",
+          "label": "Phone",
+          "icon": "mobile"
+        },
+        {
+          "id": "api",
+          "label": "Backend",
+          "icon": "api"
+        },
+        {
+          "id": "store",
+          "label": "Progress store",
+          "icon": "db"
+        },
+        {
+          "id": "laptop",
+          "label": "Laptop",
+          "icon": "client"
+        }
+      ],
+      "steps": [
+        {
+          "at": "has no signal",
+          "from": "phone",
+          "to": "api",
+          "kind": "lost",
+          "label": "lesson 3 · saved 8 pm"
+        },
+        {
+          "at": "its saves wait",
+          "from": "phone",
+          "kind": "self",
+          "label": "queued"
+        },
+        {
+          "at": "laptop moves you",
+          "from": "laptop",
+          "to": "api",
+          "label": "lesson 4 · saved 9 pm",
+          "after": "+1 h"
+        },
+        {
+          "at": "on to lesson four",
+          "from": "api",
+          "to": "store",
+          "label": "lesson 4"
+        },
+        {
+          "at": "phone reconnects",
+          "from": "phone",
+          "to": "api",
+          "label": "lesson 3 · saved 8 pm"
+        },
+        {
+          "at": "last save to",
+          "from": "api",
+          "to": "store",
+          "label": "lesson 3 overwrites",
+          "status": {
+            "store": "error"
+          },
+          "note": {
+            "text": "Last to arrive wins → *you go back*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "go back an",
+          "from": "store",
+          "to": "laptop",
+          "kind": "return",
+          "label": "resume: lesson 3"
+        }
+      ],
+      "spans": [
+        {
+          "actor": "phone",
+          "from": 0,
+          "to": 4,
+          "label": "no signal",
+          "tone": "warn"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Keep the newest",
+      "narration": "The fix: every save carries when it happened. The store keeps it only if it's newer than what it has, in one atomic step: check and write together. A late save is ignored. The cost: device clocks can be wrong, so some apps ask: lesson four, or lesson three?",
+      "steps": [
+        {
+          "at": "every save carries",
+          "packet": {
+            "from": "phone",
+            "to": "store",
+            "via": [
+              "lb",
+              "copies"
+            ],
+            "label": "lesson 3 · 8 pm",
+            "color": "yellow"
+          },
+          "note": {
+            "text": "Each save says *when it happened*",
+            "tone": "info"
+          },
+          "status": {
+            "store": "warn",
+            "api": "idle",
+            "copies": "idle",
+            "db": "idle"
+          }
+        },
+        {
+          "at": "keeps it only",
+          "focus": [
+            "store"
+          ],
+          "note": {
+            "text": "Write *only if newer* than stored",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "one atomic step",
+          "note": {
+            "text": "Check + write: *one atomic step*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "late save is ignored",
+          "status": {
+            "store": "ok"
+          },
+          "note": {
+            "text": "8 pm < 9 pm → *ignored*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "device clocks can",
+          "focus": [],
+          "note": {
+            "text": "Clocks can be wrong → *ask the user*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "or lesson three",
+          "camera": []
+        }
+      ]
+    },
+    {
+      "type": "compare",
+      "title": "When is local enough?",
+      "chapter": "When local is enough",
+      "narration": "Careful: none of this is always needed. One device, no accounts, a form draft? Local storage is enough. Progress that follows a person across devices? That's the server. And when saves outgrow one primary, a store built for writes.",
+      "left": {
+        "label": "Local storage is enough",
+        "tone": "good",
+        "items": [
+          {
+            "text": "One device",
+            "at": "One device"
+          },
+          {
+            "text": "No accounts",
+            "at": "no accounts"
+          },
+          {
+            "text": "A form draft",
+            "at": "a form draft"
+          }
+        ]
+      },
+      "right": {
+        "label": "Progress on the server",
+        "tone": "info",
+        "items": [
+          {
+            "text": "Follows a *person* across devices",
+            "at": "follows a person"
+          },
+          {
+            "text": "Saves outgrow one primary → *a write store*",
+            "at": "saves outgrow one"
+          }
+        ]
+      }
+    },
+    {
+      "type": "summary",
+      "title": "The path",
+      "chapter": "Recap",
+      "narration": "Look at the path. We started with the URL and local storage, and each piece came when a real problem asked for it. Another device: the server. Millions: save smarter and split by student. Two devices: keep the newest. What would you have done differently?",
+      "points": [
+        {
+          "text": "One device → *URL + local storage*",
+          "at": "the URL and"
+        },
+        {
+          "text": "Another device → *progress on the server*",
+          "at": "Another device"
+        },
+        {
+          "text": "Millions → *save smarter, split by student*",
+          "at": "save smarter and"
+        },
+        {
+          "text": "Two devices → *keep the newest*",
+          "at": "keep the newest"
+        }
+      ],
+      "cta": "What would you have done differently?"
+    },
+    {
+      "type": "list",
+      "title": "Before you go",
+      "numbered": false,
+      "narration": "Leave your answer in the comments, and tell me which system we design next: a URL shortener, a chat, or a payment system. If this helped, a like and a subscribe help the channel a lot. See you in the next one.",
+      "items": [
+        {
+          "text": "Your answer → *comments*",
+          "icon": "user",
+          "at": "in the comments"
+        },
+        {
+          "text": "Next: *URL shortener, chat or payments?*",
+          "icon": "search",
+          "at": "which system we"
+        },
+        {
+          "text": "*Like* and *subscribe* if it helped",
+          "icon": "bell",
+          "at": "If this helped"
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "In an interview, ask first: one device or many? Logged in or anonymous? How much progress can you lose? How many students at the peak? Those four answers pick the design.",
+    "URL first: anything that defines where you are (lesson, tab, filters, page of results) belongs in the URL, because refresh, back, bookmarks and shared links then work for free. Local storage only remembers which URL was last.",
+    "Storage in the browser: sessionStorage is per tab and gone when it closes; localStorage is per origin, survives restarts, about 5 MiB, synchronous and strings only; IndexedDB is async and much bigger, for offline-first apps. Private mode, clearing site data and Safari's 7-day cap on script-writable storage (after 7 days of Safari use without interacting with the site) can wipe it: it is a convenience, not a source of truth.",
+    "Why not save on unload or beforeunload: browsers don't guarantee those events, especially on mobile, where apps are backgrounded and killed without closing. MDN calls visibilitychange (hidden) the last event that's reliably observable by the page. Unload handlers also break the back/forward cache.",
+    "Beacon details: navigator.sendBeacon always sends a POST and can't set custom headers (auth goes in the cookie), so the endpoint must accept POST; fetch with keepalive allows PUT and headers, with a body limit of about 64 KiB.",
+    "Shared computers: key the local copy by user id and clear it on logout, so the next person never sees someone else's lesson or quiz answers.",
+    "Why not keep progress in the server's session memory: that makes the backend stateful. With several copies you need sticky sessions, and a restart or deploy loses it. Progress is data; it belongs in a database.",
+    "Two kinds of session: the auth session (a cookie or token) should expire for security; the work state should not. After login, redirect to the saved return path, but accept only relative paths on your own site (OWASP Unvalidated Redirects and Forwards: otherwise attackers send users to a phishing page with your domain in the link). Two hours idle is our example; OWASP suggests shorter idle timeouts for many apps.",
+    "The math (our own example): 1M students, 20% watching at 8 pm = 200k; one save every 10 s = 20k writes/s; one app open per hour = ~55 reads/s. Data is small (~1 KB per row with a quiz draft, 1M × 5 courses ≈ 5 GB). The problem is write rate, not size, which is why a read cache and read replicas don't help.",
+    "A single tuned Postgres primary can take thousands of small updates per second; whether 20k/s fits depends on hardware and indexes. The point is that it is the one piece that doesn't scale by adding copies, and the load grows with every student. Before changing databases, save less: it is free.",
+    "Write-heavy options: Redis with AOF persistence (fsync everysec can lose about one second on a crash, inside the 30 s budget; flushing to Postgres later is write-behind), DynamoDB (managed, partitioned by key, pay per write), Cassandra (built for heavy writes; Netflix has written about using it for viewing history), or Postgres partitioned by student id. Partition key = student: no single student is hot.",
+    "Conflicts: last write wins is simple but wrong when saves arrive late. A conditional update (UPDATE ... WHERE saved_at < :new) keeps the newest in one atomic step. In DynamoDB it is a condition expression; in Redis a Lua script; in Cassandra a conditional write is a lightweight transaction (Paxos, several round trips), so the cheap way is writing with USING TIMESTAMP = saved_at. Device clocks drift: use server time for online saves, client time only for queued offline saves, or keep the furthest point per lesson. On opening the app, local copy vs server copy: same rule, newest wins.",
+    "Abuse: the server takes the user id from the session, never from the request body (otherwise anyone can overwrite someone else's progress: an IDOR). Rate limit PUT /progress per user. If progress unlocks certificates, the position the client sends can't be trusted: validate watched time on the server.",
+    "Follow-ups an interviewer may ask: how long do you keep progress (forever, it is tiny)? Deleting an account (delete the rows)? How do you know saves are failing (alert on the error rate of PUT /progress)? Offline mode (an IndexedDB queue that syncs on reconnect)?"
+  ]
+}

@@ -1,0 +1,307 @@
+{
+  "id": "resume-progress-short-2-two-sessions",
+  "title": "Logged out, and lost your place?",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "light",
+  "hook": "broken-thing",
+  "publish": {
+    "titles": [
+      "Logged Out and Lost Your Place? The Two Kinds of Session",
+      "Why Login Sends You to the Home Page (and the Fix)"
+    ],
+    "description": "Your progress was saved, but after logging in again you land on the home page. The word session hides two things: who you are, which should expire, and where you were, which should not.",
+    "extra": [
+      "🎬 The full video (from one laptop to a million students: local storage, progress on the server, 20k writes per second and two devices that disagree) is on the channel.",
+      "Return-to-page after login must accept only paths on your own site (OWASP: Unvalidated Redirects and Forwards)."
+    ],
+    "comment": "Have you ever lost your place like this? In which app?",
+    "hashtags": [
+      "systemdesign",
+      "webdev",
+      "backend"
+    ]
+  },
+  "thumbnail": {
+    "text": "Logged out. *Lost your place?*",
+    "kicker": "System design",
+    "number": "2 sessions",
+    "tone": "warn",
+    "icons": [
+      {
+        "icon": "lock"
+      },
+      {
+        "icon": "client",
+        "status": "error"
+      }
+    ]
+  },
+  "board": {
+    "nodes": [
+      {
+        "id": "frontend",
+        "label": "Frontend",
+        "sub": "the course app",
+        "icon": "client",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "login",
+        "label": "Login",
+        "sub": "auth session",
+        "icon": "lock",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "sub": "REST API",
+        "icon": "api",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "progress",
+        "label": "Progress",
+        "sub": "lesson · second · quiz",
+        "icon": "db",
+        "row": 1,
+        "col": 1
+      }
+    ],
+    "edges": [
+      {
+        "from": "frontend",
+        "to": "login"
+      },
+      {
+        "from": "frontend",
+        "to": "api"
+      },
+      {
+        "from": "api",
+        "to": "progress"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "Logged out, and *lost your place*?",
+      "narration": "You step away from a lesson for two hours. When you come back, you log in again, and land on the home page. Your progress was saved. So why did you lose your place?",
+      "beats": [
+        {
+          "text": "Lesson 7",
+          "icon": "client",
+          "at": "away from a lesson"
+        },
+        {
+          "text": "2 h away",
+          "icon": "scheduler",
+          "at": "for two hours",
+          "sfx": "clock"
+        },
+        {
+          "text": "Home page",
+          "icon": "client",
+          "at": "land on the home"
+        },
+        {
+          "text": "?",
+          "at": "why did you lose"
+        }
+      ]
+    },
+    {
+      "type": "compare",
+      "title": "Two kinds of session",
+      "narration": "The word session hides two things. Who you are: the login. Like a hotel key card, it expires on purpose, for security. And where you were: the lesson, the second, the quiz. Like your stored luggage, it should not.",
+      "left": {
+        "label": "Who you are",
+        "tone": "warn",
+        "items": [
+          {
+            "text": "The *login*",
+            "at": "Who you are"
+          },
+          {
+            "text": "Like a key card: *expires*",
+            "at": "hotel key card"
+          },
+          {
+            "text": "On purpose: *security*",
+            "at": "for security"
+          }
+        ]
+      },
+      "right": {
+        "label": "Where you were",
+        "tone": "good",
+        "items": [
+          {
+            "text": "Lesson · second · *quiz*",
+            "at": "where you were"
+          },
+          {
+            "text": "Like stored luggage: *stays*",
+            "at": "stored luggage"
+          }
+        ]
+      }
+    },
+    {
+      "type": "board",
+      "title": "What went wrong",
+      "narration": "Here, the login expired after two hours, and the progress was safe in its table. But the login page sends everyone home. It forgot where you were going. Making the login last longer only hides it.",
+      "steps": [
+        {
+          "at": "the login expired",
+          "show": [
+            "frontend",
+            "login"
+          ],
+          "clock": {
+            "login": {
+              "label": "2 h idle",
+              "over": 3,
+              "end": "expired"
+            }
+          }
+        },
+        {
+          "at": "safe in its",
+          "show": [
+            "api",
+            "progress"
+          ],
+          "status": {
+            "progress": "ok"
+          },
+          "note": {
+            "text": "Progress: *saved*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "sends everyone home",
+          "packet": {
+            "from": "login",
+            "to": "frontend",
+            "label": "/home",
+            "color": "red"
+          },
+          "status": {
+            "frontend": "error"
+          },
+          "sfx": "riser"
+        },
+        {
+          "at": "where you were going",
+          "focus": [
+            "login"
+          ],
+          "note": {
+            "text": "The redirect *forgot it*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "last longer only",
+          "note": {
+            "text": "Longer login = *less security*",
+            "tone": "warn"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "The fix",
+      "narration": "The fix: before login, keep the page they asked for. After login, send them back there, and the progress picks up at the same second. Only accept paths on your own site, or attackers can use your login page to send people anywhere.",
+      "steps": [
+        {
+          "at": "keep the page",
+          "focus": [
+            "login"
+          ],
+          "note": {
+            "text": "Keep *returnTo = /lesson/7*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "send them back",
+          "focus": [],
+          "packet": {
+            "from": "login",
+            "to": "frontend",
+            "label": "/lesson/7",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          }
+        },
+        {
+          "at": "the same second",
+          "packet": {
+            "from": "progress",
+            "to": "frontend",
+            "via": [
+              "api"
+            ],
+            "label": "40:12 + quiz",
+            "color": "green"
+          }
+        },
+        {
+          "at": "Only accept paths",
+          "note": {
+            "text": "Return path: *your own site only*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "send people anywhere",
+          "camera": [],
+          "note": {
+            "text": "Otherwise: an *open redirect*",
+            "tone": "bad"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "Keep them apart",
+      "narration": "Keep the two sessions apart: the login expires, the progress stays. And after login, send them back, to your own site only. Have you ever lost your place like this? The full video is on the channel.",
+      "points": [
+        {
+          "text": "Login → *expires*",
+          "at": "the login expires"
+        },
+        {
+          "text": "Progress → *stays*",
+          "at": "the progress stays"
+        },
+        {
+          "text": "After login → *back to the page*",
+          "at": "send them back"
+        }
+      ],
+      "cta": "Full video on the channel ▶"
+    }
+  ],
+  "notes": [
+    "The auth session (a cookie or token) should expire for security; the work state should not. Mixing them, for example keeping progress in the server's session memory, makes it vanish on expiry, on a restart and across server copies.",
+    "Two hours idle is our example; OWASP's session management guidance suggests shorter idle timeouts for many apps, and that's fine: the progress lives elsewhere.",
+    "Return-to-page: save the requested path before redirecting to login (a query parameter or a short-lived cookie), and after login accept only relative paths on your own site. OWASP: unvalidated redirects let attackers send users to a phishing page with your domain in the link.",
+    "The progress itself is a row per student and course on the server (lesson, second, quiz answers, saved_at), so any device can pick up where you left off.",
+    "\"Own site only\" in practice: accept only paths that start with a single \"/\" and reject \"//\" and \"/\\\", because protocol-relative URLs pass naive checks.",
+    "A save that arrives after the login expired gets a 401; the client keeps it locally and retries after the user logs in again."
+  ]
+}
