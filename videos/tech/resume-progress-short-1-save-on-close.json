@@ -1,0 +1,353 @@
+{
+  "id": "resume-progress-short-1-save-on-close",
+  "title": "Why saving on close loses progress",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "dark",
+  "hook": "broken-thing",
+  "publish": {
+    "titles": [
+      "Why \"Save on Close\" Loses Your Users' Progress",
+      "Don't Save on unload: Use visibilitychange"
+    ],
+    "description": "Your app saves progress when the page closes, and on phones it's gone anyway. Why the close event often never fires, and where and when to save instead.",
+    "extra": [
+      "🎬 The full video (from one laptop to a million students: local storage, progress on the server, 20k writes per second and two devices that disagree) is on the channel.",
+      "MDN calls visibilitychange (hidden) the last event that's reliably observable by the page; unload and beforeunload are not reliable, especially on mobile."
+    ],
+    "comment": "How often would you save: every second, or every minute?",
+    "hashtags": [
+      "webdev",
+      "javascript",
+      "systemdesign"
+    ]
+  },
+  "thumbnail": {
+    "text": "Don't *save on close*",
+    "kicker": "System design",
+    "number": "unload ✕",
+    "tone": "bad",
+    "icons": [
+      {
+        "icon": "code"
+      },
+      {
+        "icon": "mobile",
+        "status": "error"
+      }
+    ]
+  },
+  "board": {
+    "nodes": [
+      {
+        "id": "frontend",
+        "label": "Frontend",
+        "sub": "laptop browser",
+        "icon": "client",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "local",
+        "label": "Local storage",
+        "sub": "in the browser",
+        "icon": "storage",
+        "row": 1,
+        "col": 0
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "sub": "REST API",
+        "icon": "api",
+        "row": 0,
+        "col": 1
+      },
+      {
+        "id": "progress",
+        "label": "Progress",
+        "sub": "lesson · second · quiz",
+        "icon": "db",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "phone",
+        "label": "Phone",
+        "sub": "its own browser",
+        "icon": "mobile",
+        "row": 0,
+        "col": 2
+      }
+    ],
+    "edges": [
+      {
+        "from": "frontend",
+        "to": "local"
+      },
+      {
+        "from": "frontend",
+        "to": "api"
+      },
+      {
+        "from": "api",
+        "to": "progress"
+      },
+      {
+        "from": "phone",
+        "to": "api"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "Why does *save on close* lose progress?",
+      "narration": "Your app saves progress when the user closes the page. Then they close it on a phone, come back, and it's all gone. Why, if the code looks right?",
+      "beats": [
+        {
+          "text": "Save on close",
+          "icon": "code",
+          "at": "saves progress when"
+        },
+        {
+          "text": "Phone",
+          "icon": "mobile",
+          "at": "on a phone"
+        },
+        {
+          "text": "Progress gone",
+          "icon": "client",
+          "at": "it's all gone",
+          "sfx": "impact"
+        },
+        {
+          "text": "?",
+          "at": "the code looks"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "title": "The close event",
+      "filename": "resume.ts",
+      "language": "ts",
+      "code": "// ✗ often never runs on phones\nwindow.addEventListener(\"unload\", save);\n\n// ✓ save as they go\nquiz.oninput = debounce(save, 1000);\nsetInterval(save, 5000); // video position\n\n// ✓ and when the page gets hidden\ndocument.addEventListener(\n  \"visibilitychange\", () => {\n    if (document.hidden) save();\n  });",
+      "narration": "The close event is the problem. On phones, the browser often doesn't fire it: the app goes to the background and gets killed, and your code never runs. So save as they go: quiz answers a second after the last change, the video position every few seconds.",
+      "steps": [
+        {
+          "at": "The close event",
+          "lines": [
+            1,
+            2
+          ],
+          "note": "unload: not guaranteed"
+        },
+        {
+          "at": "gets killed",
+          "lines": [
+            1,
+            2
+          ],
+          "note": "Backgrounded, then killed: your code never runs"
+        },
+        {
+          "at": "save as they go",
+          "lines": [
+            4,
+            5
+          ],
+          "note": "Quiz: 1 s after the last change"
+        },
+        {
+          "at": "every few seconds",
+          "lines": [
+            6
+          ],
+          "note": "Video position: every 5 s"
+        }
+      ]
+    },
+    {
+      "type": "code",
+      "title": "The last moment",
+      "filename": "resume.ts",
+      "language": "ts",
+      "code": "// ✓ and when the page gets hidden\ndocument.addEventListener(\n  \"visibilitychange\", () => {\n    if (document.hidden) save();\n  });",
+      "narration": "And save once more when the page gets hidden: when they switch apps, lock the phone or change tabs. That's the last moment you can count on.",
+      "steps": [
+        {
+          "at": "page gets hidden",
+          "lines": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "note": "visibilitychange → hidden"
+        },
+        {
+          "at": "lock the phone",
+          "lines": [
+            4
+          ],
+          "note": "Switch apps · lock · change tabs"
+        },
+        {
+          "at": "the last moment",
+          "lines": [
+            4
+          ],
+          "note": "The last moment you can count on"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "One device",
+      "narration": "Where does save write? For one device, local storage: a small key value store in the browser that survives closing the tab. On open, it jumps straight back.",
+      "steps": [
+        {
+          "at": "Where does save",
+          "show": [
+            "frontend"
+          ]
+        },
+        {
+          "at": "local storage",
+          "show": [
+            "local"
+          ],
+          "packet": {
+            "from": "frontend",
+            "to": "local",
+            "label": "URL + second + quiz",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "survives closing the",
+          "note": {
+            "text": "Survives *closing the tab*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "jumps straight back",
+          "packet": {
+            "from": "local",
+            "to": "frontend",
+            "label": "lesson 7 · 40:12",
+            "color": "green"
+          },
+          "status": {
+            "frontend": "ok"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Many devices",
+      "narration": "To follow the student to their phone, save to your server too. That's a write every few seconds per student. And send the last save as a beacon: a small request the browser keeps sending even as the page goes away.",
+      "steps": [
+        {
+          "at": "to their phone",
+          "show": [
+            "phone"
+          ],
+          "note": {
+            "text": "Local storage = *one browser*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "your server too",
+          "show": [
+            "api",
+            "progress"
+          ],
+          "packet": {
+            "from": "frontend",
+            "to": "progress",
+            "via": [
+              "api"
+            ],
+            "label": "PUT /progress",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "a write every",
+          "note": {
+            "text": "1 write / 5 s *per student*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "as a beacon",
+          "packet": {
+            "from": "frontend",
+            "to": "progress",
+            "via": [
+              "api"
+            ],
+            "label": "beacon",
+            "color": "purple"
+          },
+          "note": {
+            "text": "*sendBeacon* · *fetch keepalive*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "page goes away",
+          "packet": {
+            "from": "progress",
+            "to": "phone",
+            "via": [
+              "api"
+            ],
+            "label": "lesson 7 · 40:12",
+            "color": "green"
+          },
+          "status": {
+            "phone": "ok"
+          },
+          "camera": []
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "Save as they go",
+      "narration": "Don't trust the close event. Save as they go, and once more when the page gets hidden. How often would you save: every second, or every minute? The full video is on the channel.",
+      "points": [
+        {
+          "text": "Don't trust *unload*",
+          "at": "trust the close"
+        },
+        {
+          "text": "Save *as they go*",
+          "at": "Save as they"
+        },
+        {
+          "text": "Once more when *hidden*",
+          "at": "once more when"
+        }
+      ],
+      "cta": "Full video on the channel ▶"
+    }
+  ],
+  "notes": [
+    "Browsers don't guarantee unload or beforeunload, especially on mobile, where apps are backgrounded and later killed without closing. MDN calls visibilitychange (hidden) the last event that's reliably observable by the page.",
+    "Unload handlers also make the page ineligible for the back/forward cache in some browsers, so avoiding them makes back navigation faster too.",
+    "A debounce alone never fires while a video plays (the position changes all the time), so the position uses an interval and the quiz uses a debounce.",
+    "navigator.sendBeacon always sends a POST and can't set custom headers (auth goes in the cookie); fetch with keepalive allows PUT and headers, with a body limit of about 64 KiB.",
+    "localStorage is per origin, about 5 MiB, synchronous and strings only; private mode and clearing site data wipe it. Key it by user and clear it on logout on shared computers.",
+    "Chrome is deprecating the unload event, another reason not to depend on it. Older Safari (before 14.5) did not fire visibilitychange hidden when closing a tab, so pagehide is a useful fallback.",
+    "Safari's tracking prevention can delete script-written storage after 7 days of Safari use without interacting with the site: one more reason to keep a copy on the server."
+  ]
+}

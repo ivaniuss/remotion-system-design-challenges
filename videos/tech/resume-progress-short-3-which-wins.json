@@ -1,0 +1,348 @@
+{
+  "id": "resume-progress-short-3-which-wins",
+  "title": "Phone vs laptop: which save wins?",
+  "lang": "en",
+  "pack": "tech",
+  "theme": "neon",
+  "hook": "broken-thing",
+  "publish": {
+    "titles": [
+      "Phone vs Laptop: Which Save Wins? (Out-of-Order Writes)",
+      "Why Your App Sent You Back an Hour"
+    ],
+    "description": "Two devices save your progress, and one morning you're an hour behind. Why the last save to arrive isn't the newest, and the conditional update that keeps the right one.",
+    "extra": [
+      "🎬 The full video (from one laptop to a million students: local storage, progress on the server, 20k writes per second and two devices that disagree) is on the channel.",
+      "A conditional update (write only if newer) is a condition expression in DynamoDB, a WHERE clause in SQL, a Lua script in Redis; in Cassandra, write with USING TIMESTAMP set to when the save happened."
+    ],
+    "comment": "Would you pick automatically, or ask the user?",
+    "hashtags": [
+      "systemdesign",
+      "backend",
+      "distributedsystems"
+    ]
+  },
+  "thumbnail": {
+    "text": "Which save *wins?*",
+    "kicker": "System design",
+    "number": "1 h behind",
+    "tone": "bad",
+    "icons": [
+      {
+        "icon": "mobile"
+      },
+      {
+        "icon": "db",
+        "status": "error"
+      },
+      {
+        "icon": "client"
+      }
+    ]
+  },
+  "board": {
+    "nodes": [
+      {
+        "id": "phone",
+        "label": "Phone",
+        "sub": "saved 8 pm, offline",
+        "icon": "mobile",
+        "row": 0,
+        "col": 0
+      },
+      {
+        "id": "laptop",
+        "label": "Laptop",
+        "sub": "saved 9 pm",
+        "icon": "client",
+        "row": 0,
+        "col": 2
+      },
+      {
+        "id": "api",
+        "label": "Backend",
+        "sub": "REST API",
+        "icon": "api",
+        "row": 1,
+        "col": 1
+      },
+      {
+        "id": "store",
+        "label": "Progress store",
+        "sub": "one row per student",
+        "icon": "db",
+        "row": 2,
+        "col": 1
+      }
+    ],
+    "edges": [
+      {
+        "from": "phone",
+        "to": "api"
+      },
+      {
+        "from": "laptop",
+        "to": "api"
+      },
+      {
+        "from": "api",
+        "to": "store"
+      }
+    ]
+  },
+  "scenes": [
+    {
+      "type": "title",
+      "tag": "System design",
+      "heading": "Phone vs laptop: *which save wins?*",
+      "narration": "You study on the laptop at night, and on the phone on the bus. Both save your progress. One morning you open the app, and you're an hour behind. Which save won, and why?",
+      "beats": [
+        {
+          "text": "Laptop",
+          "icon": "client",
+          "at": "on the laptop"
+        },
+        {
+          "text": "Phone",
+          "icon": "mobile",
+          "at": "on the bus"
+        },
+        {
+          "text": "1 h behind",
+          "icon": "scheduler",
+          "at": "an hour behind",
+          "sfx": "impact"
+        },
+        {
+          "text": "?",
+          "at": "Which save won"
+        }
+      ]
+    },
+    {
+      "type": "sequence",
+      "title": "Out of order",
+      "narration": "On the bus, the phone has no signal, so its saves wait. At home, the laptop moves you on to lesson four. Then the phone reconnects and sends lesson three, from an hour ago. The last save to arrive wins, so lesson three wins. You go back an hour.",
+      "actors": [
+        {
+          "id": "phone",
+          "label": "Phone",
+          "icon": "mobile"
+        },
+        {
+          "id": "api",
+          "label": "Backend",
+          "icon": "api"
+        },
+        {
+          "id": "store",
+          "label": "Progress store",
+          "icon": "db"
+        },
+        {
+          "id": "laptop",
+          "label": "Laptop",
+          "icon": "client"
+        }
+      ],
+      "steps": [
+        {
+          "at": "has no signal",
+          "from": "phone",
+          "kind": "self",
+          "label": "queued · no signal"
+        },
+        {
+          "at": "laptop moves you",
+          "from": "laptop",
+          "to": "api",
+          "after": "+1 h",
+          "label": "lesson 4 · saved 9 pm"
+        },
+        {
+          "at": "on to lesson four",
+          "from": "api",
+          "to": "store",
+          "label": "lesson 4"
+        },
+        {
+          "at": "phone reconnects",
+          "from": "phone",
+          "to": "api",
+          "label": "lesson 3 · saved 8 pm"
+        },
+        {
+          "at": "last save to",
+          "from": "api",
+          "to": "store",
+          "label": "lesson 3 overwrites",
+          "status": {
+            "store": "error"
+          },
+          "note": {
+            "text": "Last to arrive wins → *you go back*",
+            "tone": "bad"
+          }
+        },
+        {
+          "at": "go back an",
+          "from": "store",
+          "to": "laptop",
+          "kind": "return",
+          "label": "resume: lesson 3"
+        }
+      ],
+      "spans": [
+        {
+          "actor": "phone",
+          "from": 0,
+          "to": 3,
+          "label": "no signal",
+          "tone": "warn"
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "Keep the newest",
+      "narration": "The fix: every save carries when it happened. The store keeps it only if it's newer than what it has, in one atomic step: check and write together. The late save from the phone is ignored.",
+      "steps": [
+        {
+          "at": "every save carries",
+          "show": [
+            "laptop",
+            "api",
+            "store"
+          ],
+          "packet": {
+            "from": "laptop",
+            "to": "store",
+            "via": [
+              "api"
+            ],
+            "label": "lesson 4 · 9 pm",
+            "color": "green"
+          },
+          "note": {
+            "text": "Each save says *when it happened*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "keeps it only",
+          "focus": [
+            "store"
+          ],
+          "note": {
+            "text": "Write *only if newer* than stored",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "one atomic step",
+          "note": {
+            "text": "Check + write: *one atomic step*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "the late save",
+          "focus": [],
+          "show": [
+            "phone"
+          ],
+          "packet": {
+            "from": "phone",
+            "to": "store",
+            "via": [
+              "api"
+            ],
+            "label": "lesson 3 · 8 pm",
+            "color": "yellow"
+          }
+        },
+        {
+          "at": "phone is ignored",
+          "status": {
+            "store": "ok"
+          },
+          "note": {
+            "text": "8 pm < 9 pm → *ignored*",
+            "tone": "good"
+          }
+        }
+      ]
+    },
+    {
+      "type": "board",
+      "title": "What it costs",
+      "narration": "The cost: device clocks can be wrong. So the phone sends how long ago each save happened, and the server subtracts that from its own clock. Some apps also just ask: lesson four, or lesson three?",
+      "steps": [
+        {
+          "at": "device clocks can",
+          "focus": [
+            "phone",
+            "laptop"
+          ],
+          "note": {
+            "text": "Device clocks *can be wrong*",
+            "tone": "warn"
+          }
+        },
+        {
+          "at": "how long ago",
+          "focus": [
+            "phone"
+          ],
+          "note": {
+            "text": "Phone: saved *2 h ago*",
+            "tone": "info"
+          }
+        },
+        {
+          "at": "its own clock",
+          "focus": [
+            "api"
+          ],
+          "note": {
+            "text": "Server: 10 pm − 2 h = *8 pm*",
+            "tone": "good"
+          }
+        },
+        {
+          "at": "just ask",
+          "focus": [],
+          "camera": [],
+          "note": {
+            "text": "Or ask: *lesson 4 or lesson 3?*",
+            "tone": "info"
+          }
+        }
+      ]
+    },
+    {
+      "type": "summary",
+      "title": "When, not arrival",
+      "narration": "Order saves by when they happened, not by when they arrived. Would you pick automatically, or ask the user? The full video is on the channel.",
+      "points": [
+        {
+          "text": "Order by *when it happened*",
+          "at": "when they happened"
+        },
+        {
+          "text": "Not by *when it arrived*",
+          "at": "when they arrived"
+        }
+      ],
+      "cta": "Full video on the channel ▶"
+    }
+  ],
+  "notes": [
+    "\"Last write wins\" in databases like Cassandra or DynamoDB usually means the highest timestamp wins, which is exactly the fix here when the timestamp is when the save happened. The bug is ordering by arrival.",
+    "A conditional update keeps the newest in one atomic step: UPDATE ... WHERE saved_at < :new in SQL, a condition expression in DynamoDB, a Lua script in Redis. In Cassandra a conditional write is a lightweight transaction (Paxos, several round trips), so the cheap way is writing with USING TIMESTAMP = saved_at.",
+    "Device clocks drift or are set wrong, so never compare two devices' clock times. Use the device clock only to measure durations: the phone sends how long ago each save happened, and the server turns that into its own time. The limit: that elapsed time resets if the phone restarts while offline. Alternative: version numbers; each save carries the version it read, and the server rejects an old version, which becomes a conflict or a question to the user.",
+    "Some apps resolve it by asking; e-readers, for example, offer to jump to the furthest page read on another device.",
+    "The same rule applies when the app opens: local copy versus server copy, the newest by when it happened wins.",
+    "Overwriting the whole row would also discard quiz answers the phone saved for another lesson. Storing and comparing per lesson avoids it."
+  ]
+}
